@@ -182,24 +182,15 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
     let mut bindings = bindings!(
         KeyBinding;
         L, ModifiersState::CTRL; Action::ClearLogNotice;
-        L,    ModifiersState::CTRL;
-            Action::Esc("\x0c".into());
-        Up,    +BindingMode::APP_CURSOR;
-            Action::Esc("\x1bOA".into());
-        Up,    ~BindingMode::APP_CURSOR;
-            Action::Esc("\x1b[A".into());
-        Down,  +BindingMode::APP_CURSOR;
-            Action::Esc("\x1bOB".into());
-        Down,  ~BindingMode::APP_CURSOR;
-            Action::Esc("\x1b[B".into());
-        Right, +BindingMode::APP_CURSOR;
-            Action::Esc("\x1bOC".into());
-        Right, ~BindingMode::APP_CURSOR;
-            Action::Esc("\x1b[C".into());
-        Left,  +BindingMode::APP_CURSOR;
-            Action::Esc("\x1bOD".into());
-        Left,  ~BindingMode::APP_CURSOR;
-            Action::Esc("\x1b[D".into());
+        L,    ModifiersState::CTRL; Action::Esc("\x0c".into());
+        Up,    +BindingMode::APP_CURSOR; Action::Esc("\x1bOA".into());
+        Up,    ~BindingMode::APP_CURSOR; Action::Esc("\x1b[A".into());
+        Down,  +BindingMode::APP_CURSOR; Action::Esc("\x1bOB".into());
+        Down,  ~BindingMode::APP_CURSOR; Action::Esc("\x1b[B".into());
+        Right, +BindingMode::APP_CURSOR; Action::Esc("\x1bOC".into());
+        Right, ~BindingMode::APP_CURSOR; Action::Esc("\x1b[C".into());
+        Left,  +BindingMode::APP_CURSOR; Action::Esc("\x1bOD".into());
+        Left,  ~BindingMode::APP_CURSOR; Action::Esc("\x1b[D".into());
         Back        ; Action::Esc("\x7f".into());
         Insert      ; Action::Esc("\x1b[2~".into());
         Delete      ; Action::Esc("\x1b[3~".into());
@@ -379,7 +370,7 @@ impl<'a> Deserialize<'a> for ModeWrapper {
 
             fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 f.write_str(
-                    "a combination of AppCursor | AppKeypad | Alt | Vi, possibly with negation (~)",
+                    "a combination of AppCursor | AppKeypad | Alt",
                 )
             }
 

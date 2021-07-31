@@ -10,3 +10,4 @@
 * New docs/README
 * Remove cursor changing when typing
 * Go through and read everything and find more stuff to delete
+* Remove nested configs (the import statement)

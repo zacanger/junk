@@ -39,4 +39,4 @@ install:
 .PHONY: app binary clean dmg install $(TARGET)
 
 clean:
-	@rm -rf target
+	@cargo clean
