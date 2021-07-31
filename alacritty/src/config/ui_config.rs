@@ -1,13 +1,10 @@
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
 
 use log::error;
 use serde::{self, Deserialize, Deserializer};
 
 use alacritty_config_derive::ConfigDeserialize;
 use alacritty_terminal::config::{Percentage, LOG_TARGET_CONFIG};
-use alacritty_terminal::term::search::RegexSearch;
 
 use crate::config::bell::BellConfig;
 use crate::config::bindings::{

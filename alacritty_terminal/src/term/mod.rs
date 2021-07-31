@@ -472,7 +472,6 @@ impl<T> Term<T> {
 
         debug!("New num_cols is {} and num_lines is {}", num_cols, num_lines);
 
-        // Move vi mode cursor with the content.
         let history_size = self.history_size();
         let mut delta = num_lines as i32 - old_lines as i32;
         let min_delta = min(0, num_lines as i32 - self.grid.cursor.point.line.0 - 1);
@@ -632,8 +631,6 @@ impl<T> Term<T> {
     }
 
     /// Active terminal cursor style.
-    ///
-    /// While vi mode is active, this will automatically return the vi mode cursor style.
     #[inline]
     pub fn cursor_style(&self) -> CursorStyle {
         let cursor_style = self.cursor_style.unwrap_or(self.default_cursor_style);

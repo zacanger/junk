@@ -4,13 +4,6 @@ This document gives an overview over Alacritty's features beyond its terminal
 emulation capabilities. To get a list with supported control sequences take a
 look at [Alacritty's escape sequence support](./escape_support.md).
 
-## Vi Mode
-
-The vi mode allows moving around Alacritty's viewport and scrollback using the
-keyboard. It also serves as a jump-off point for other features like search and
-opening URLs with the keyboard. By default you can launch it using
-<kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>Space</kbd>.
-
 ### Motion
 
 The cursor motions are setup by default to mimic vi, however they are fully

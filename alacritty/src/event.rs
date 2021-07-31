@@ -682,10 +682,6 @@ impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
 
         // Clear focused match.
         self.search_state.focused_match = None;
-
-        // The viewport reset logic is only needed for vi mode, since without it our origin is
-        // always at the current display offset instead of at the vi cursor position which we need
-        // to recover to.
         return;
     }
 
@@ -753,7 +749,7 @@ impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
     /// Update the cursor blinking state.
     fn update_cursor_blinking(&mut self) {
         // Get config cursor style.
-        let mut cursor_style = self.config.cursor.style;
+        let cursor_style = self.config.cursor.style;
 
         // Check terminal cursor style.
         let terminal_blinking = self.terminal.cursor_style().blinking;

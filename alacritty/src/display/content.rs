@@ -75,11 +75,6 @@ impl<'a> RenderableContent<'a> {
         }
     }
 
-    /// Viewport offset.
-    pub fn display_offset(&self) -> usize {
-        self.terminal_content.display_offset
-    }
-
     /// Get the terminal cursor.
     pub fn cursor(mut self) -> Option<RenderableCursor> {
         // Assure this function is only called after the iterator has been drained.
@@ -201,7 +196,6 @@ impl RenderableCell {
         });
 
         let display_offset = content.terminal_content.display_offset;
-        let viewport_start = Point::new(Line(-(display_offset as i32)), Column(0));
         let colors = &content.config.ui_config.colors;
         let character = cell.c;
 

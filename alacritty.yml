@@ -236,16 +236,6 @@
     #  foreground: '#e9ff5e'
     #  background: '#1d1f21'
 
-  # Line indicator
-  #
-  # Color used for the indicator displaying the position in history during
-  # search and vi mode.
-  #
-  # By default, these will use the opposing primary color.
-  #line_indicator:
-  #  foreground: None
-  #  background: None
-
   # Selection colors
   #
   # Colors which should be used to draw the selection area.
@@ -521,83 +511,6 @@
 #       Remove the active selection.
 #   - ReceiveChar
 #   - None
-#
-# - Vi mode exclusive actions:
-#
-#   - Open
-#       Perform the action of the first matching hint under the vi mode cursor
-#       with `mouse.enabled` set to `true`.
-#   - ToggleNormalSelection
-#   - ToggleLineSelection
-#   - ToggleBlockSelection
-#   - ToggleSemanticSelection
-#       Toggle semantic selection based on `selection.semantic_escape_chars`.
-#
-# - Vi mode exclusive cursor motion actions:
-#
-#   - Up
-#       One line up.
-#   - Down
-#       One line down.
-#   - Left
-#       One character left.
-#   - Right
-#       One character right.
-#   - First
-#       First column, or beginning of the line when already at the first column.
-#   - Last
-#       Last column, or beginning of the line when already at the last column.
-#   - FirstOccupied
-#       First non-empty cell in this terminal row, or first non-empty cell of
-#       the line when already at the first cell of the row.
-#   - High
-#       Top of the screen.
-#   - Middle
-#       Center of the screen.
-#   - Low
-#       Bottom of the screen.
-#   - SemanticLeft
-#       Start of the previous semantically separated word.
-#   - SemanticRight
-#       Start of the next semantically separated word.
-#   - SemanticLeftEnd
-#       End of the previous semantically separated word.
-#   - SemanticRightEnd
-#       End of the next semantically separated word.
-#   - WordLeft
-#       Start of the previous whitespace separated word.
-#   - WordRight
-#       Start of the next whitespace separated word.
-#   - WordLeftEnd
-#       End of the previous whitespace separated word.
-#   - WordRightEnd
-#       End of the next whitespace separated word.
-#   - Bracket
-#       Character matching the bracket at the cursor's location.
-#   - SearchNext
-#       Beginning of the next match.
-#   - SearchPrevious
-#       Beginning of the previous match.
-#   - SearchStart
-#       Start of the match to the left of the vi mode cursor.
-#   - SearchEnd
-#       End of the match to the right of the vi mode cursor.
-#
-# - Search mode exclusive actions:
-#   - SearchFocusNext
-#       Move the focus to the next search match.
-#   - SearchFocusPrevious
-#       Move the focus to the previous search match.
-#   - SearchConfirm
-#   - SearchCancel
-#   - SearchClear
-#       Reset the search regex.
-#   - SearchDeleteWord
-#       Delete the last word in the search regex.
-#   - SearchHistoryPrevious
-#       Go to the previous regex in the search history.
-#   - SearchHistoryNext
-#       Go to the next regex in the search history.
 #
 # - macOS exclusive actions:
 #   - ToggleSimpleFullscreen

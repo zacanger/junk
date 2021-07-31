@@ -104,16 +104,6 @@ pub trait ActionContext<T: EventListener> {
 }
 
 impl Action {
-    fn toggle_selection<T, A>(ctx: &mut A, ty: SelectionType)
-    where
-        A: ActionContext<T>,
-        T: EventListener,
-    {
-        // Make sure initial selection is not empty.
-        if let Some(selection) = &mut ctx.terminal_mut().selection {
-            selection.include_all();
-        }
-    }
 }
 
 trait Execute<T: EventListener> {
@@ -165,14 +155,12 @@ impl<T: EventListener> Execute<T> for Action {
                 ctx.scroll(Scroll::PageDown);
             },
             Action::ScrollHalfPageUp => {
-                // Move vi mode cursor.
                 let term = ctx.terminal_mut();
                 let scroll_lines = term.screen_lines() as i32 / 2;
 
                 ctx.scroll(Scroll::Delta(scroll_lines));
             },
             Action::ScrollHalfPageDown => {
-                // Move vi mode cursor.
                 let term = ctx.terminal_mut();
                 let scroll_lines = -(term.screen_lines() as i32 / 2);
 
@@ -398,7 +386,7 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
         }
     }
 
-    /// Handle left click selection and vi mode cursor movement.
+    /// Handle left click selection.
     fn on_left_click(&mut self, point: Point) {
         let side = self.ctx.mouse().cell_side;
 

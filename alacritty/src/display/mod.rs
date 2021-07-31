@@ -471,11 +471,9 @@ impl Display {
             grid_cells.push(cell);
         }
         let background_color = content.color(NamedColor::Background as usize);
-        let display_offset = content.display_offset();
         let cursor = content.cursor();
 
         let cursor_point = terminal.grid().cursor.point;
-        let total_lines = terminal.grid().total_lines();
         let metrics = self.glyph_cache.font_metrics();
         let size_info = self.size_info;
 
