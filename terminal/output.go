@@ -1,9 +1,5 @@
 package terminal
 
-import (
-	"time"
-)
-
 // Wish list here: http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 
 type TerminalCharSet int
@@ -103,11 +99,6 @@ func (terminal *Terminal) processInput(pty chan rune) {
 	var b rune
 
 	for {
-
-		if terminal.config.Slomo {
-			time.Sleep(time.Millisecond * 100)
-		}
-
 		b = <-pty
 
 		if b == 0x1b {

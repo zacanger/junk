@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/liamg/aminal/config"
+	"github.com/zacanger/term/config"
 	"go.uber.org/zap"
 )
 

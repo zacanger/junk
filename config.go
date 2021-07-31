@@ -8,8 +8,8 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/liamg/aminal/config"
-	"github.com/liamg/aminal/version"
+	"github.com/zacanger/term/config"
+	"github.com/zacanger/term/version"
 )
 
 func getActuallyProvidedFlags() map[string]bool {
@@ -27,14 +27,12 @@ func getConfig() *config.Config {
 	ignoreConfig := false
 	shell := ""
 	debugMode := false
-	slomo := false
 
 	if flag.Parsed() == false {
 		flag.BoolVar(&showVersion, "version", showVersion, "Output version information")
 		flag.BoolVar(&ignoreConfig, "ignore-config", ignoreConfig, "Ignore user config files and use defaults")
 		flag.StringVar(&shell, "shell", shell, "Specify the shell to use")
 		flag.BoolVar(&debugMode, "debug", debugMode, "Enable debug logging")
-		flag.BoolVar(&slomo, "slomo", slomo, "Render in slow motion (useful for debugging)")
 
 		flag.Parse() // actual parsing and fetching flags from the command line
 	}
@@ -63,10 +61,6 @@ func getConfig() *config.Config {
 
 	if actuallyProvidedFlags["debug"] {
 		conf.DebugMode = debugMode
-	}
-
-	if actuallyProvidedFlags["slomo"] {
-		conf.Slomo = slomo
 	}
 
 	return conf

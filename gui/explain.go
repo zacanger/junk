@@ -2,7 +2,7 @@ package gui
 
 import (
 	"github.com/go-gl/gl/all-core/gl"
-	"github.com/liamg/aminal/hints"
+	"github.com/zacanger/term/hints"
 )
 
 type annotation struct {

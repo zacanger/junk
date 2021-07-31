@@ -1,4 +1,2 @@
-aminal
-aminal.exe
-*.syso
-.idea
+/term
+.DS_Store

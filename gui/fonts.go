@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gobuffalo/packr"
-	"github.com/liamg/aminal/glfont"
+	"github.com/zacanger/term/glfont"
 )
 
 func (gui *GUI) getPackedFont(name string) (*glfont.Font, error) {

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/liamg/aminal/gui"
-	"github.com/liamg/aminal/terminal"
+	"github.com/zacanger/term/gui"
+	"github.com/zacanger/term/terminal"
 
 	"github.com/carlogit/phash"
 )

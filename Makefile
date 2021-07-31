@@ -1,66 +1,37 @@
 SHELL := /bin/bash
-BINARY := aminal
+BINARY := term
 FONTPATH := ./gui/packed-fonts
+VERSION := $(shell git describe --tags 2>/dev/null)
 
-.PHONY: build
-build: 
-	./build.sh `git describe --tags`
+build:
+	@go build -ldflags "-X github.com/zacanger/term/version.Version=$version"
 
-.PHONY: test
+lint:
+	@go fmt ./...
+	@go vet ./...
+	@staticcheck ./...
+
 test:
-	go test -v ./...
-	go vet -v
+	@go test ./...
 
-.PHONY: check-gofmt
-check-gofmt:
-	$(eval files := $(shell gofmt -l `find -name '*.go' | grep -v vendor`))
-	$(if $(files),@echo "Some files not gofmt compliant: $(files)"; exit 1, @exit 0)
+cover:
+	@go test -coverprofile=coverage.out ./...
 
-.PHONY: gofmt
-gofmt:
-	gofmt -w -l `find -name '*.go' | grep -v vendor`
+coverage:
+	@go tool cover -html=coverage.out
 
-.PHONY: install
-install: build
-	go install -ldflags "-X github.com/liamg/aminal/version.Version=`git describe --tags`"
+fmt:
+	go fmt ./...
 
-.PHONY: install-tools
-install-tools:
-	which dep || curl -L https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-	which packr || go get -u github.com/gobuffalo/packr/packr
+install:
+	@mkdir -p $(PREFIX)/bin
+	@cp -f cozy $(PREFIX)/bin/term
+	@chmod 755 $(PREFIX)/bin/term
 
-.PHONY:	build-linux
-build-linux:
-	mkdir -p bin/linux
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -o bin/linux/${BINARY}-linux-amd64 -ldflags "-X github.com/liamg/aminal/version.Version=${CIRCLE_TAG}"
+clean:
+	@rm -f term coverage.out
 
-.PHONY:	build-darwin
-build-darwin:
-	mkdir -p bin/darwin
-	xgo -x -v -ldflags "-X github.com/liamg/aminal/version.Version=${CIRCLE_TAG}" --targets=darwin/amd64 -out bin/darwin/${BINARY} .
+tags:
+	@ctags --exclude=x -R .
 
-.PHONY:	package-debian
-package-debian: build-linux
-	./scripts/package-debian.sh "${CIRCLE_TAG}" bin/linux/${BINARY}-linux-amd64
-
-.PHONY:	build-linux-travis
-build-linux-travis:
-	mkdir -p bin/linux
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -o bin/linux/${BINARY}-linux-amd64 -ldflags "-X github.com/liamg/aminal/version.Version=${TRAVIS_TAG}"
-
-.PHONY: windows-cross-compile-travis
-windows-cross-compile-travis:
-	mkdir -p bin/windows
-	x86_64-w64-mingw32-windres -o aminal.syso aminal.rc
-	GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CXX=x86_64-w64-mingw32-g++ CC=x86_64-w64-mingw32-gcc go build -o bin/windows/${BINARY}-windows-amd64.exe -ldflags "-X github.com/liamg/aminal/version.Version=${TRAVIS_TAG}"
-
-.PHONY:	build-windows
-build-windows:
-	windres -o aminal.syso aminal.rc
-	go build -o ${BINARY}-windows-amd64.exe
-
-.PHONY:	build-darwin-native-travis
-build-darwin-native-travis:
-	mkdir -p bin/darwin
-	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -o bin/darwin/${BINARY}-darwin-amd64 -ldflags "-X github.com/liamg/aminal/version.Version=${TRAVIS_TAG}"
-
+.PHONY: clean install tags todo

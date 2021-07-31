@@ -1,3 +1,5 @@
+My fork of `aminal`, ripping out most of the features and hopefully making it fast.
+
 # Aminal - A Modern Terminal Emulator
 
 [![Travis Build Status](https://travis-ci.org/liamg/aminal.svg?branch=master)](https://travis-ci.org/liamg/aminal)
@@ -6,7 +8,7 @@
 [![Slack](https://img.shields.io/badge/slack-%23aminal-%23ffcc00.svg)](http://gophers.slack.com/messages/aminal)
 ![License](https://img.shields.io/github/license/liamg/aminal.svg)
 
-Aminal is a modern terminal emulator for Mac/Linux/Windows implemented in Golang and utilising OpenGL. 
+Aminal is a modern terminal emulator for Mac/Linux/Windows implemented in Golang and utilising OpenGL.
 
 ![Demo GIF](demo.gif)
 
@@ -47,7 +49,7 @@ Dev environment setup instructions are available [here](windows.md).
 
 ### Prebuilt Binaries
 
-Prebuilt binaries are available for Linux, OSX and Windows on the [releases](https://github.com/liamg/aminal/releases) page. 
+Prebuilt binaries are available for Linux, OSX and Windows on the [releases](https://github.com/liamg/aminal/releases) page.
 
 Download the binary and `sudo cp aminal-* /usr/local/bin/aminal && chmod +x /usr/local/bin/aminal`.
 
@@ -57,7 +59,7 @@ Download the binary and `sudo cp aminal-* /usr/local/bin/aminal && chmod +x /usr
 go get -u github.com/liamg/aminal
 ```
 
-## Build 
+## Build
 
 ### Dependencies
 
@@ -117,11 +119,11 @@ copy_and_paste_with_mouse = true # Text selected with the mouse is copied to the
 dpi-scale = 0.0             # Override DPI scale. Defaults to 0.0 (let Aminal determine the DPI scale itself).
 
 [colours]
-  cursor        = "#e8dfd6" 
-  foreground    = "#e8dfd6" 
-  background    = "#021b21" 
-  black         = "#032c36" 
-  red           = "#c2454e" 
+  cursor        = "#e8dfd6"
+  foreground    = "#e8dfd6"
+  background    = "#021b21"
+  black         = "#032c36"
+  red           = "#c2454e"
   green         = "#7cbf9e"
   yellow        = "#8a7a63"
   blue          = "#065f73"
@@ -153,7 +155,7 @@ dpi-scale = 0.0             # Override DPI scale. Defaults to 0.0 (let Aminal de
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `--debug`         | Enable debug mode, with debug logging and debug info terminal overlay.
 | `--slomo`         | Enable slomo mode, delay the handling of each incoming byte (or escape sequence) from the pty by 100ms. Useful for debugging.
-| `--shell [shell]` | Use the specified shell program instead of the user's usual one. 
+| `--shell [shell]` | Use the specified shell program instead of the user's usual one.
 | `--version`       | Show the version of aminal and exit.
 
 # Contributors

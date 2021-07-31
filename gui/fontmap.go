@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/liamg/aminal/glfont"
+import "github.com/zacanger/term/glfont"
 
 type FontMap struct {
 	defaultFont     *glfont.Font

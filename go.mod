@@ -1,4 +1,4 @@
-module github.com/liamg/aminal
+module github.com/zacanger/term
 
 go 1.16
 

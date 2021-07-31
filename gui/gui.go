@@ -15,11 +15,11 @@ import (
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/kbinani/screenshot"
-	"github.com/liamg/aminal/buffer"
-	"github.com/liamg/aminal/config"
-	"github.com/liamg/aminal/platform"
-	"github.com/liamg/aminal/terminal"
-	"github.com/liamg/aminal/version"
+	"github.com/zacanger/term/buffer"
+	"github.com/zacanger/term/config"
+	"github.com/zacanger/term/platform"
+	"github.com/zacanger/term/terminal"
+	"github.com/zacanger/term/version"
 	"go.uber.org/zap"
 )
 
@@ -384,14 +384,6 @@ func (gui *GUI) Render() error {
 	gui.terminal.SetProgram(program)
 
 	latestVersion := ""
-
-	go func() {
-		r, err := version.GetNewerRelease()
-		if err == nil && r != nil {
-			latestVersion = r.TagName
-			gui.terminal.SetDirty()
-		}
-	}()
 
 	startTime := time.Now()
 	showMessage := true

@@ -26,19 +26,12 @@ var DefaultConfig = Config{
 		White:        strToColourNoErr("#ffffff"),
 		Selection:    strToColourNoErr("#333366"),
 	},
-	KeyMapping:            KeyMappingConfig(map[string]string{}),
-	SearchURL:             "https://www.google.com/search?q=$QUERY",
-	MaxLines:              1000,
-	CopyAndPasteWithMouse: true,
+	KeyMapping: KeyMappingConfig(map[string]string{}),
+	MaxLines:   1000,
 }
 
 func init() {
-	DefaultConfig.KeyMapping[string(ActionCopy)] = addMod("c")
-	DefaultConfig.KeyMapping[string(ActionPaste)] = addMod("v")
-	DefaultConfig.KeyMapping[string(ActionSearch)] = addMod("g")
 	DefaultConfig.KeyMapping[string(ActionToggleDebug)] = addMod("d")
-	DefaultConfig.KeyMapping[string(ActionToggleSlomo)] = addMod(";")
-	DefaultConfig.KeyMapping[string(ActionReportBug)] = addMod("r")
 }
 
 func addMod(keys string) string {

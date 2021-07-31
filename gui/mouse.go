@@ -6,8 +6,7 @@ import (
 	"time"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/liamg/aminal/buffer"
-	"github.com/liamg/aminal/terminal"
+	"github.com/zacanger/term/terminal"
 )
 
 func (gui *GUI) glfwScrollCallback(w *glfw.Window, xoff float64, yoff float64) {
@@ -132,33 +131,6 @@ func (gui *GUI) mouseButtonCallback(w *glfw.Window, button glfw.MouseButton, act
 	tx := int(x) + 1 // vt100 is 1 indexed
 	ty := int(y) + 1
 
-	switch button {
-	case glfw.MouseButtonLeft:
-		if action == glfw.Press {
-			gui.mouseDownModifier = mod
-			gui.mouseDown = true
-
-			if gui.terminal.GetMouseMode() != terminal.MouseModeButtonEvent {
-				gui.handleSelectionButtonPress(x, y)
-			}
-		} else if action == glfw.Release {
-			gui.mouseDown = false
-
-			if gui.terminal.GetMouseMode() != terminal.MouseModeButtonEvent {
-				gui.handleSelectionButtonRelease(x, y)
-			}
-		}
-
-	case glfw.MouseButtonRight:
-		if gui.config.CopyAndPasteWithMouse && action == glfw.Press && gui.terminal.GetMouseMode() == terminal.MouseModeNone {
-			if str := gui.window.GetClipboardString(); str != "" {
-				activeBuffer := gui.terminal.ActiveBuffer()
-				activeBuffer.ClearSelection()
-				_ = gui.terminal.Paste([]byte(str))
-			}
-		}
-	}
-
 	// https://www.xfree86.org/4.8.0/ctlseqs.html
 
 	/*
@@ -246,47 +218,6 @@ func (gui *GUI) mouseButtonCallback(w *glfw.Window, button glfw.MouseButton, act
 
 	default:
 		panic("Unsupported mouse mode")
-	}
-}
-
-func (gui *GUI) handleSelectionButtonPress(x uint16, y uint16) {
-	activeBuffer := gui.terminal.ActiveBuffer()
-	clickCount := gui.updateLeftClickCount(x, y)
-	switch clickCount {
-	case 1:
-		activeBuffer.StartSelection(x, y, buffer.SelectionChar)
-	case 2:
-		activeBuffer.StartSelection(x, y, buffer.SelectionWord)
-	case 3:
-		activeBuffer.StartSelection(x, y, buffer.SelectionLine)
-	}
-	gui.mouseMovedAfterSelectionStarted = false
-}
-
-func (gui *GUI) handleSelectionButtonRelease(x uint16, y uint16) {
-	activeBuffer := gui.terminal.ActiveBuffer()
-	if x != gui.prevLeftClickX || y != gui.prevLeftClickY {
-		gui.mouseMovedAfterSelectionStarted = true
-	}
-
-	if gui.leftClickCount != 1 || gui.mouseMovedAfterSelectionStarted {
-		activeBuffer.ExtendSelection(x, y, true)
-	}
-
-	// Do copy to clipboard *or* open URL, but not both.
-	handled := false
-	if gui.config.CopyAndPasteWithMouse {
-		selectedText := activeBuffer.GetSelectedText()
-		if selectedText != "" {
-			gui.window.SetClipboardString(selectedText)
-			handled = true
-		}
-	}
-
-	if !handled {
-		if url := activeBuffer.GetURLAtPosition(x, y); url != "" {
-			go gui.launchTarget(url)
-		}
 	}
 }
 

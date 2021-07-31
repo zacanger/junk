@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/liamg/aminal/hints"
+	"github.com/zacanger/term/hints"
 )
 
 func (buffer *Buffer) GetHintAtPosition(col uint16, viewRow uint16) *hints.Hint {

@@ -7,8 +7,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/liamg/aminal/matrix"
-	"github.com/liamg/aminal/sixel"
+	"github.com/zacanger/term/matrix"
+	"github.com/zacanger/term/sixel"
 )
 
 type boolFormRuneFunc func(rune) bool

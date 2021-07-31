@@ -5,9 +5,9 @@ import (
 	"math"
 
 	"github.com/go-gl/gl/all-core/gl"
-	"github.com/liamg/aminal/buffer"
-	"github.com/liamg/aminal/config"
-	"github.com/liamg/aminal/glfont"
+	"github.com/zacanger/term/buffer"
+	"github.com/zacanger/term/config"
+	"github.com/zacanger/term/glfont"
 )
 
 type OpenGLRenderer struct {

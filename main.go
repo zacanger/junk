@@ -5,10 +5,10 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/liamg/aminal/gui"
-	"github.com/liamg/aminal/platform"
-	"github.com/liamg/aminal/terminal"
 	"github.com/riywo/loginshell"
+	"github.com/zacanger/term/gui"
+	"github.com/zacanger/term/platform"
+	"github.com/zacanger/term/terminal"
 )
 
 type callback func(terminal *terminal.Terminal, g *gui.GUI)

@@ -3,7 +3,7 @@ package gui
 import (
 	"fmt"
 
-	"github.com/liamg/aminal/buffer"
+	"github.com/zacanger/term/buffer"
 )
 
 func (gui *GUI) textbox(col uint16, row uint16, text string, fg [3]float32, bg [3]float32) {
