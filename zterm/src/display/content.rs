@@ -167,37 +167,15 @@ impl RenderableCell {
         let mut fg = Self::compute_fg_rgb(content, cell.fg, cell.flags);
         let mut bg = Self::compute_bg_rgb(content, cell.bg);
 
-        let mut bg_alpha = if cell.flags.contains(Flags::INVERSE) {
+        let bg_alpha = if cell.flags.contains(Flags::INVERSE) {
             mem::swap(&mut fg, &mut bg);
             1.0
         } else {
             Self::compute_bg_alpha(cell.bg)
         };
 
-        let is_selected = content.terminal_content.selection.map_or(false, |selection| {
-            selection.contains_cell(
-                &cell,
-                content.terminal_content.cursor.point,
-                content.cursor_shape,
-            )
-        });
-
         let display_offset = content.terminal_content.display_offset;
-        let colors = &content.config.ui_config.colors;
         let character = cell.c;
-
-        if is_selected {
-            let config_fg = colors.selection.foreground;
-            let config_bg = colors.selection.background;
-            Self::compute_cell_rgb(&mut fg, &mut bg, &mut bg_alpha, config_fg, config_bg);
-
-            if fg == bg && !cell.flags.contains(Flags::HIDDEN) {
-                // Reveal inversed text when fg/bg is the same.
-                fg = content.color(NamedColor::Background as usize);
-                bg = content.color(NamedColor::Foreground as usize);
-                bg_alpha = 1.0;
-            }
-        }
 
         // Convert cell point to viewport position.
         let cell_point = cell.point;
@@ -220,22 +198,6 @@ impl RenderableCell {
             && self.character == ' '
             && self.zerowidth.is_none()
             && !self.flags.intersects(Flags::UNDERLINE | Flags::STRIKEOUT | Flags::DOUBLE_UNDERLINE)
-    }
-
-    /// Apply [`CellRgb`] colors to the cell's colors.
-    fn compute_cell_rgb(
-        cell_fg: &mut Rgb,
-        cell_bg: &mut Rgb,
-        bg_alpha: &mut f32,
-        fg: CellRgb,
-        bg: CellRgb,
-    ) {
-        let old_fg = mem::replace(cell_fg, fg.color(*cell_fg, *cell_bg));
-        *cell_bg = bg.color(old_fg, *cell_bg);
-
-        if bg != CellRgb::CellBackground {
-            *bg_alpha = 1.0;
-        }
     }
 
     /// Get the RGB color from a cell's foreground color.

@@ -8,7 +8,7 @@
 use std::borrow::Cow;
 use std::cmp::{max, min, Ordering};
 use std::marker::PhantomData;
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
 use glutin::dpi::PhysicalPosition;
 use glutin::event::{
@@ -20,7 +20,6 @@ use glutin::window::CursorIcon;
 use zterm_terminal::event::EventListener;
 use zterm_terminal::grid::{Dimensions, Scroll};
 use zterm_terminal::index::{Column, Point, Side};
-use zterm_terminal::selection::SelectionType;
 use zterm_terminal::term::{SizeInfo, Term, TermMode};
 
 use crate::config::{Action, BindingMode, Config, Key};
@@ -29,16 +28,7 @@ use crate::display::window::Window;
 use crate::display::Display;
 use crate::event::{ClickState, Event, Mouse};
 use crate::message_bar::{self, Message};
-use crate::scheduler::{Scheduler, TimerId};
-
-/// Interval for mouse scrolling during selection outside of the boundaries.
-const SELECTION_SCROLLING_INTERVAL: Duration = Duration::from_millis(15);
-
-/// Minimum number of pixels at the bottom/top where selection scrolling is performed.
-const MIN_SELECTION_SCROLLING_HEIGHT: f64 = 5.;
-
-/// Number of pixels for increasing the selection scrolling speed factor by one.
-const SELECTION_SCROLLING_STEP: f64 = 20.;
+use crate::scheduler::{Scheduler};
 
 /// Processes input from glutin.
 ///
@@ -53,11 +43,6 @@ pub trait ActionContext<T: EventListener> {
     fn write_to_pty<B: Into<Cow<'static, [u8]>>>(&self, _data: B) {}
     fn mark_dirty(&mut self) {}
     fn size_info(&self) -> SizeInfo;
-    fn start_selection(&mut self, _ty: SelectionType, _point: Point, _side: Side) {}
-    fn toggle_selection(&mut self, _ty: SelectionType, _point: Point, _side: Side) {}
-    fn update_selection(&mut self, _point: Point, _side: Side) {}
-    fn clear_selection(&mut self) {}
-    fn selection_is_empty(&self) -> bool;
     fn mouse_mut(&mut self) -> &mut Mouse;
     fn mouse(&self) -> &Mouse;
     fn received_count(&mut self) -> &mut usize;
@@ -76,7 +61,6 @@ pub trait ActionContext<T: EventListener> {
     fn mouse_mode(&self) -> bool;
     fn scheduler_mut(&mut self) -> &mut Scheduler;
     fn on_typing_start(&mut self) {}
-    fn expand_selection(&mut self) {}
 }
 
 impl Action {
@@ -93,7 +77,6 @@ impl<T: EventListener> Execute<T> for Action {
             Action::Esc(s) => {
                 ctx.on_typing_start();
 
-                ctx.clear_selection();
                 ctx.scroll(Scroll::Bottom);
                 ctx.write_to_pty(s.clone().into_bytes())
             },
@@ -117,10 +100,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
         let (x, y) = position.into();
 
         let lmb_pressed = self.ctx.mouse().left_button_state == ElementState::Pressed;
-        let rmb_pressed = self.ctx.mouse().right_button_state == ElementState::Pressed;
-        if !self.ctx.selection_is_empty() && (lmb_pressed || rmb_pressed) {
-            self.update_selection_scrolling(y);
-        }
 
         let display_offset = self.ctx.terminal().grid().display_offset();
         let old_point = self.ctx.mouse().point(&size_info, display_offset);
@@ -151,10 +130,7 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
         let mouse_state = self.cursor_state();
         self.ctx.window().set_mouse_cursor(mouse_state);
 
-        if (lmb_pressed || rmb_pressed) && (self.ctx.modifiers().shift() || !self.ctx.mouse_mode())
-        {
-            self.ctx.update_selection(point, cell_side);
-        } else if cell_changed
+        if cell_changed
             && self.ctx.terminal().mode().intersects(TermMode::MOUSE_MOTION | TermMode::MOUSE_DRAG)
         {
             if lmb_pressed {
@@ -295,34 +271,7 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
                 },
                 _ => ClickState::Click,
             };
-
-            // Load mouse point, treating message bar and padding as the closest cell.
-            let display_offset = self.ctx.terminal().grid().display_offset();
-            let point = self.ctx.mouse().point(&self.ctx.size_info(), display_offset);
-
-            if let MouseButton::Left = button {
-                self.on_left_click(point)
-            }
         }
-    }
-
-    /// Handle left click selection.
-    fn on_left_click(&mut self, point: Point) {
-        let side = self.ctx.mouse().cell_side;
-
-        match self.ctx.mouse().click_state {
-            ClickState::Click => {
-                self.ctx.clear_selection();
-
-                // Start new empty selection.
-                if self.ctx.modifiers().ctrl() {
-                    self.ctx.start_selection(SelectionType::Block, point, side);
-                } else {
-                    self.ctx.start_selection(SelectionType::Simple, point, side);
-                }
-            },
-            ClickState::None => (),
-        };
     }
 
     fn on_mouse_release(&mut self, button: MouseButton) {
@@ -337,8 +286,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
             self.mouse_report(code, ElementState::Released);
             return;
         }
-
-        self.ctx.scheduler_mut().unschedule(TimerId::SelectionScrolling);
     }
 
     pub fn mouse_wheel_input(&mut self, delta: MouseScrollDelta, phase: TouchPhase) {
@@ -431,7 +378,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
 
             let current_lines = self.ctx.message().map(|m| m.text(&size).len()).unwrap_or(0);
 
-            self.ctx.clear_selection();
             self.ctx.pop_message();
 
             // Reset cursor when message bar height changed or all messages are gone.
@@ -500,7 +446,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
         self.ctx.on_typing_start();
 
         self.ctx.scroll(Scroll::Bottom);
-        self.ctx.clear_selection();
 
         let utf8_len = c.len_utf8();
         let mut bytes = Vec::with_capacity(utf8_len);
@@ -608,49 +553,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
             CursorIcon::Text
         }
     }
-
-    /// Handle automatic scrolling when selecting above/below the window.
-    fn update_selection_scrolling(&mut self, mouse_y: i32) {
-        let dpr = self.ctx.window().dpr;
-        let size = self.ctx.size_info();
-        let scheduler = self.ctx.scheduler_mut();
-
-        // Scale constants by DPI.
-        let min_height = (MIN_SELECTION_SCROLLING_HEIGHT * dpr) as i32;
-        let step = (SELECTION_SCROLLING_STEP * dpr) as i32;
-
-        // Compute the height of the scrolling areas.
-        let end_top = max(min_height, size.padding_y() as i32);
-        let text_area_bottom = size.padding_y() + size.screen_lines() as f32 * size.cell_height();
-        let start_bottom = min(size.height() as i32 - min_height, text_area_bottom as i32);
-
-        // Get distance from closest window boundary.
-        let delta = if mouse_y < end_top {
-            end_top - mouse_y + step
-        } else if mouse_y >= start_bottom {
-            start_bottom - mouse_y - step
-        } else {
-            scheduler.unschedule(TimerId::SelectionScrolling);
-            return;
-        };
-
-        // Scale number of lines scrolled based on distance to boundary.
-        let delta = delta as i32 / step as i32;
-        let event = Event::Scroll(Scroll::Delta(delta));
-
-        // Schedule event.
-        match scheduler.get_mut(TimerId::SelectionScrolling) {
-            Some(timer) => timer.event = event.into(),
-            None => {
-                scheduler.schedule(
-                    event.into(),
-                    SELECTION_SCROLLING_INTERVAL,
-                    true,
-                    TimerId::SelectionScrolling,
-                );
-            },
-        }
-    }
 }
 
 #[cfg(test)]
@@ -691,10 +593,6 @@ mod tests {
 
         fn size_info(&self) -> SizeInfo {
             *self.size_info
-        }
-
-        fn selection_is_empty(&self) -> bool {
-            true
         }
 
         fn scroll(&mut self, scroll: Scroll) {

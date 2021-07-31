@@ -276,11 +276,6 @@
 # The value `0.0` is completely transparent and `1.0` is opaque.
 #background_opacity: 1.0
 
-#selection:
-  # This string contains all characters that are used as separators for
-  # "semantic words" in Zterm.
-  #semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
-
 #cursor:
   # Cursor style
   #style:
@@ -363,17 +358,6 @@
 #
 # - `action` (see key bindings for actions not exclusive to mouse mode)
 #
-# - Mouse exclusive actions:
-#
-#   - ExpandSelection
-#       Expand the selection to the current mouse cursor location.
-#
-# And optionally:
-#
-# - `mods` (see key bindings)
-#mouse_bindings:
-#  - { mouse: Right,             action: ExpandSelection }
-#  - { mouse: Middle, mode: ~Vi, action: PasteSelection  }
 
 # Key bindings
 #

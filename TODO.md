@@ -9,5 +9,4 @@
 * New icons
 * New docs/README
 * Remove cursor changing when typing
-* Remove anything related to selections
 * Go through and read everything and find more stuff to delete

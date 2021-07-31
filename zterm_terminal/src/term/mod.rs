@@ -17,7 +17,6 @@ use crate::config::Config;
 use crate::event::{Event, EventListener};
 use crate::grid::{Dimensions, Grid, GridIterator, Scroll};
 use crate::index::{self, Boundary, Column, Direction, Line, Point};
-use crate::selection::{Selection, SelectionRange};
 use crate::term::cell::{Cell, Flags, LineLength};
 use crate::term::color::{Colors, Rgb};
 
@@ -209,9 +208,6 @@ pub struct Term<T> {
     /// Terminal focus controlling the cursor shape.
     pub is_focused: bool,
 
-    /// Cursor for keyboard selection.
-    pub selection: Option<Selection>,
-
     /// Currently active grid.
     ///
     /// Tracks the screen buffer currently in use. While the alternate screen buffer is active,
@@ -237,8 +233,6 @@ pub struct Term<T> {
     ///
     /// Range going from top to bottom of the terminal, indexed from the top of the viewport.
     scroll_region: Range<Line>,
-
-    semantic_escape_chars: String,
 
     /// Modified terminal colors.
     colors: Colors,
@@ -294,14 +288,12 @@ impl<T> Term<T> {
             mode: Default::default(),
             scroll_region,
             colors: color::Colors::default(),
-            semantic_escape_chars: config.selection.semantic_escape_chars.to_owned(),
             cursor_style: None,
             default_cursor_style: config.cursor.style(),
             event_proxy,
             is_focused: true,
             title: None,
             title_stack: Vec::new(),
-            selection: None,
             cell_width: size.cell_width as usize,
             cell_height: size.cell_height as usize,
         }
@@ -311,7 +303,6 @@ impl<T> Term<T> {
     where
         T: EventListener,
     {
-        self.semantic_escape_chars = config.selection.semantic_escape_chars.to_owned();
         self.default_cursor_style = config.cursor.style();
 
         let title_event = match &self.title {
@@ -326,30 +317,6 @@ impl<T> Term<T> {
         } else {
             self.grid.update_history(config.scrolling.history() as usize);
         }
-    }
-
-    /// Convert the active selection to a String.
-    pub fn selection_to_string(&self) -> Option<String> {
-        let selection_range = self.selection.as_ref().and_then(|s| s.to_range(self))?;
-        let SelectionRange { start, end, is_block } = selection_range;
-
-        let mut res = String::new();
-
-        if is_block {
-            for line in (start.line.0..end.line.0).map(Line::from) {
-                res += &self.line_to_string(line, start.column..end.column, start.column.0 != 0);
-
-                // If the last column is included, newline is appended automatically.
-                if end.column != self.columns() - 1 {
-                    res += "\n";
-                }
-            }
-            res += &self.line_to_string(end.line, start.column..end.column, true);
-        } else {
-            res = self.bounds_to_string(start, end);
-        }
-
-        Some(res)
     }
 
     /// Convert range between two points to a String.
@@ -471,20 +438,10 @@ impl<T> Term<T> {
 
         debug!("New num_cols is {} and num_lines is {}", num_cols, num_lines);
 
-        let history_size = self.history_size();
-        let mut delta = num_lines as i32 - old_lines as i32;
-        let min_delta = min(0, num_lines as i32 - self.grid.cursor.point.line.0 - 1);
-        delta = min(max(delta, min_delta), history_size as i32);
-
-        // Invalidate selection and tabs only when necessary.
+        // Invalidate tabs only when necessary.
         if old_cols != num_cols {
-            self.selection = None;
-
             // Recreate tabs list.
             self.tabs.resize(num_cols);
-        } else if let Some(selection) = self.selection.take() {
-            let range = Line(0)..Line(num_lines as i32);
-            self.selection = selection.rotate(self, &range, -delta);
         }
 
         let is_alt = self.mode.contains(TermMode::ALT_SCREEN);
@@ -516,7 +473,6 @@ impl<T> Term<T> {
 
         mem::swap(&mut self.grid, &mut self.inactive_grid);
         self.mode ^= TermMode::ALT_SCREEN;
-        self.selection = None;
     }
 
     /// Scroll screen down.
@@ -531,10 +487,6 @@ impl<T> Term<T> {
         lines = min(lines, (self.scroll_region.end - origin).0 as usize);
 
         let region = origin..self.scroll_region.end;
-
-        // Scroll selection.
-        self.selection =
-            self.selection.take().and_then(|s| s.rotate(self, &region, -(lines as i32)));
 
         // Scroll between origin and bottom
         self.grid.scroll_down(&region, lines);
@@ -551,9 +503,6 @@ impl<T> Term<T> {
         lines = min(lines, (self.scroll_region.end - self.scroll_region.start).0 as usize);
 
         let region = origin..self.scroll_region.end;
-
-        // Scroll selection.
-        self.selection = self.selection.take().and_then(|s| s.rotate(self, &region, lines as i32));
 
         // Scroll from origin to bottom less number of lines.
         self.grid.scroll_up(&region, lines);
@@ -622,11 +571,6 @@ impl<T> Term<T> {
         }
 
         point
-    }
-
-    #[inline]
-    pub fn semantic_escape_chars(&self) -> &str {
-        &self.semantic_escape_chars
     }
 
     /// Active terminal cursor style.
@@ -1192,9 +1136,6 @@ impl<T: EventListener> Handler for Term<T> {
                 }
             },
         }
-
-        let range = self.grid.cursor.point.line..=self.grid.cursor.point.line;
-        self.selection = self.selection.take().filter(|s| !s.intersects_range(range));
     }
 
     /// Set the indexed color value.
@@ -1250,9 +1191,6 @@ impl<T: EventListener> Handler for Term<T> {
                 for cell in &mut self.grid[cursor.line][..end] {
                     *cell = bg.into();
                 }
-
-                let range = Line(0)..=cursor.line;
-                self.selection = self.selection.take().filter(|s| !s.intersects_range(range));
             },
             ansi::ClearMode::Below => {
                 let cursor = self.grid.cursor.point;
@@ -1263,9 +1201,6 @@ impl<T: EventListener> Handler for Term<T> {
                 if (cursor.line.0 as usize) < screen_lines - 1 {
                     self.grid.reset_region((cursor.line + 1)..);
                 }
-
-                let range = cursor.line..Line(screen_lines as i32);
-                self.selection = self.selection.take().filter(|s| !s.intersects_range(range));
             },
             ansi::ClearMode::All => {
                 if self.mode.contains(TermMode::ALT_SCREEN) {
@@ -1273,13 +1208,9 @@ impl<T: EventListener> Handler for Term<T> {
                 } else {
                     self.grid.clear_viewport();
                 }
-
-                self.selection = None;
             },
             ansi::ClearMode::Saved if self.history_size() > 0 => {
                 self.grid.clear_history();
-
-                self.selection = self.selection.take().filter(|s| !s.intersects_range(..Line(0)));
             },
             // We have no history to clear.
             ansi::ClearMode::Saved => (),
@@ -1313,7 +1244,6 @@ impl<T: EventListener> Handler for Term<T> {
         self.tabs = TabStops::new(self.columns());
         self.title_stack = Vec::new();
         self.title = None;
-        self.selection = None;
 
         self.mode.insert(TermMode::default());
 
@@ -1686,7 +1616,6 @@ impl RenderableCursor {
 /// This contains all content required to render the current terminal view.
 pub struct RenderableContent<'a> {
     pub display_iter: GridIterator<'a, Cell>,
-    pub selection: Option<SelectionRange>,
     pub cursor: RenderableCursor,
     pub display_offset: usize,
     pub colors: &'a color::Colors,
@@ -1699,7 +1628,6 @@ impl<'a> RenderableContent<'a> {
             display_iter: term.grid().display_iter(),
             display_offset: term.grid().display_offset(),
             cursor: RenderableCursor::new(term),
-            selection: term.selection.as_ref().and_then(|s| s.to_range(term)),
             colors: &term.colors,
             mode: *term.mode(),
         }
@@ -1782,7 +1710,6 @@ mod tests {
     use crate::config::MockConfig;
     use crate::grid::{Grid, Scroll};
     use crate::index::{Column, Point, Side};
-    use crate::selection::{Selection, SelectionType};
     use crate::term::cell::{Cell, Flags};
 
     #[test]
@@ -1832,100 +1759,6 @@ mod tests {
         // Scrollable amount to bottom is 0.
         term.scroll_display(Scroll::PageDown);
         assert_eq!(term.grid.display_offset(), 0);
-    }
-
-    #[test]
-    fn semantic_selection_works() {
-        let size = SizeInfo::new(5., 3., 1.0, 1.0, 0.0, 0.0, false);
-        let mut term = Term::new(&MockConfig::default(), size, ());
-        let mut grid: Grid<Cell> = Grid::new(3, 5, 0);
-        for i in 0..5 {
-            for j in 0..2 {
-                grid[Line(j)][Column(i)].c = 'a';
-            }
-        }
-        grid[Line(0)][Column(0)].c = '"';
-        grid[Line(0)][Column(3)].c = '"';
-        grid[Line(1)][Column(2)].c = '"';
-        grid[Line(0)][Column(4)].flags.insert(Flags::WRAPLINE);
-
-        let mut escape_chars = String::from("\"");
-
-        mem::swap(&mut term.grid, &mut grid);
-        mem::swap(&mut term.semantic_escape_chars, &mut escape_chars);
-
-        {
-            term.selection = Some(Selection::new(
-                SelectionType::Semantic,
-                Point { line: Line(0), column: Column(1) },
-                Side::Left,
-            ));
-            assert_eq!(term.selection_to_string(), Some(String::from("aa")));
-        }
-
-        {
-            term.selection = Some(Selection::new(
-                SelectionType::Semantic,
-                Point { line: Line(0), column: Column(4) },
-                Side::Left,
-            ));
-            assert_eq!(term.selection_to_string(), Some(String::from("aaa")));
-        }
-
-        {
-            term.selection = Some(Selection::new(
-                SelectionType::Semantic,
-                Point { line: Line(1), column: Column(1) },
-                Side::Left,
-            ));
-            assert_eq!(term.selection_to_string(), Some(String::from("aaa")));
-        }
-    }
-
-    #[test]
-    fn line_selection_works() {
-        let size = SizeInfo::new(5., 1., 1.0, 1.0, 0.0, 0.0, false);
-        let mut term = Term::new(&MockConfig::default(), size, ());
-        let mut grid: Grid<Cell> = Grid::new(1, 5, 0);
-        for i in 0..5 {
-            grid[Line(0)][Column(i)].c = 'a';
-        }
-        grid[Line(0)][Column(0)].c = '"';
-        grid[Line(0)][Column(3)].c = '"';
-
-        mem::swap(&mut term.grid, &mut grid);
-
-        term.selection = Some(Selection::new(
-            SelectionType::Lines,
-            Point { line: Line(0), column: Column(3) },
-            Side::Left,
-        ));
-        assert_eq!(term.selection_to_string(), Some(String::from("\"aa\"a\n")));
-    }
-
-    #[test]
-    fn selecting_empty_line() {
-        let size = SizeInfo::new(3.0, 3.0, 1.0, 1.0, 0.0, 0.0, false);
-        let mut term = Term::new(&MockConfig::default(), size, ());
-        let mut grid: Grid<Cell> = Grid::new(3, 3, 0);
-        for l in 0..3 {
-            if l != 1 {
-                for c in 0..3 {
-                    grid[Line(l)][Column(c)].c = 'a';
-                }
-            }
-        }
-
-        mem::swap(&mut term.grid, &mut grid);
-
-        let mut selection = Selection::new(
-            SelectionType::Simple,
-            Point { line: Line(0), column: Column(0) },
-            Side::Left,
-        );
-        selection.update(Point { line: Line(2), column: Column(2) }, Side::Right);
-        term.selection = Some(selection);
-        assert_eq!(term.selection_to_string(), Some("aaa\n\naaa\n".into()));
     }
 
     /// Check that the grid can be serialized back and forth losslessly.

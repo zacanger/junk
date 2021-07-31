@@ -25,7 +25,6 @@ use zterm_terminal::config::LOG_TARGET_CONFIG;
 use zterm_terminal::event::{Event as TerminalEvent, EventListener, Notify, OnResize};
 use zterm_terminal::grid::{Dimensions, Scroll};
 use zterm_terminal::index::{Column, Point, Side};
-use zterm_terminal::selection::{Selection, SelectionType};
 use zterm_terminal::sync::FairMutex;
 use zterm_terminal::term::{SizeInfo, Term, TermMode};
 use zterm_terminal::tty;
@@ -100,59 +99,7 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 
     fn scroll(&mut self, scroll: Scroll) {
         self.terminal.scroll_display(scroll);
-
-        if self.mouse.left_button_state == ElementState::Pressed
-            || self.mouse.right_button_state == ElementState::Pressed
-        {
-            let display_offset = self.terminal.grid().display_offset();
-            let point = self.mouse.point(&self.size_info(), display_offset);
-            self.update_selection(point, self.mouse.cell_side);
-        }
-
         *self.dirty = true;
-    }
-
-    fn selection_is_empty(&self) -> bool {
-        self.terminal.selection.as_ref().map(Selection::is_empty).unwrap_or(true)
-    }
-
-    fn clear_selection(&mut self) {
-        self.terminal.selection = None;
-        *self.dirty = true;
-    }
-
-    fn update_selection(&mut self, mut point: Point, side: Side) {
-        let mut selection = match self.terminal.selection.take() {
-            Some(selection) => selection,
-            None => return,
-        };
-
-        // Treat motion over message bar like motion over the last line.
-        point.line = min(point.line, self.terminal.bottommost_line());
-
-        // Update selection.
-        selection.update(point, side);
-
-        self.terminal.selection = Some(selection);
-        *self.dirty = true;
-    }
-
-    fn start_selection(&mut self, ty: SelectionType, point: Point, side: Side) {
-        self.terminal.selection = Some(Selection::new(ty, point, side));
-        *self.dirty = true;
-    }
-
-    fn toggle_selection(&mut self, ty: SelectionType, point: Point, side: Side) {
-        match &mut self.terminal.selection {
-            Some(selection) if selection.ty == ty && !selection.is_empty() => {
-                self.clear_selection();
-            },
-            Some(selection) if !selection.is_empty() => {
-                selection.ty = ty;
-                *self.dirty = true;
-            },
-            _ => self.start_selection(ty, point, side),
-        }
     }
 
     #[inline]
@@ -271,35 +218,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         if self.config.ui_config.mouse.hide_when_typing {
             self.display.window.set_mouse_visible(false);
         }
-    }
-
-    /// Expand the selection to the current mouse cursor position.
-    #[inline]
-    fn expand_selection(&mut self) {
-        let selection_type = match self.mouse().click_state {
-            ClickState::Click => {
-                if self.modifiers().ctrl() {
-                    SelectionType::Block
-                } else {
-                    SelectionType::Simple
-                }
-            },
-            ClickState::None => return,
-        };
-
-        // Load mouse point, treating message bar and padding as the closest cell.
-        let display_offset = self.terminal().grid().display_offset();
-        let point = self.mouse().point(&self.size_info(), display_offset);
-
-        let cell_side = self.mouse().cell_side;
-
-        let selection = match &mut self.terminal_mut().selection {
-            Some(selection) => selection,
-            None => return,
-        };
-
-        selection.ty = selection_type;
-        self.update_selection(point, cell_side);
     }
 
     fn message(&self) -> Option<&Message> {

@@ -23,8 +23,6 @@ pub struct Config<T> {
     /// TERM env variable.
     pub env: HashMap<String, String>,
 
-    pub selection: Selection,
-
     /// Path to a shell program to run on startup.
     pub shell: Option<Program>,
 
@@ -44,19 +42,6 @@ pub struct Config<T> {
     /// Remain open after child process exits.
     #[config(skip)]
     pub hold: bool,
-}
-
-#[derive(ConfigDeserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Selection {
-    pub semantic_escape_chars: String,
-}
-
-impl Default for Selection {
-    fn default() -> Self {
-        Self {
-            semantic_escape_chars: String::from(",│`|:\"' ()[]{}<>\t"),
-        }
-    }
 }
 
 #[derive(ConfigDeserialize, Copy, Clone, Debug, PartialEq)]

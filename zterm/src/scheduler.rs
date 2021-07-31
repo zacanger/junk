@@ -12,7 +12,6 @@ type Event = GlutinEvent<'static, ZtermEvent>;
 /// ID uniquely identifying a timer.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum TimerId {
-    SelectionScrolling,
     BlinkCursor,
 }
 
