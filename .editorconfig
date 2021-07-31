@@ -11,3 +11,4 @@ indent_size = 4
 
 [{Makefile,go.mod,go.sum,*.go}]
 indent_style = tab
+indent_size = 4
