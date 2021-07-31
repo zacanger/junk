@@ -5,13 +5,13 @@ use std::cmp::{max, min};
 use std::env;
 use std::f32;
 use std::fmt::Debug;
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(not(any(target_os = "macos")))]
 use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::mem;
 use std::path::{Path, PathBuf};
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(not(any(target_os = "macos")))]
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -20,7 +20,7 @@ use glutin::dpi::PhysicalSize;
 use glutin::event::{ElementState, Event as GlutinEvent, ModifiersState, MouseButton, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop, EventLoopProxy, EventLoopWindowTarget};
 use glutin::platform::run_return::EventLoopExtRunReturn;
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 use glutin::platform::unix::EventLoopWindowTargetExtUnix;
 use log::info;
 use serde_json as json;
@@ -33,12 +33,10 @@ use alacritty_terminal::grid::{Dimensions, Scroll};
 use alacritty_terminal::index::{Column, Point, Side};
 use alacritty_terminal::selection::{Selection, SelectionType};
 use alacritty_terminal::sync::FairMutex;
-use alacritty_terminal::term::{ClipboardType, SizeInfo, Term, TermMode};
-#[cfg(not(windows))]
+use alacritty_terminal::term::{SizeInfo, Term, TermMode};
 use alacritty_terminal::tty;
 
 use crate::cli::Options as CLIOptions;
-use crate::clipboard::Clipboard;
 use crate::config::{self, Config};
 use crate::daemon::start_daemon;
 use crate::display::window::Window;
@@ -75,7 +73,6 @@ impl From<TerminalEvent> for Event {
 pub struct ActionContext<'a, N, T> {
     pub notifier: &'a mut N,
     pub terminal: &'a mut Term<T>,
-    pub clipboard: &'a mut Clipboard,
     pub mouse: &'a mut Mouse,
     pub received_count: &'a mut usize,
     pub suppress_chars: &'a mut bool,
@@ -118,22 +115,8 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
             let point = self.mouse.point(&self.size_info(), display_offset);
             self.update_selection(point, self.mouse.cell_side);
         }
-        self.copy_selection(ClipboardType::Selection);
 
         *self.dirty = true;
-    }
-
-    // Copy text selection.
-    fn copy_selection(&mut self, ty: ClipboardType) {
-        let text = match self.terminal.selection_to_string().filter(|s| !s.is_empty()) {
-            Some(text) => text,
-            None => return,
-        };
-
-        if ty == ClipboardType::Selection && self.config.selection.save_to_clipboard {
-            self.clipboard.store(ClipboardType::Clipboard, text.clone());
-        }
-        self.clipboard.store(ty, text);
     }
 
     fn selection_is_empty(&self) -> bool {
@@ -164,8 +147,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
     fn start_selection(&mut self, ty: SelectionType, point: Point, side: Side) {
         self.terminal.selection = Some(Selection::new(ty, point, side));
         *self.dirty = true;
-
-        self.copy_selection(ClipboardType::Selection);
     }
 
     fn toggle_selection(&mut self, ty: SelectionType, point: Point, side: Side) {
@@ -176,8 +157,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
             Some(selection) if !selection.is_empty() => {
                 selection.ty = ty;
                 *self.dirty = true;
-
-                self.copy_selection(ClipboardType::Selection);
             },
             _ => self.start_selection(ty, point, side),
         }
@@ -350,23 +329,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         self.update_selection(point, cell_side);
     }
 
-    /// Paste a text into the terminal.
-    fn paste(&mut self, text: &str) {
-        if self.terminal().mode().contains(TermMode::BRACKETED_PASTE) {
-            self.write_to_pty(&b"\x1b[200~"[..]);
-            self.write_to_pty(text.replace("\x1b", "").into_bytes());
-            self.write_to_pty(&b"\x1b[201~"[..]);
-        } else {
-            // In non-bracketed (ie: normal) mode, terminal applications cannot distinguish
-            // pasted data from keystrokes.
-            // In theory, we should construct the keystrokes needed to produce the data we are
-            // pasting... since that's neither practical nor sensible (and probably an impossible
-            // task to solve in a general way), we'll just replace line breaks (windows and unix
-            // style) with a single carriage return (\r, which is what the Enter key produces).
-            self.write_to_pty(text.replace("\r\n", "\r").replace("\n", "\r").into_bytes());
-        }
-    }
-
     fn message(&self) -> Option<&Message> {
         self.message_buffer.message()
     }
@@ -377,10 +339,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 
     fn event_loop(&self) -> &EventLoopWindowTarget<Event> {
         self.event_loop
-    }
-
-    fn clipboard_mut(&mut self) -> &mut Clipboard {
-        self.clipboard
     }
 
     fn scheduler_mut(&mut self) -> &mut Scheduler {
@@ -521,7 +479,7 @@ impl<N: Notify + OnResize> Processor<N> {
 
     /// Return `true` if `event_queue` is empty, `false` otherwise.
     #[inline]
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     fn event_queue_empty(&mut self) -> bool {
         let wayland_event_queue = match self.display.wayland_event_queue.as_mut() {
             Some(wayland_event_queue) => wayland_event_queue,
@@ -539,7 +497,7 @@ impl<N: Notify + OnResize> Processor<N> {
 
     /// Return `true` if `event_queue` is empty, `false` otherwise.
     #[inline]
-    #[cfg(any(not(feature = "wayland"), target_os = "macos", windows))]
+    #[cfg(any(not(feature = "wayland"), target_os = "macos"))]
     fn event_queue_empty(&mut self) -> bool {
         self.event_queue.is_empty()
     }
@@ -556,12 +514,6 @@ impl<N: Notify + OnResize> Processor<N> {
             let event: Event = TerminalEvent::CursorBlinkingChange(true).into();
             self.event_queue.push(event.into());
         }
-
-        // NOTE: Since this takes a pointer to the winit event loop, it MUST be dropped first.
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
-        let mut clipboard = unsafe { Clipboard::new(event_loop.wayland_display()) };
-        #[cfg(any(not(feature = "wayland"), target_os = "macos", windows))]
-        let mut clipboard = Clipboard::new();
 
         event_loop.run_return(|event, event_loop, control_flow| {
             if self.config.ui_config.debug.print_events {
@@ -617,7 +569,6 @@ impl<N: Notify + OnResize> Processor<N> {
                 terminal: &mut terminal,
                 notifier: &mut self.notifier,
                 mouse: &mut self.mouse,
-                clipboard: &mut clipboard,
                 received_count: &mut self.received_count,
                 suppress_chars: &mut self.suppress_chars,
                 modifiers: &mut self.modifiers,
@@ -643,7 +594,7 @@ impl<N: Notify + OnResize> Processor<N> {
             }
 
             // Skip rendering on Wayland until we get frame event from compositor.
-            #[cfg(not(any(target_os = "macos", windows)))]
+            #[cfg(not(any(target_os = "macos")))]
             if !self.display.is_x11 && !self.display.window.should_draw.load(Ordering::Relaxed) {
                 return;
             }
@@ -734,13 +685,6 @@ impl<N: Notify + OnResize> Processor<N> {
                             start_daemon(bell_command.program(), bell_command.args());
                         }
                     },
-                    TerminalEvent::ClipboardStore(clipboard_type, content) => {
-                        processor.ctx.clipboard.store(clipboard_type, content);
-                    },
-                    TerminalEvent::ClipboardLoad(clipboard_type, format) => {
-                        let text = format(processor.ctx.clipboard.load(clipboard_type).as_str());
-                        processor.ctx.write_to_pty(text.into_bytes());
-                    },
                     TerminalEvent::ColorRequest(index, format) => {
                         let text = format(processor.ctx.display.colors[index]);
                         processor.ctx.write_to_pty(text.into_bytes());
@@ -760,11 +704,6 @@ impl<N: Notify + OnResize> Processor<N> {
                     WindowEvent::Resized(size) => {
                         // Minimizing the window sends a Resize event with zero width and
                         // height. But there's no need to ever actually resize to this.
-                        // ConPTY has issues when resizing down to zero size and back.
-                        #[cfg(windows)]
-                        if size.width == 0 && size.height == 0 {
-                            return;
-                        }
 
                         processor.ctx.display_update_pending.set_dimensions(size);
                         *processor.ctx.dirty = true;
@@ -908,7 +847,7 @@ impl<N: Notify + OnResize> Processor<N> {
             processor.ctx.window().set_title(&config.ui_config.window.title);
         }
 
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         if processor.ctx.event_loop.is_wayland() {
             processor.ctx.window().set_wayland_theme(&config.ui_config.colors);
         }

@@ -49,14 +49,12 @@ pub struct Config<T> {
 #[derive(ConfigDeserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Selection {
     pub semantic_escape_chars: String,
-    pub save_to_clipboard: bool,
 }
 
 impl Default for Selection {
     fn default() -> Self {
         Self {
             semantic_escape_chars: String::from(",│`|:\"' ()[]{}<>\t"),
-            save_to_clipboard: Default::default(),
         }
     }
 }

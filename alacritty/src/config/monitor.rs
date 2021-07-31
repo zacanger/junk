@@ -10,9 +10,9 @@ use alacritty_terminal::thread;
 
 use crate::event::{Event, EventProxy};
 
-#[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 const DEBOUNCE_DELAY: Duration = Duration::from_millis(10);
-#[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+#[cfg(not(any(target_os = "linux", target_os = "macos")))]
 const DEBOUNCE_DELAY: Duration = Duration::from_millis(1000);
 
 pub fn watch(mut paths: Vec<PathBuf>, event_proxy: EventProxy) {

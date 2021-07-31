@@ -1,7 +1,6 @@
 use std::fmt::{self, Formatter};
 use std::os::raw::c_ulong;
 
-use glutin::window::Fullscreen;
 use log::error;
 use serde::de::{self, MapAccess, Visitor};
 use serde::{Deserialize, Deserializer};
@@ -90,16 +89,7 @@ impl WindowConfig {
         (padding_x, padding_y)
     }
 
-    #[inline]
-    pub fn fullscreen(&self) -> Option<Fullscreen> {
-        if self.startup_mode == StartupMode::Fullscreen {
-            Some(Fullscreen::Borderless(None))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
+   #[inline]
     pub fn maximized(&self) -> bool {
         self.startup_mode == StartupMode::Maximized
     }
@@ -109,9 +99,6 @@ impl WindowConfig {
 pub enum StartupMode {
     Windowed,
     Maximized,
-    Fullscreen,
-    #[cfg(target_os = "macos")]
-    SimpleFullscreen,
 }
 
 impl Default for StartupMode {

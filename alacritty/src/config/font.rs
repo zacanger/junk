@@ -82,12 +82,10 @@ pub struct FontDescription {
 impl Default for FontDescription {
     fn default() -> FontDescription {
         FontDescription {
-            #[cfg(not(any(target_os = "macos", windows)))]
+            #[cfg(not(any(target_os = "macos")))]
             family: "monospace".into(),
             #[cfg(target_os = "macos")]
-            family: "Menlo".into(),
-            #[cfg(windows)]
-            family: "Consolas".into(),
+            family: "Hack".into(),
             style: None,
         }
     }

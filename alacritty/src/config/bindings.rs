@@ -90,19 +90,6 @@ pub enum Action {
     #[config(skip)]
     Command(Program),
 
-    /// Paste contents of system clipboard.
-    Paste,
-
-    /// Store current selection into clipboard.
-    Copy,
-
-    #[cfg(not(any(target_os = "macos", windows)))]
-    /// Store current selection into selection buffer.
-    CopySelection,
-
-    /// Paste contents of selection buffer.
-    PasteSelection,
-
     /// Increase font size.
     IncreaseFontSize,
 
@@ -139,16 +126,6 @@ pub enum Action {
     /// Clear the display buffer(s) to remove history.
     ClearHistory,
 
-    /// Hide the Alacritty window.
-    Hide,
-
-    /// Hide all windows other than Alacritty on macOS.
-    #[cfg(target_os = "macos")]
-    HideOtherApplications,
-
-    /// Minimize the Alacritty window.
-    Minimize,
-
     /// Quit Alacritty.
     Quit,
 
@@ -157,16 +134,6 @@ pub enum Action {
 
     /// Spawn a new instance of Alacritty.
     SpawnNewInstance,
-
-    /// Toggle fullscreen.
-    ToggleFullscreen,
-
-    /// Toggle simple fullscreen on macOS.
-    #[cfg(target_os = "macos")]
-    ToggleSimpleFullscreen,
-
-    /// Clear active selection.
-    ClearSelection,
 
     /// Allow receiving char input.
     ReceiveChar,
@@ -250,7 +217,6 @@ macro_rules! bindings {
 pub fn default_mouse_bindings() -> Vec<MouseBinding> {
     bindings!(
         MouseBinding;
-        MouseButton::Middle; Action::PasteSelection;
     )
 }
 
@@ -303,7 +269,6 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
         F20         ; Action::Esc("\x1b[34~".into());
         NumpadEnter ; Action::Esc("\n".into());
         Space, ModifiersState::SHIFT | ModifiersState::CTRL; Action::ScrollToBottom;
-        Escape; Action::ClearSelection;
         I; Action::ScrollToBottom;
         Y,      ModifiersState::CTRL; Action::ScrollLineUp;
         E,      ModifiersState::CTRL; Action::ScrollLineDown;
@@ -313,8 +278,6 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
         F,      ModifiersState::CTRL; Action::ScrollPageDown;
         U,      ModifiersState::CTRL; Action::ScrollHalfPageUp;
         D,      ModifiersState::CTRL; Action::ScrollHalfPageDown;
-        Y                              ; Action::Copy;
-        Y                              ; Action::ClearSelection;
     );
 
     //   Code     Modifiers
@@ -392,10 +355,6 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
 fn common_keybindings() -> Vec<KeyBinding> {
     bindings!(
         KeyBinding;
-        V,        ModifiersState::CTRL | ModifiersState::SHIFT; Action::Paste;
-        C,        ModifiersState::CTRL | ModifiersState::SHIFT; Action::Copy;
-        C,        ModifiersState::CTRL | ModifiersState::SHIFT; Action::ClearSelection;
-        Insert,   ModifiersState::SHIFT; Action::PasteSelection;
         Key0,     ModifiersState::CTRL;  Action::ResetFontSize;
         Equals,   ModifiersState::CTRL;  Action::IncreaseFontSize;
         Plus,     ModifiersState::CTRL;  Action::IncreaseFontSize;
@@ -405,19 +364,9 @@ fn common_keybindings() -> Vec<KeyBinding> {
     )
 }
 
-#[cfg(not(any(target_os = "macos", target_os = "windows", test)))]
+#[cfg(not(any(target_os = "macos", test)))]
 pub fn platform_key_bindings() -> Vec<KeyBinding> {
     common_keybindings()
-}
-
-#[cfg(all(target_os = "windows", not(test)))]
-pub fn platform_key_bindings() -> Vec<KeyBinding> {
-    let mut bindings = bindings!(
-        KeyBinding;
-        Return, ModifiersState::ALT; Action::ToggleFullscreen;
-    );
-    bindings.extend(common_keybindings());
-    bindings
 }
 
 #[cfg(all(target_os = "macos", not(test)))]
@@ -433,14 +382,7 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         Insert, ModifiersState::SHIFT; Action::Esc("\x1b[2;2~".into());
         K, ModifiersState::LOGO; Action::Esc("\x0c".into());
         K, ModifiersState::LOGO;  Action::ClearHistory;
-        V, ModifiersState::LOGO; Action::Paste;
         N, ModifiersState::LOGO; Action::SpawnNewInstance;
-        F, ModifiersState::CTRL | ModifiersState::LOGO; Action::ToggleFullscreen;
-        C, ModifiersState::LOGO; Action::Copy;
-        C, ModifiersState::LOGO; Action::ClearSelection;
-        H, ModifiersState::LOGO; Action::Hide;
-        H, ModifiersState::LOGO | ModifiersState::ALT; Action::HideOtherApplications;
-        M, ModifiersState::LOGO; Action::Minimize;
         Q, ModifiersState::LOGO; Action::Quit;
         W, ModifiersState::LOGO; Action::Quit;
     )

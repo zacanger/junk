@@ -1228,42 +1228,6 @@ impl<T: EventListener> Handler for Term<T> {
         self.colors[index] = None;
     }
 
-    /// Store data into clipboard.
-    #[inline]
-    fn clipboard_store(&mut self, clipboard: u8, base64: &[u8]) {
-        let clipboard_type = match clipboard {
-            b'c' => ClipboardType::Clipboard,
-            b'p' | b's' => ClipboardType::Selection,
-            _ => return,
-        };
-
-        if let Ok(bytes) = base64::decode(base64) {
-            if let Ok(text) = String::from_utf8(bytes) {
-                self.event_proxy.send_event(Event::ClipboardStore(clipboard_type, text));
-            }
-        }
-    }
-
-    /// Load data from clipboard.
-    #[inline]
-    fn clipboard_load(&mut self, clipboard: u8, terminator: &str) {
-        let clipboard_type = match clipboard {
-            b'c' => ClipboardType::Clipboard,
-            b'p' | b's' => ClipboardType::Selection,
-            _ => return,
-        };
-
-        let terminator = terminator.to_owned();
-
-        self.event_proxy.send_event(Event::ClipboardLoad(
-            clipboard_type,
-            Arc::new(move |text| {
-                let base64 = base64::encode(&text);
-                format!("\x1b]52;{};{}{}", clipboard as char, base64, terminator)
-            }),
-        ));
-    }
-
     #[inline]
     fn clear_screen(&mut self, mode: ansi::ClearMode) {
         trace!("Clearing screen: {:?}", mode);
@@ -1645,12 +1609,6 @@ fn version_number(mut version: &str) -> usize {
     }
 
     version_number
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ClipboardType {
-    Clipboard,
-    Selection,
 }
 
 struct TabStops {

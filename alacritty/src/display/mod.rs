@@ -4,17 +4,17 @@
 use std::convert::TryFrom;
 use std::f64;
 use std::fmt::{self, Formatter};
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 use std::sync::atomic::Ordering;
 use std::time::Instant;
 
 use glutin::dpi::{PhysicalPosition, PhysicalSize};
 use glutin::event_loop::EventLoop;
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(not(any(target_os = "macos")))]
 use glutin::platform::unix::EventLoopWindowTargetExtUnix;
 use log::{debug, info};
 use parking_lot::MutexGuard;
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 use wayland_client::{Display as WaylandDisplay, EventQueue};
 
 use crossfont::{self, Rasterize, Rasterizer};
@@ -27,8 +27,6 @@ use alacritty_terminal::term::{SizeInfo, Term, MIN_COLUMNS, MIN_SCREEN_LINES};
 
 use crate::config::font::Font;
 use crate::config::window::Dimensions;
-#[cfg(not(windows))]
-use crate::config::window::StartupMode;
 use crate::config::Config;
 use crate::display::bell::VisualBell;
 use crate::display::color::List;
@@ -47,7 +45,7 @@ pub mod window;
 mod bell;
 mod color;
 mod meter;
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 mod wayland_theme;
 
 #[derive(Debug)]
@@ -154,10 +152,10 @@ pub struct Display {
     pub size_info: SizeInfo,
     pub window: Window,
 
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     pub wayland_event_queue: Option<EventQueue>,
 
-    #[cfg(not(any(target_os = "macos", windows)))]
+    #[cfg(not(any(target_os = "macos")))]
     pub is_x11: bool,
 
     /// UI cursor visibility for blinking.
@@ -175,14 +173,14 @@ pub struct Display {
 
 impl Display {
     pub fn new<E>(config: &Config, event_loop: &EventLoop<E>) -> Result<Display, Error> {
-        #[cfg(any(not(feature = "x11"), target_os = "macos", windows))]
+        #[cfg(any(not(feature = "x11"), target_os = "macos"))]
         let is_x11 = false;
-        #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
         let is_x11 = event_loop.is_x11();
 
         // Guess DPR based on first monitor. On Wayland the initial frame always renders at a DPR
         // of 1.
-        let estimated_dpr = if cfg!(any(target_os = "macos", windows)) || is_x11 {
+        let estimated_dpr = if cfg!(any(target_os = "macos")) || is_x11 {
             event_loop.available_monitors().next().map(|m| m.scale_factor()).unwrap_or(1.)
         } else {
             1.
@@ -202,11 +200,11 @@ impl Display {
         debug!("Estimated window size: {:?}", estimated_size);
         debug!("Estimated cell size: {} x {}", cell_width, cell_height);
 
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         let mut wayland_event_queue = None;
 
         // Initialize Wayland event queue, to handle Wayland callbacks.
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         if let Some(display) = event_loop.wayland_display() {
             let display = unsafe { WaylandDisplay::from_external_display(display as _) };
             wayland_event_queue = Some(display.create_event_queue());
@@ -217,7 +215,7 @@ impl Display {
             event_loop,
             config,
             estimated_size,
-            #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+            #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
             wayland_event_queue.as_ref(),
         )?;
 
@@ -276,7 +274,7 @@ impl Display {
 
         // On Wayland we can safely ignore this call, since the window isn't visible until you
         // actually draw something into it and commit those changes.
-        #[cfg(not(any(target_os = "macos", windows)))]
+        #[cfg(not(any(target_os = "macos")))]
         if is_x11 {
             window.swap_buffers();
             renderer.with_api(&config.ui_config, &size_info, |api| {
@@ -295,10 +293,7 @@ impl Display {
         }
 
         #[allow(clippy::single_match)]
-        #[cfg(not(windows))]
         match config.ui_config.window.startup_mode {
-            #[cfg(target_os = "macos")]
-            StartupMode::SimpleFullscreen => window.set_simple_fullscreen(true),
             #[cfg(not(target_os = "macos"))]
             StartupMode::Maximized if is_x11 => window.set_maximized(true),
             _ => (),
@@ -310,9 +305,9 @@ impl Display {
             glyph_cache,
             meter: Meter::new(),
             size_info,
-            #[cfg(not(any(target_os = "macos", windows)))]
+            #[cfg(not(any(target_os = "macos")))]
             is_x11,
-            #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+            #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
             wayland_event_queue,
             cursor_hidden: false,
             visual_bell: VisualBell::from(&config.ui_config.bell),
@@ -549,12 +544,12 @@ impl Display {
 
         // Frame event should be requested before swaping buffers, since it requires surface
         // `commit`, which is done by swap buffers under the hood.
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         self.request_frame(&self.window);
 
         self.window.swap_buffers();
 
-        #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
         if self.is_x11 {
             // On X11 `swap_buffers` does not block for vsync. However the next OpenGl command
             // will block to synchronize (this is `glClear` in Alacritty), which causes a
@@ -591,7 +586,7 @@ impl Display {
 
     /// Requst a new frame for a window on Wayland.
     #[inline]
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     fn request_frame(&self, window: &Window) {
         let surface = match window.wayland_surface() {
             Some(surface) => surface,

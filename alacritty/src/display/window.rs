@@ -1,5 +1,5 @@
 #[rustfmt::skip]
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(not(any(target_os = "macos")))]
 use {
     std::sync::atomic::AtomicBool,
     std::sync::Arc,
@@ -8,7 +8,7 @@ use {
 };
 
 #[rustfmt::skip]
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 use {
     wayland_client::protocol::wl_surface::WlSurface,
     wayland_client::{Attached, EventQueue, Proxy},
@@ -19,7 +19,7 @@ use {
 };
 
 #[rustfmt::skip]
-#[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 use {
     std::io::Cursor,
 
@@ -35,19 +35,15 @@ use cocoa::base::{id, NO, YES};
 use glutin::dpi::{PhysicalPosition, PhysicalSize};
 use glutin::event_loop::EventLoop;
 #[cfg(target_os = "macos")]
-use glutin::platform::macos::{WindowBuilderExtMacOS, WindowExtMacOS};
-#[cfg(windows)]
-use glutin::platform::windows::IconExtWindows;
+use glutin::platform::macos::{WindowBuilderExtMacOS};
 use glutin::window::{
-    CursorIcon, Fullscreen, UserAttentionType, Window as GlutinWindow, WindowBuilder, WindowId,
+    CursorIcon, UserAttentionType, Window as GlutinWindow, WindowBuilder, WindowId,
 };
 use glutin::{self, ContextBuilder, PossiblyCurrent, WindowedContext};
 #[cfg(target_os = "macos")]
 use objc::{msg_send, sel, sel_impl};
 #[cfg(target_os = "macos")]
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
-#[cfg(windows)]
-use winapi::shared::minwindef::WORD;
 
 use alacritty_terminal::index::Point;
 use alacritty_terminal::term::SizeInfo;
@@ -57,16 +53,12 @@ use crate::config::Config;
 use crate::gl;
 
 /// Window icon for `_NET_WM_ICON` property.
-#[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 static WINDOW_ICON: &[u8] = include_bytes!("../../alacritty.png");
 
 /// Maximum DPR on X11 before it is assumed that XRandr is reporting incorrect values.
-#[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 const MAX_X11_DPR: f64 = 10.;
-
-/// This should match the definition of IDI_ICON from `windows.rc`.
-#[cfg(windows)]
-const IDI_ICON: WORD = 0x101;
 
 /// Window errors.
 #[derive(Debug)]
@@ -150,11 +142,11 @@ fn create_gl_window<E>(
 /// Wraps the underlying windowing library to provide a stable API in Alacritty.
 pub struct Window {
     /// Flag tracking frame redraw requests from Wayland compositor.
-    #[cfg(not(any(target_os = "macos", windows)))]
+    #[cfg(not(any(target_os = "macos")))]
     pub should_draw: Arc<AtomicBool>,
 
     /// Attached Wayland surface to request new frame events.
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     pub wayland_surface: Option<Attached<WlSurface>>,
 
     /// Cached DPR for quickly scaling pixel sizes.
@@ -173,16 +165,16 @@ impl Window {
         event_loop: &EventLoop<E>,
         config: &Config,
         size: Option<PhysicalSize<u32>>,
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         wayland_event_queue: Option<&EventQueue>,
     ) -> Result<Window> {
         let window_config = &config.ui_config.window;
         let window_builder = Window::get_platform_window(&window_config.title, window_config);
 
         // Check if we're running Wayland to disable vsync.
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         let is_wayland = event_loop.is_wayland();
-        #[cfg(any(not(feature = "wayland"), target_os = "macos", windows))]
+        #[cfg(any(not(feature = "wayland"), target_os = "macos"))]
         let is_wayland = false;
 
         let windowed_context =
@@ -198,7 +190,7 @@ impl Window {
         // Set OpenGL symbol loader. This call MUST be after window.make_current on windows.
         gl::load_with(|symbol| windowed_context.get_proc_address(symbol) as *const _);
 
-        #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
         if !is_wayland {
             // On X11, embed the window inside another if the parent ID has been set.
             if let Some(parent_window_id) = window_config.embed {
@@ -206,7 +198,7 @@ impl Window {
             }
         }
 
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
         let wayland_surface = if is_wayland {
             // Apply client side decorations theme.
             let theme = AlacrittyWaylandTheme::new(&config.ui_config.colors);
@@ -224,7 +216,7 @@ impl Window {
         let mut dpr = windowed_context.window().scale_factor();
 
         // Handle winit reporting invalid values due to incorrect XRandr monitor metrics.
-        #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
         if !is_wayland && dpr > MAX_X11_DPR {
             dpr = 1.;
         }
@@ -233,9 +225,9 @@ impl Window {
             current_mouse_cursor,
             mouse_visible: true,
             windowed_context,
-            #[cfg(not(any(target_os = "macos", windows)))]
+            #[cfg(not(any(target_os = "macos")))]
             should_draw: Arc::new(AtomicBool::new(true)),
-            #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+            #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
             wayland_surface,
             dpr,
         })
@@ -276,7 +268,7 @@ impl Window {
         }
     }
 
-    #[cfg(not(any(target_os = "macos", windows)))]
+    #[cfg(not(any(target_os = "macos")))]
     pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
         #[cfg(feature = "x11")]
         let icon = {
@@ -292,8 +284,7 @@ impl Window {
             .with_visible(false)
             .with_transparent(true)
             .with_decorations(window_config.decorations != Decorations::None)
-            .with_maximized(window_config.maximized())
-            .with_fullscreen(window_config.fullscreen());
+            .with_maximized(window_config.maximized());
 
         #[cfg(feature = "x11")]
         let builder = builder.with_window_icon(icon.ok());
@@ -316,28 +307,13 @@ impl Window {
         builder
     }
 
-    #[cfg(windows)]
-    pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
-        let icon = glutin::window::Icon::from_resource(IDI_ICON, None);
-
-        WindowBuilder::new()
-            .with_title(title)
-            .with_visible(false)
-            .with_decorations(window_config.decorations != Decorations::None)
-            .with_transparent(true)
-            .with_maximized(window_config.maximized())
-            .with_fullscreen(window_config.fullscreen())
-            .with_window_icon(icon.ok())
-    }
-
     #[cfg(target_os = "macos")]
     pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
         let window = WindowBuilder::new()
             .with_title(title)
             .with_visible(false)
             .with_transparent(true)
-            .with_maximized(window_config.maximized())
-            .with_fullscreen(window_config.fullscreen());
+            .with_maximized(window_config.maximized());
 
         match window_config.decorations {
             Decorations::Full => window,
@@ -364,12 +340,12 @@ impl Window {
         self.window().set_outer_position(pos);
     }
 
-    #[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
     pub fn x11_window_id(&self) -> Option<usize> {
         self.window().xlib_window().map(|xlib_window| xlib_window as usize)
     }
 
-    #[cfg(any(not(feature = "x11"), target_os = "macos", windows))]
+    #[cfg(any(not(feature = "x11"), target_os = "macos"))]
     pub fn x11_window_id(&self) -> Option<usize> {
         None
     }
@@ -378,44 +354,17 @@ impl Window {
         self.window().id()
     }
 
-    #[cfg(not(any(target_os = "macos", windows)))]
+    #[cfg(not(any(target_os = "macos")))]
     pub fn set_maximized(&self, maximized: bool) {
         self.window().set_maximized(maximized);
     }
 
-    pub fn set_minimized(&self, minimized: bool) {
-        self.window().set_minimized(minimized);
-    }
-
-    /// Toggle the window's fullscreen state.
-    pub fn toggle_fullscreen(&mut self) {
-        self.set_fullscreen(self.window().fullscreen().is_none());
-    }
-
-    #[cfg(target_os = "macos")]
-    pub fn toggle_simple_fullscreen(&mut self) {
-        self.set_simple_fullscreen(!self.window().simple_fullscreen());
-    }
-
-    pub fn set_fullscreen(&mut self, fullscreen: bool) {
-        if fullscreen {
-            self.window().set_fullscreen(Some(Fullscreen::Borderless(None)));
-        } else {
-            self.window().set_fullscreen(None);
-        }
-    }
-
-    #[cfg(target_os = "macos")]
-    pub fn set_simple_fullscreen(&mut self, simple_fullscreen: bool) {
-        self.window().set_simple_fullscreen(simple_fullscreen);
-    }
-
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     pub fn wayland_surface(&self) -> Option<&Attached<WlSurface>> {
         self.wayland_surface.as_ref()
     }
 
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     pub fn set_wayland_theme(&mut self, colors: &Colors) {
         self.window().set_wayland_theme(AlacrittyWaylandTheme::new(colors));
     }
@@ -457,7 +406,7 @@ impl Window {
     }
 }
 
-#[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 fn x_embed_window(window: &GlutinWindow, parent_id: std::os::raw::c_ulong) {
     let (xlib_display, xlib_window) = match (window.xlib_display(), window.xlib_window()) {
         (Some(display), Some(window)) => (display, window),
@@ -491,7 +440,7 @@ fn x_embed_window(window: &GlutinWindow, parent_id: std::os::raw::c_ulong) {
     }
 }
 
-#[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 unsafe extern "C" fn xembed_error_handler(_: *mut XDisplay, _: *mut XErrorEvent) -> i32 {
     log::error!("Could not embed into specified window.");
     std::process::exit(1);

@@ -3,13 +3,7 @@
 #![warn(rust_2018_idioms, future_incompatible)]
 #![deny(clippy::all, clippy::if_not_else, clippy::enum_glob_use)]
 #![cfg_attr(feature = "cargo-clippy", deny(warnings))]
-// With the default subsystem, 'console', windows creates an additional console
-// window for the program.
-// This is silently ignored on non-windows systems.
-// See https://msdn.microsoft.com/en-us/library/4cc7ya5b.aspx for more details.
-#![windows_subsystem = "windows"]
-
-#[cfg(not(any(feature = "x11", feature = "wayland", target_os = "macos", windows)))]
+#[cfg(not(any(feature = "x11", feature = "wayland", target_os = "macos")))]
 compile_error!(r#"at least one of the "x11"/"wayland" features must be enabled"#);
 
 #[cfg(target_os = "macos")]
@@ -21,8 +15,6 @@ use std::sync::Arc;
 
 use glutin::event_loop::EventLoop as GlutinEventLoop;
 use log::{error, info};
-#[cfg(windows)]
-use winapi::um::wincon::{AttachConsole, FreeConsole, ATTACH_PARENT_PROCESS};
 
 use alacritty_terminal::event_loop::{self, EventLoop, Msg};
 use alacritty_terminal::grid::Dimensions;
@@ -31,7 +23,6 @@ use alacritty_terminal::term::Term;
 use alacritty_terminal::tty;
 
 mod cli;
-mod clipboard;
 mod config;
 mod daemon;
 mod display;
@@ -41,8 +32,6 @@ mod logging;
 #[cfg(target_os = "macos")]
 mod macos;
 mod message_bar;
-#[cfg(windows)]
-mod panic;
 mod renderer;
 mod scheduler;
 
@@ -61,17 +50,6 @@ use crate::macos::locale;
 use crate::message_bar::MessageBuffer;
 
 fn main() {
-    #[cfg(windows)]
-    panic::attach_handler();
-
-    // When linked with the windows subsystem windows won't automatically attach
-    // to the console of the parent process, so we do it explicitly. This fails
-    // silently if the parent has no console.
-    #[cfg(windows)]
-    unsafe {
-        AttachConsole(ATTACH_PARENT_PROCESS);
-    }
-
     // Load command line options.
     let options = Options::new();
 
@@ -203,18 +181,8 @@ fn run(
     // Start event loop and block until shutdown.
     processor.run(terminal, window_event_loop);
 
-    // This explicit drop is needed for Windows, ConPTY backend. Otherwise a deadlock can occur.
-    // The cause:
-    //   - Drop for ConPTY will deadlock if the conout pipe has already been dropped.
-    //   - The conout pipe is dropped when the io_thread is joined below (io_thread owns PTY).
-    //   - ConPTY is dropped when the last of processor and io_thread are dropped, because both of
-    //     them own an Arc<ConPTY>.
-    //
-    // The fix is to ensure that processor is dropped first. That way, when io_thread (i.e. PTY)
-    // is dropped, it can ensure ConPTY is dropped before the conout pipe in the PTY drop order.
-    //
-    // FIXME: Change PTY API to enforce the correct drop order with the typesystem.
-    drop(processor);
+    // TODO: old comments said this was just for windows, so maybe we don't need it
+    // drop(processor);
 
     // Shutdown PTY parser event loop.
     loop_tx.send(Msg::Shutdown).expect("Error sending shutdown to PTY event loop");
@@ -224,10 +192,6 @@ fn run(
     // config_reloader.join().ok();
 
     // Without explicitly detaching the console cmd won't redraw it's prompt.
-    #[cfg(windows)]
-    unsafe {
-        FreeConsole();
-    }
 
     info!("Goodbye");
 

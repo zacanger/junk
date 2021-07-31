@@ -260,7 +260,6 @@ fn load_imports(config: &Value, config_paths: &mut Vec<PathBuf>, recursion_limit
 /// 2. $XDG_CONFIG_HOME/alacritty.yml
 /// 3. $HOME/.config/alacritty/alacritty.yml
 /// 4. $HOME/.alacritty.yml
-#[cfg(not(windows))]
 fn installed_config() -> Option<PathBuf> {
     // Try using XDG location by default.
     xdg::BaseDirectories::with_prefix("alacritty")
@@ -286,11 +285,6 @@ fn installed_config() -> Option<PathBuf> {
             }
             None
         })
-}
-
-#[cfg(windows)]
-fn installed_config() -> Option<PathBuf> {
-    dirs::config_dir().map(|path| path.join("alacritty\\alacritty.yml")).filter(|new| new.exists())
 }
 
 #[cfg(test)]

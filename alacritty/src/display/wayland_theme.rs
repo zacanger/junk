@@ -11,14 +11,12 @@ pub struct AlacrittyWaylandTheme {
     pub dim_foreground: ARGBColor,
     pub hovered_close_icon: ARGBColor,
     pub hovered_maximize_icon: ARGBColor,
-    pub hovered_minimize_icon: ARGBColor,
 }
 
 impl AlacrittyWaylandTheme {
     pub fn new(colors: &Colors) -> Self {
         let hovered_close_icon = colors.normal.red.into_rgba();
         let hovered_maximize_icon = colors.normal.green.into_rgba();
-        let hovered_minimize_icon = colors.normal.yellow.into_rgba();
 
         let mut dim_foreground = foreground;
         dim_foreground.a = INACTIVE_OPACITY;
@@ -27,7 +25,6 @@ impl AlacrittyWaylandTheme {
             dim_foreground,
             hovered_close_icon,
             hovered_maximize_icon,
-            hovered_minimize_icon,
         }
     }
 }
@@ -57,7 +54,6 @@ impl WaylandTheme for AlacrittyWaylandTheme {
         match (state, button) {
             (ButtonState::Idle, _) => self.foreground,
             (ButtonState::Disabled, _) => self.dim_foreground,
-            (_, Button::Minimize) => self.hovered_minimize_icon,
             (_, Button::Maximize) => self.hovered_maximize_icon,
             (_, Button::Close) => self.hovered_close_icon,
         }

@@ -15,8 +15,6 @@ use glutin::event::{
     ElementState, KeyboardInput, ModifiersState, MouseButton, MouseScrollDelta, TouchPhase,
 };
 use glutin::event_loop::EventLoopWindowTarget;
-#[cfg(target_os = "macos")]
-use glutin::platform::macos::EventLoopWindowTargetExtMacOS;
 use glutin::window::CursorIcon;
 
 use alacritty_terminal::ansi::{ClearMode, Handler};
@@ -24,9 +22,8 @@ use alacritty_terminal::event::EventListener;
 use alacritty_terminal::grid::{Dimensions, Scroll};
 use alacritty_terminal::index::{Column, Point, Side};
 use alacritty_terminal::selection::SelectionType;
-use alacritty_terminal::term::{ClipboardType, SizeInfo, Term, TermMode};
+use alacritty_terminal::term::{SizeInfo, Term, TermMode};
 
-use crate::clipboard::Clipboard;
 use crate::config::{Action, BindingMode, Config, Key};
 use crate::daemon::start_daemon;
 use crate::display::window::Window;
@@ -60,7 +57,6 @@ pub trait ActionContext<T: EventListener> {
     fn write_to_pty<B: Into<Cow<'static, [u8]>>>(&self, _data: B) {}
     fn mark_dirty(&mut self) {}
     fn size_info(&self) -> SizeInfo;
-    fn copy_selection(&mut self, _ty: ClipboardType) {}
     fn start_selection(&mut self, _ty: SelectionType, _point: Point, _side: Side) {}
     fn toggle_selection(&mut self, _ty: SelectionType, _point: Point, _side: Side) {}
     fn update_selection(&mut self, _point: Point, _side: Side) {}
@@ -84,11 +80,9 @@ pub trait ActionContext<T: EventListener> {
     fn config(&self) -> &Config;
     fn event_loop(&self) -> &EventLoopWindowTarget<Event>;
     fn mouse_mode(&self) -> bool;
-    fn clipboard_mut(&mut self) -> &mut Clipboard;
     fn scheduler_mut(&mut self) -> &mut Scheduler;
     fn on_typing_start(&mut self) {}
     fn expand_selection(&mut self) {}
-    fn paste(&mut self, _text: &str) {}
 }
 
 impl Action {
@@ -110,28 +104,7 @@ impl<T: EventListener> Execute<T> for Action {
                 ctx.write_to_pty(s.clone().into_bytes())
             },
             Action::Command(program) => start_daemon(program.program(), program.args()),
-            Action::Copy => ctx.copy_selection(ClipboardType::Clipboard),
-            #[cfg(not(any(target_os = "macos", windows)))]
-            Action::CopySelection => ctx.copy_selection(ClipboardType::Selection),
-            Action::ClearSelection => ctx.clear_selection(),
-            Action::Paste => {
-                let text = ctx.clipboard_mut().load(ClipboardType::Clipboard);
-                ctx.paste(&text);
-            },
-            Action::PasteSelection => {
-                let text = ctx.clipboard_mut().load(ClipboardType::Selection);
-                ctx.paste(&text);
-            },
-            Action::ToggleFullscreen => ctx.window().toggle_fullscreen(),
             #[cfg(target_os = "macos")]
-            Action::ToggleSimpleFullscreen => ctx.window().toggle_simple_fullscreen(),
-            #[cfg(target_os = "macos")]
-            Action::Hide => ctx.event_loop().hide_application(),
-            #[cfg(target_os = "macos")]
-            Action::HideOtherApplications => ctx.event_loop().hide_other_applications(),
-            #[cfg(not(target_os = "macos"))]
-            Action::Hide => ctx.window().set_visible(false),
-            Action::Minimize => ctx.window().set_minimized(true),
             Action::Quit => ctx.terminal_mut().exit(),
             Action::IncreaseFontSize => ctx.change_font_size(FONT_SIZE_STEP),
             Action::DecreaseFontSize => ctx.change_font_size(FONT_SIZE_STEP * -1.),
@@ -407,9 +380,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
         }
 
         self.ctx.scheduler_mut().unschedule(TimerId::SelectionScrolling);
-
-        // Copy selection on release, to prevent flooding the display server.
-        self.ctx.copy_selection(ClipboardType::Selection);
     }
 
     pub fn mouse_wheel_input(&mut self, delta: MouseScrollDelta, phase: TouchPhase) {
@@ -744,7 +714,6 @@ mod tests {
         pub terminal: &'a mut Term<T>,
         pub size_info: &'a SizeInfo,
         pub mouse: &'a mut Mouse,
-        pub clipboard: &'a mut Clipboard,
         pub message_buffer: &'a mut MessageBuffer,
         pub received_count: usize,
         pub suppress_chars: bool,
@@ -819,10 +788,6 @@ mod tests {
             self.config
         }
 
-        fn clipboard_mut(&mut self) -> &mut Clipboard {
-            self.clipboard
-        }
-
         fn event_loop(&self) -> &EventLoopWindowTarget<Event> {
             unimplemented!();
         }
@@ -842,7 +807,6 @@ mod tests {
         } => {
             #[test]
             fn $name() {
-                let mut clipboard = Clipboard::new_nop();
                 let cfg = Config::default();
                 let size = SizeInfo::new(
                     21.0,
@@ -868,7 +832,6 @@ mod tests {
                     terminal: &mut terminal,
                     mouse: &mut mouse,
                     size_info: &size,
-                    clipboard: &mut clipboard,
                     received_count: 0,
                     suppress_chars: false,
                     modifiers: Default::default(),

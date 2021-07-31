@@ -3,7 +3,7 @@ use std::fmt::{self, Debug, Formatter};
 use std::sync::Arc;
 
 use crate::term::color::Rgb;
-use crate::term::{ClipboardType, SizeInfo};
+use crate::term::{SizeInfo};
 
 /// Terminal event.
 ///
@@ -19,15 +19,6 @@ pub enum Event {
 
     /// Reset to the default window title.
     ResetTitle,
-
-    /// Request to store a text string in the clipboard.
-    ClipboardStore(ClipboardType, String),
-
-    /// Request to write the contents of the clipboard to the PTY.
-    ///
-    /// The attached function is a formatter which will corectly transform the clipboard content
-    /// into the expected escape sequence format.
-    ClipboardLoad(ClipboardType, Arc<dyn Fn(&str) -> String + Sync + Send + 'static>),
 
     /// Request to write the RGB value of a color to the PTY.
     ///
@@ -57,8 +48,6 @@ impl Debug for Event {
             Event::MouseCursorDirty => write!(f, "MouseCursorDirty"),
             Event::Title(title) => write!(f, "Title({})", title),
             Event::ResetTitle => write!(f, "ResetTitle"),
-            Event::ClipboardStore(ty, text) => write!(f, "ClipboardStore({:?}, {})", ty, text),
-            Event::ClipboardLoad(ty, _) => write!(f, "ClipboardLoad({:?})", ty),
             Event::ColorRequest(index, _) => write!(f, "ColorRequest({})", index),
             Event::PtyWrite(text) => write!(f, "PtyWrite({})", text),
             Event::Wakeup => write!(f, "Wakeup"),

@@ -3,6 +3,10 @@ don't want any of those, I just want a terminal emulator. On Linux I would use
 `st` or `xterm`; on Mac my best option right now is the default Terminal.app.
 Maybe I can rectify that here.
 
+I've removed a lot of features: searching, vi-mode, Windows support, clipboard
+support, etc. The goal is to just have a terminal emulator; I use tmux for
+"features."
+
 <p align="center">
     <img width="200" alt="Alacritty Logo" src="https://raw.githubusercontent.com/alacritty/alacritty/master/extra/logo/compat/alacritty-term%2Bscanlines.png">
 </p>
@@ -21,7 +25,7 @@ Alacritty is a modern terminal emulator that comes with sensible defaults, but
 allows for extensive [configuration](#configuration). By integrating with other
 applications, rather than reimplementing their functionality, it manages to
 provide a flexible set of [features](./docs/features.md) with high performance.
-The supported platforms currently consist of BSD, Linux, macOS and Windows.
+The supported platforms currently consist of BSD, Linux, and macOS.
 
 The software is considered to be at a **beta** level of readiness; there are
 a few missing features and bugs to be fixed, but it is already used by many as
@@ -44,10 +48,7 @@ You can find an overview over the features available in Alacritty [here](./docs/
 ## Installation
 
 Alacritty can be installed by using various package managers on Linux, BSD,
-macOS and Windows.
-
-Prebuilt binaries for macOS and Windows can also be downloaded from the
-[GitHub releases page](https://github.com/alacritty/alacritty/releases).
+and macOS.
 
 For everyone else, the detailed instructions to install Alacritty can be found
 [here](INSTALL.md).
@@ -55,7 +56,6 @@ For everyone else, the detailed instructions to install Alacritty can be found
 ### Requirements
 
 - OpenGL 3.3 or higher
-- [Windows] ConPTY support (Windows 10 version 1809 or higher)
 
 ## Configuration
 
@@ -69,12 +69,6 @@ following locations:
 2. `$XDG_CONFIG_HOME/alacritty.yml`
 3. `$HOME/.config/alacritty/alacritty.yml`
 4. `$HOME/.alacritty.yml`
-
-### Windows
-
-On Windows, the config file should be located at:
-
-`%APPDATA%\alacritty\alacritty.yml`
 
 ## Contributing
 

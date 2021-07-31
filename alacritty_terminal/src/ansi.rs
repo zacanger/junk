@@ -436,12 +436,6 @@ pub trait Handler {
     /// Reset an indexed color to original value.
     fn reset_color(&mut self, _: usize) {}
 
-    /// Store data into clipboard.
-    fn clipboard_store(&mut self, _: u8, _: &[u8]) {}
-
-    /// Load data from clipboard.
-    fn clipboard_load(&mut self, _: u8, _: &str) {}
-
     /// Run the decaln routine.
     fn decaln(&mut self) {}
 
@@ -1033,19 +1027,6 @@ where
                     return;
                 }
                 unhandled(params);
-            },
-
-            // Set clipboard.
-            b"52" => {
-                if params.len() < 3 {
-                    return unhandled(params);
-                }
-
-                let clipboard = params[1].get(0).unwrap_or(&b'c');
-                match params[2] {
-                    b"?" => self.handler.clipboard_load(*clipboard, terminator),
-                    base64 => self.handler.clipboard_store(*clipboard, base64),
-                }
             },
 
             // Reset color index.
