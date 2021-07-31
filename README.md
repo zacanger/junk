@@ -1,16 +1,12 @@
-Minimalist opengl terminal for macos.
+Bare minimum OpenGL terminal emulator for macOS.
 
-My fork of Zterm. Zterm is fine, but it's got a ton of features and I
-don't want any of those, I just want a terminal emulator. On Linux I would use
-`st` or `xterm`; on Mac my best option right now is the default Terminal.app.
-Maybe I can rectify that here.
-
-I've removed a lot of features: searching, vi-mode, Windows support, clipboard
-support, etc. The goal is to just have a terminal emulator; I use tmux for
-"features."
-
-This is partially a chance for me to learn Rust, and partially a chance for me
-to get Mac terminal that isn't terrible.
+Forked from Alacritty. Most features removed. Why? I wanted something like `st`
+or `xterm`, but for Mac. Turns out every single Mac terminal emulator out there
+has ridiculous features, like password management, Vim keybinds, and URL
+opening. I don't want any of that, and honestly, neither should you; it violates
+basic Unix principles and leads to terrible bugs (just search for "iterm
+vulnerability" if you're curious). This is also a chance for me to mess around
+with Rust a bit.
 
 <p align="center">
     <img width="200" alt="Zterm Logo" src="https://raw.githubusercontent.com/zterm/zterm/master/extra/logo/compat/zterm-term%2Bscanlines.png">
