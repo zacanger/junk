@@ -1,7 +1,7 @@
 //! Process window events.
 
 use std::borrow::Cow;
-use std::cmp::{max, min};
+use std::cmp::{min};
 use std::env;
 use std::f32;
 use std::fmt::Debug;
@@ -35,7 +35,7 @@ use crate::config::{self, Config};
 use crate::daemon::start_daemon;
 use crate::display::window::Window;
 use crate::display::{self, Display, DisplayUpdate};
-use crate::input::{self, ActionContext as _, FONT_SIZE_STEP};
+use crate::input::{self, ActionContext as _};
 use crate::macos;
 use crate::message_bar::{Message, MessageBuffer};
 use crate::scheduler::{Scheduler, TimerId};
@@ -240,19 +240,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         }
 
         start_daemon(&zterm, &args);
-    }
-
-    fn change_font_size(&mut self, delta: f32) {
-        *self.font_size = max(*self.font_size + delta, Size::new(FONT_SIZE_STEP));
-        let font = self.config.ui_config.font.clone().with_size(*self.font_size);
-        self.display_update_pending.set_font(font);
-        *self.dirty = true;
-    }
-
-    fn reset_font_size(&mut self) {
-        *self.font_size = self.config.ui_config.font.size();
-        self.display_update_pending.set_font(self.config.ui_config.font.clone());
-        *self.dirty = true;
     }
 
     #[inline]

@@ -413,18 +413,8 @@
 #
 # - `action`: Execute a predefined action
 #
-#   - Copy
-#   - Paste
-#   - ClearHistory
-#       Remove the terminal's scrollback history.
-#   - Quit
-#       Quit Zterm.
-#   - SpawnNewInstance
-#       Spawn a new instance of Zterm.
 #   - ClearLogNotice
 #       Clear Zterm's UI warning and error notice.
-#   - ClearSelection
-#       Remove the active selection.
 #   - ReceiveChar
 #   - None
 #
@@ -470,12 +460,6 @@
 # in the order they were defined in.
 #key_bindings:
   #- { key: L,         mods: Control,                    action: ClearLogNotice }
-
-
-  #- { key: M,              mods: Command,                    action: Minimize              }
-  #- { key: Q,              mods: Command,                    action: Quit                  }
-  #- { key: W,              mods: Command,                    action: Quit                  }
-  #- { key: N,              mods: Command,                    action: SpawnNewInstance      }
 
 #debug:
   # Display the time it takes to redraw each frame.

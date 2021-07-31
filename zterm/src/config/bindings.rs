@@ -90,17 +90,8 @@ pub enum Action {
     #[config(skip)]
     Command(Program),
 
-    /// Clear the display buffer(s) to remove history.
-    ClearHistory,
-
-    /// Quit Zterm.
-    Quit,
-
     /// Clear warning and error notices.
     ClearLogNotice,
-
-    /// Spawn a new instance of Zterm.
-    SpawnNewInstance,
 
     /// Allow receiving char input.
     ReceiveChar,
@@ -314,10 +305,6 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         KeyBinding;
         Insert, ModifiersState::SHIFT; Action::Esc("\x1b[2;2~".into());
         K, ModifiersState::LOGO; Action::Esc("\x0c".into());
-        K, ModifiersState::LOGO;  Action::ClearHistory;
-        N, ModifiersState::LOGO; Action::SpawnNewInstance;
-        Q, ModifiersState::LOGO; Action::Quit;
-        W, ModifiersState::LOGO; Action::Quit;
     )
 }
 
@@ -813,7 +800,7 @@ mod tests {
     fn binding_matches_different_action() {
         let binding = MockBinding::default();
         let different_action =
-            MockBinding { action: Action::ClearHistory, ..MockBinding::default() };
+            MockBinding { action: Action::ClearLogNotice, ..MockBinding::default() };
 
         assert!(binding.triggers_match(&different_action));
         assert!(different_action.triggers_match(&binding));

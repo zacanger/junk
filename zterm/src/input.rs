@@ -17,7 +17,6 @@ use glutin::event::{
 use glutin::event_loop::EventLoopWindowTarget;
 use glutin::window::CursorIcon;
 
-use zterm_terminal::ansi::{ClearMode, Handler};
 use zterm_terminal::event::EventListener;
 use zterm_terminal::grid::{Dimensions, Scroll};
 use zterm_terminal::index::{Column, Point, Side};
@@ -31,9 +30,6 @@ use crate::display::Display;
 use crate::event::{ClickState, Event, Mouse};
 use crate::message_bar::{self, Message};
 use crate::scheduler::{Scheduler, TimerId};
-
-/// Font size change interval.
-pub const FONT_SIZE_STEP: f32 = 0.5;
 
 /// Interval for mouse scrolling during selection outside of the boundaries.
 const SELECTION_SCROLLING_INTERVAL: Duration = Duration::from_millis(15);
@@ -73,8 +69,6 @@ pub trait ActionContext<T: EventListener> {
     fn terminal(&self) -> &Term<T>;
     fn terminal_mut(&mut self) -> &mut Term<T>;
     fn spawn_new_instance(&mut self) {}
-    fn change_font_size(&mut self, _delta: f32) {}
-    fn reset_font_size(&mut self) {}
     fn pop_message(&mut self) {}
     fn message(&self) -> Option<&Message>;
     fn config(&self) -> &Config;
@@ -105,10 +99,7 @@ impl<T: EventListener> Execute<T> for Action {
             },
             Action::Command(program) => start_daemon(program.program(), program.args()),
             #[cfg(target_os = "macos")]
-            Action::Quit => ctx.terminal_mut().exit(),
-            Action::ClearHistory => ctx.terminal_mut().clear_screen(ClearMode::Saved),
             Action::ClearLogNotice => ctx.pop_message(),
-            Action::SpawnNewInstance => ctx.spawn_new_instance(),
             Action::ReceiveChar | Action::None => (),
         }
     }
