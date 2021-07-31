@@ -308,19 +308,7 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
     bindings
 }
 
-#[cfg(not(any(target_os = "macos", test)))]
-fn common_keybindings() -> Vec<KeyBinding> {
-    bindings!(
-        KeyBinding;
-    )
-}
-
-#[cfg(not(any(target_os = "macos", test)))]
-pub fn platform_key_bindings() -> Vec<KeyBinding> {
-    common_keybindings()
-}
-
-#[cfg(all(target_os = "macos", not(test)))]
+#[cfg(not(test))]
 pub fn platform_key_bindings() -> Vec<KeyBinding> {
     bindings!(
         KeyBinding;

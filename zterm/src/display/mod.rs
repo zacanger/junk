@@ -8,8 +8,6 @@ use std::time::Instant;
 
 use glutin::dpi::{PhysicalPosition, PhysicalSize};
 use glutin::event_loop::EventLoop;
-#[cfg(not(any(target_os = "macos")))]
-use glutin::platform::unix::EventLoopWindowTargetExtUnix;
 use log::{debug, info};
 use parking_lot::MutexGuard;
 
@@ -146,9 +144,6 @@ pub struct Display {
     pub size_info: SizeInfo,
     pub window: Window,
 
-    #[cfg(not(any(target_os = "macos")))]
-    pub is_x11: bool,
-
     /// UI cursor visibility for blinking.
     pub cursor_hidden: bool,
 
@@ -164,17 +159,8 @@ pub struct Display {
 
 impl Display {
     pub fn new<E>(config: &Config, event_loop: &EventLoop<E>) -> Result<Display, Error> {
-        #[cfg(any(not(feature = "x11"), target_os = "macos"))]
-        let is_x11 = false;
-        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-        let is_x11 = event_loop.is_x11();
-
         // Guess DPR based on first monitor.
-        let estimated_dpr = if cfg!(any(target_os = "macos")) || is_x11 {
-            event_loop.available_monitors().next().map(|m| m.scale_factor()).unwrap_or(1.)
-        } else {
-            1.
-        };
+        let estimated_dpr = event_loop.available_monitors().next().map(|m| m.scale_factor()).unwrap_or(1.);
 
         // Guess the target window dimensions.
         let metrics = GlyphCache::static_metrics(config.ui_config.font.clone(), estimated_dpr)?;
@@ -243,20 +229,10 @@ impl Display {
         });
 
         // Set subpixel anti-aliasing.
-        #[cfg(target_os = "macos")]
         crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
 
-        // Disable shadows for transparent windows on macOS.
-        #[cfg(target_os = "macos")]
+        // Disable shadows for transparent windows.
         window.set_has_shadow(config.ui_config.background_opacity() >= 1.0);
-
-        #[cfg(not(any(target_os = "macos")))]
-        if is_x11 {
-            window.swap_buffers();
-            renderer.with_api(&config.ui_config, &size_info, |api| {
-                api.finish();
-            });
-        }
 
         window.set_visible(true);
 
@@ -268,21 +244,12 @@ impl Display {
             window.set_outer_position(PhysicalPosition::from((position.x, position.y)));
         }
 
-        #[allow(clippy::single_match)]
-        match config.ui_config.window.startup_mode {
-            #[cfg(not(target_os = "macos"))]
-            StartupMode::Maximized if is_x11 => window.set_maximized(true),
-            _ => (),
-        }
-
         Ok(Self {
             window,
             renderer,
             glyph_cache,
             meter: Meter::new(),
             size_info,
-            #[cfg(not(any(target_os = "macos")))]
-            is_x11,
             cursor_hidden: false,
             visual_bell: VisualBell::from(&config.ui_config.bell),
             colors: List::from(&config.ui_config.colors),
@@ -517,16 +484,6 @@ impl Display {
         self.window.update_ime_position(ime_position, &self.size_info);
 
         self.window.swap_buffers();
-
-        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-        if self.is_x11 {
-            // On X11 `swap_buffers` does not block for vsync. However the next OpenGl command
-            // will block to synchronize (this is `glClear` in Zterm), which causes a
-            // permanent one frame delay.
-            self.renderer.with_api(&config.ui_config, &size_info, |api| {
-                api.finish();
-            });
-        }
     }
 
     /// Update to a new configuration.

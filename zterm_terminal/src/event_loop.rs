@@ -387,16 +387,6 @@ where
                             if event.readiness().is_readable() {
                                 if let Err(err) = self.pty_read(&mut state, &mut buf, pipe.as_mut())
                                 {
-                                    // On Linux, a `read` on the master side of a PTY can fail
-                                    // with `EIO` if the client side hangs up.  In that case,
-                                    // just loop back round for the inevitable `Exited` event.
-                                    // This sucks, but checking the process is either racy or
-                                    // blocking.
-                                    #[cfg(target_os = "linux")]
-                                    if err.kind() == ErrorKind::Other {
-                                        continue;
-                                    }
-
                                     error!("Error reading from PTY in event loop: {}", err);
                                     break 'event_loop;
                                 }

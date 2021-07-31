@@ -1,3 +1,5 @@
+Minimalist opengl terminal for macos.
+
 My fork of Zterm. Zterm is fine, but it's got a ton of features and I
 don't want any of those, I just want a terminal emulator. On Linux I would use
 `st` or `xterm`; on Mac my best option right now is the default Terminal.app.

@@ -5,14 +5,10 @@ use std::cmp::{max, min};
 use std::env;
 use std::f32;
 use std::fmt::Debug;
-#[cfg(not(any(target_os = "macos")))]
-use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::mem;
 use std::path::{Path, PathBuf};
-#[cfg(not(any(target_os = "macos")))]
-use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
@@ -40,7 +36,6 @@ use crate::daemon::start_daemon;
 use crate::display::window::Window;
 use crate::display::{self, Display, DisplayUpdate};
 use crate::input::{self, ActionContext as _, FONT_SIZE_STEP};
-#[cfg(target_os = "macos")]
 use crate::macos;
 use crate::message_bar::{Message, MessageBuffer};
 use crate::scheduler::{Scheduler, TimerId};
@@ -222,13 +217,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
                 pid = tty::child_pid();
             }
 
-            #[cfg(not(any(target_os = "macos", target_os = "freebsd")))]
-            let link_path = format!("/proc/{}/cwd", pid);
-            #[cfg(target_os = "freebsd")]
-            let link_path = format!("/compat/linux/proc/{}/cwd", pid);
-            #[cfg(not(target_os = "macos"))]
-            let cwd = fs::read_link(link_path);
-            #[cfg(target_os = "macos")]
             let cwd = macos::proc::cwd(pid);
 
             // Add the current working directory as parameter.
@@ -477,7 +465,6 @@ impl<N: Notify + OnResize> Processor<N> {
 
     /// Return `true` if `event_queue` is empty, `false` otherwise.
     #[inline]
-    #[cfg(any(target_os = "macos"))]
     fn event_queue_empty(&mut self) -> bool {
         self.event_queue.is_empty()
     }
@@ -571,12 +558,6 @@ impl<N: Notify + OnResize> Processor<N> {
             // Process DisplayUpdate events.
             if display_update_pending.dirty {
                 self.submit_display_update(&mut terminal, display_update_pending);
-            }
-
-            // Skip rendering on Wayland until we get frame event from compositor.
-            #[cfg(not(any(target_os = "macos")))]
-            if !self.display.is_x11 && !self.display.window.should_draw.load(Ordering::Relaxed) {
-                return;
             }
 
             if self.dirty {
@@ -828,11 +809,9 @@ impl<N: Notify + OnResize> Processor<N> {
         }
 
         // Set subpixel anti-aliasing.
-        #[cfg(target_os = "macos")]
         crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
 
-        // Disable shadows for transparent windows on macOS.
-        #[cfg(target_os = "macos")]
+        // Disable shadows for transparent windows.
         processor.ctx.window().set_has_shadow(config.ui_config.background_opacity() >= 1.0);
 
         *processor.ctx.config = config;

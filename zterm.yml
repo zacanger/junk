@@ -58,7 +58,7 @@
   #     - full: Borders and title bar
   #     - none: Neither borders nor title bar
   #
-  # Values for `decorations` (macOS only):
+  # Values for `decorations`:
   #     - transparent: Title bar, transparent background and title bar buttons
   #     - buttonless: Title bar, transparent background and no title bar buttons
   #decorations: full
@@ -77,19 +77,6 @@
   # Allow terminal applications to change Zterm's window title.
   #dynamic_title: true
 
-  # Window class (Linux/BSD only):
-  #class:
-    # Application instance name
-    #instance: Zterm
-    # General application class
-    #general: Zterm
-
-  # GTK theme variant (Linux/BSD only)
-  #
-  # Override the variant of the GTK theme. Commonly supported values are `dark`
-  # and `light`. Set this to `None` to use the default theme variant.
-  #gtk_theme_variant: None
-
 #scrolling:
   # Maximum number of lines in the scrollback buffer.
   # Specifying '0' will disable scrolling.
@@ -105,8 +92,7 @@
     # Font family
     #
     # Default:
-    #   - (macOS) Menlo
-    #   - (Linux/BSD) monospace
+    #   - Menlo
     #family: monospace
 
     # The `style` can be specified to pick a specific face.
@@ -162,7 +148,7 @@
   #  x: 0
   #  y: 0
 
-  # Thin stroke font rendering (macOS only)
+  # Thin stroke font rendering
   #
   # Thin strokes are suitable for retina displays, but for non-retina screens
   # it is recommended to set `use_thin_strokes` to `false`.
@@ -336,8 +322,7 @@
 # shell.
 #
 # Default:
-#   - (macOS) /bin/bash --login
-#   - (Linux/BSD) user login shell
+#   - /bin/bash --login
 #shell:
 #  program: /bin/bash
 #  args:
@@ -443,13 +428,6 @@
 #   - ReceiveChar
 #   - None
 #
-# - Linux/BSD exclusive actions:
-#
-#   - CopySelection
-#       Copy from the selection buffer.
-#   - PasteSelection
-#       Paste from the selection buffer.
-#
 # - `command`: Fork and execute a specified command plus arguments
 #
 #    The `command` field must be a map containing a `program` string and an
@@ -494,7 +472,6 @@
   #- { key: L,         mods: Control,                    action: ClearLogNotice }
 
 
-  # (macOS only)
   #- { key: M,              mods: Command,                    action: Minimize              }
   #- { key: Q,              mods: Command,                    action: Quit                  }
   #- { key: W,              mods: Command,                    action: Quit                  }

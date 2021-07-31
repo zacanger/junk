@@ -1,8 +1,6 @@
 //! TTY related functionality.
 
 use std::borrow::Cow;
-#[cfg(not(target_os = "macos"))]
-use std::env;
 use std::ffi::CStr;
 use std::fs::File;
 use std::io;
@@ -19,7 +17,6 @@ use libc::{self, c_int, pid_t, winsize, TIOCSCTTY};
 use log::error;
 use mio::unix::EventedFd;
 use nix::pty::openpty;
-#[cfg(any(target_os = "linux", target_os = "macos"))]
 use nix::sys::termios::{self, InputFlags, SetArg};
 use signal_hook::{self as sighook, iterator::Signals};
 
@@ -139,7 +136,6 @@ pub struct Pty {
     signals_token: mio::Token,
 }
 
-#[cfg(target_os = "macos")]
 fn default_shell(pw: &Passwd<'_>) -> Program {
     let shell_name = pw.shell.rsplit('/').next().unwrap();
     let argv = vec![String::from("-c"), format!("exec -a -{} {}", shell_name, pw.shell)];
@@ -147,16 +143,10 @@ fn default_shell(pw: &Passwd<'_>) -> Program {
     Program::WithArgs { program: "/bin/bash".to_owned(), args: argv }
 }
 
-#[cfg(not(target_os = "macos"))]
-fn default_shell(pw: &Passwd<'_>) -> Program {
-    Program::Just(env::var("SHELL").unwrap_or_else(|_| pw.shell.to_owned()))
-}
-
 /// Create a new TTY and return a handle to interact with it.
-pub fn new<C>(config: &Config<C>, size: &SizeInfo, window_id: Option<usize>) -> Pty {
+pub fn new<C>(config: &Config<C>, size: &SizeInfo) -> Pty {
     let (master, slave) = make_pty(size.to_winsize());
 
-    #[cfg(any(target_os = "linux", target_os = "macos"))]
     if let Ok(mut termios) = termios::tcgetattr(master) {
         // Set character encoding to UTF-8.
         termios.input_flags.set(InputFlags::IUTF8, true);
@@ -189,13 +179,8 @@ pub fn new<C>(config: &Config<C>, size: &SizeInfo, window_id: Option<usize>) -> 
     builder.env("USER", pw.name);
     builder.env("HOME", pw.dir);
 
-    // Set $SHELL environment variable on macOS, since login does not do it for us.
-    #[cfg(target_os = "macos")]
+    // Set $SHELL environment variable, since login on mac does not do it for us.
     builder.env("SHELL", config.shell.as_ref().map(|sh| sh.program()).unwrap_or(pw.shell));
-
-    if let Some(window_id) = window_id {
-        builder.env("WINDOWID", format!("{}", window_id));
-    }
 
     unsafe {
         builder.pre_exec(move || {

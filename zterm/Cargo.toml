@@ -1,6 +1,6 @@
 [package]
 name = "zterm"
-version = "0.10.0-dev"
+version = "0.0.1"
 authors = ["Zac Anger"]
 license = "LGPL-3.0"
 description = "A fast, cross-platform, OpenGL terminal emulator"
@@ -38,21 +38,11 @@ dirs = "3.0.1"
 [build-dependencies]
 gl_generator = "0.14.0"
 
-[target.'cfg(not(windows))'.dependencies]
-xdg = "2"
-
-[target.'cfg(not(target_os = "macos"))'.dependencies]
-png = { version = "0.16.8", default-features = false, optional = true }
-
 [target.'cfg(target_os = "macos")'.dependencies]
 raw-window-handle = "0.3.3"
 cocoa = "0.24.0"
 objc = "0.2.2"
 
-[target.'cfg(not(any(target_os="windows", target_os="macos")))'.dependencies]
-x11-dl = { version = "2", optional = true }
-
 [features]
-default = ["x11"]
-x11 = ["copypasta/x11", "glutin/x11", "x11-dl", "png"]
+default = []
 nightly = []

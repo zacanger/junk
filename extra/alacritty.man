@@ -32,23 +32,13 @@ Increases the level of verbosity (the max level is \fB\-vvv\fR)
 Prints version information
 .SH "OPTIONS"
 .TP
-\fB\-\-class\fR <instance> | <instance>,<general>
-Defines the window class hint on Linux [default: Zterm,Zterm]
-.TP
 \fB\-e\fR, \fB\-\-command\fR <command>...
 Command and args to execute (must be last argument)
 .TP
 \fB\-\-config\-file\fR <config\-file>
 Specify alternative configuration file
 
-Zterm looks for the configuration file at the following paths:
-    1. $XDG_CONFIG_HOME/zterm/zterm.yml
-    2. $XDG_CONFIG_HOME/zterm.yml
-    3. $HOME/.config/zterm/zterm.yml
-    4. $HOME/.zterm.yml
-.TP
-\fB\-\-embed\fR <parent>
-Defines the X11 window ID (as a decimal integer) to embed Zterm within
+Zterm looks for the configuration file at the path $HOME/zterm.yml
 .TP
 \fB\-o\fR, \fB\-\-option\fR <option>...
 Override configuration file options [example: cursor.style=Beam]

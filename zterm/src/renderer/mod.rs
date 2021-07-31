@@ -778,13 +778,6 @@ impl<'a> RenderApi<'a> {
         }
     }
 
-    #[cfg(not(any(target_os = "macos")))]
-    pub fn finish(&self) {
-        unsafe {
-            gl::Finish();
-        }
-    }
-
     fn render_batch(&mut self) {
         unsafe {
             gl::BufferSubData(

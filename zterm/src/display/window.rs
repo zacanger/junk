@@ -1,37 +1,15 @@
 #[rustfmt::skip]
-#[cfg(not(any(target_os = "macos")))]
-use {
-    std::sync::atomic::AtomicBool,
-    std::sync::Arc,
-
-    glutin::platform::unix::{WindowBuilderExtUnix, WindowExtUnix},
-};
-
-#[rustfmt::skip]
-#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-use {
-    std::io::Cursor,
-
-    x11_dl::xlib::{Display as XDisplay, PropModeReplace, XErrorEvent, Xlib},
-    glutin::window::Icon,
-    png::Decoder,
-};
-
 use std::fmt::{self, Display, Formatter};
 
-#[cfg(target_os = "macos")]
 use cocoa::base::{id, NO, YES};
 use glutin::dpi::{PhysicalPosition, PhysicalSize};
 use glutin::event_loop::EventLoop;
-#[cfg(target_os = "macos")]
 use glutin::platform::macos::{WindowBuilderExtMacOS};
 use glutin::window::{
     CursorIcon, UserAttentionType, Window as GlutinWindow, WindowBuilder, WindowId,
 };
 use glutin::{self, ContextBuilder, PossiblyCurrent, WindowedContext};
-#[cfg(target_os = "macos")]
 use objc::{msg_send, sel, sel_impl};
-#[cfg(target_os = "macos")]
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 
 use zterm_terminal::index::Point;
@@ -40,14 +18,6 @@ use zterm_terminal::term::SizeInfo;
 use crate::config::window::{Decorations, WindowConfig};
 use crate::config::Config;
 use crate::gl;
-
-/// Window icon for `_NET_WM_ICON` property.
-#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-static WINDOW_ICON: &[u8] = include_bytes!("../../zterm.png");
-
-/// Maximum DPR on X11 before it is assumed that XRandr is reporting incorrect values.
-#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-const MAX_X11_DPR: f64 = 10.;
 
 /// Window errors.
 #[derive(Debug)]
@@ -128,10 +98,6 @@ fn create_gl_window<E>(
 ///
 /// Wraps the underlying windowing library to provide a stable API in Zterm.
 pub struct Window {
-    /// Flag tracking frame redraw requests from Wayland compositor.
-    #[cfg(not(any(target_os = "macos")))]
-    pub should_draw: Arc<AtomicBool>,
-
     /// Cached DPR for quickly scaling pixel sizes.
     pub dpr: f64,
 
@@ -165,27 +131,13 @@ impl Window {
         // Set OpenGL symbol loader. This call MUST be after window.make_current on windows.
         gl::load_with(|symbol| windowed_context.get_proc_address(symbol) as *const _);
 
-        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-        // On X11, embed the window inside another if the parent ID has been set.
-        if let Some(parent_window_id) = window_config.embed {
-            x_embed_window(windowed_context.window(), parent_window_id);
-        }
-
         #[allow(unused_mut)]
         let mut dpr = windowed_context.window().scale_factor();
-
-        // Handle winit reporting invalid values due to incorrect XRandr monitor metrics.
-        #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-        if dpr > MAX_X11_DPR {
-            dpr = 1.;
-        }
 
         Ok(Self {
             current_mouse_cursor,
             mouse_visible: true,
             windowed_context,
-            #[cfg(not(any(target_os = "macos")))]
-            should_draw: Arc::new(AtomicBool::new(true)),
             dpr,
         })
     }
@@ -225,43 +177,6 @@ impl Window {
         }
     }
 
-    #[cfg(not(any(target_os = "macos")))]
-    pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
-        #[cfg(feature = "x11")]
-        let icon = {
-            let decoder = Decoder::new(Cursor::new(WINDOW_ICON));
-            let (info, mut reader) = decoder.read_info().expect("invalid embedded icon");
-            let mut buf = vec![0; info.buffer_size()];
-            let _ = reader.next_frame(&mut buf);
-            Icon::from_rgba(buf, info.width, info.height)
-        };
-
-        let builder = WindowBuilder::new()
-            .with_title(title)
-            .with_visible(false)
-            .with_transparent(true)
-            .with_decorations(window_config.decorations != Decorations::None)
-            .with_maximized(window_config.maximized());
-
-        #[cfg(feature = "x11")]
-        let builder = builder.with_window_icon(icon.ok());
-
-        #[cfg(feature = "x11")]
-        let builder = builder.with_class(
-            window_config.class.instance.to_owned(),
-            window_config.class.general.to_owned(),
-        );
-
-        #[cfg(feature = "x11")]
-        let builder = match &window_config.gtk_theme_variant {
-            Some(val) => builder.with_gtk_theme_variant(val.clone()),
-            None => builder,
-        };
-
-        builder
-    }
-
-    #[cfg(target_os = "macos")]
     pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
         let window = WindowBuilder::new()
             .with_title(title)
@@ -294,23 +209,8 @@ impl Window {
         self.window().set_outer_position(pos);
     }
 
-    #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-    pub fn x11_window_id(&self) -> Option<usize> {
-        self.window().xlib_window().map(|xlib_window| xlib_window as usize)
-    }
-
-    #[cfg(any(not(feature = "x11"), target_os = "macos"))]
-    pub fn x11_window_id(&self) -> Option<usize> {
-        None
-    }
-
     pub fn window_id(&self) -> WindowId {
         self.window().id()
-    }
-
-    #[cfg(not(any(target_os = "macos")))]
-    pub fn set_maximized(&self, maximized: bool) {
-        self.window().set_maximized(maximized);
     }
 
     /// Adjust the IME editor position according to the new location of the cursor.
@@ -332,7 +232,6 @@ impl Window {
     /// Disable macOS window shadows.
     ///
     /// This prevents rendering artifacts from showing up when the window is transparent.
-    #[cfg(target_os = "macos")]
     pub fn set_has_shadow(&self, has_shadows: bool) {
         let raw_window = match self.window().raw_window_handle() {
             RawWindowHandle::MacOS(handle) => handle.ns_window as id,
@@ -348,44 +247,4 @@ impl Window {
     fn window(&self) -> &GlutinWindow {
         self.windowed_context.window()
     }
-}
-
-#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-fn x_embed_window(window: &GlutinWindow, parent_id: std::os::raw::c_ulong) {
-    let (xlib_display, xlib_window) = match (window.xlib_display(), window.xlib_window()) {
-        (Some(display), Some(window)) => (display, window),
-        _ => return,
-    };
-
-    let xlib = Xlib::open().expect("get xlib");
-
-    unsafe {
-        let atom = (xlib.XInternAtom)(xlib_display as *mut _, "_XEMBED".as_ptr() as *const _, 0);
-        (xlib.XChangeProperty)(
-            xlib_display as _,
-            xlib_window as _,
-            atom,
-            atom,
-            32,
-            PropModeReplace,
-            [0, 1].as_ptr(),
-            2,
-        );
-
-        // Register new error handler.
-        let old_handler = (xlib.XSetErrorHandler)(Some(xembed_error_handler));
-
-        // Check for the existence of the target before attempting reparenting.
-        (xlib.XReparentWindow)(xlib_display as _, xlib_window as _, parent_id, 0, 0);
-
-        // Drain errors and restore original error handler.
-        (xlib.XSync)(xlib_display as _, 0);
-        (xlib.XSetErrorHandler)(old_handler);
-    }
-}
-
-#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-unsafe extern "C" fn xembed_error_handler(_: *mut XDisplay, _: *mut XErrorEvent) -> i32 {
-    log::error!("Could not embed into specified window.");
-    std::process::exit(1);
 }

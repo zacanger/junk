@@ -1,0 +1,1 @@
+/Users/z/Dropbox/work/repos/3-active/zterm/target/debug/zterm

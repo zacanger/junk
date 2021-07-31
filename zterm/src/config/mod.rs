@@ -253,38 +253,15 @@ fn load_imports(config: &Value, config_paths: &mut Vec<PathBuf>, recursion_limit
     merged
 }
 
-/// Get the location of the first found default config file paths
-/// according to the following order:
-///
-/// 1. $XDG_CONFIG_HOME/zterm/zterm.yml
-/// 2. $XDG_CONFIG_HOME/zterm.yml
-/// 3. $HOME/.config/zterm/zterm.yml
-/// 4. $HOME/.zterm.yml
+/// Resolve the config file
 fn installed_config() -> Option<PathBuf> {
-    // Try using XDG location by default.
-    xdg::BaseDirectories::with_prefix("zterm")
-        .ok()
-        .and_then(|xdg| xdg.find_config_file("zterm.yml"))
-        .or_else(|| {
-            xdg::BaseDirectories::new()
-                .ok()
-                .and_then(|fallback| fallback.find_config_file("zterm.yml"))
-        })
-        .or_else(|| {
-            if let Ok(home) = env::var("HOME") {
-                // Fallback path: $HOME/.config/zterm/zterm.yml.
-                let fallback = PathBuf::from(&home).join(".config/zterm/zterm.yml");
-                if fallback.exists() {
-                    return Some(fallback);
-                }
-                // Fallback path: $HOME/.zterm.yml.
-                let fallback = PathBuf::from(&home).join(".zterm.yml");
-                if fallback.exists() {
-                    return Some(fallback);
-                }
-            }
-            None
-        })
+    if let Ok(home) = env::var("HOME") {
+        let p = PathBuf::from(&home).join(".zterm.yml");
+        if p.exists() {
+            return Some(p);
+        }
+    }
+    None
 }
 
 #[cfg(test)]

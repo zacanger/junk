@@ -11,10 +11,7 @@ use crate::config::serde_utils;
 use crate::config::window::DEFAULT_NAME;
 use crate::config::Config;
 
-#[cfg(not(any(target_os = "macos")))]
-const CONFIG_PATH: &str = "$XDG_CONFIG_HOME/zterm/zterm.yml";
-#[cfg(target_os = "macos")]
-const CONFIG_PATH: &str = "$HOME/.config/zterm/zterm.yml";
+const CONFIG_PATH: &str = "$HOME/.zterm.yml";
 
 /// Options specified on the command line.
 pub struct Options {
@@ -78,22 +75,6 @@ impl Options {
                     .short("t")
                     .takes_value(true)
                     .help(&format!("Defines the window title [default: {}]", DEFAULT_NAME)),
-            )
-            .arg(
-                Arg::with_name("class")
-                    .long("class")
-                    .value_name("instance> | <instance>,<general")
-                    .takes_value(true)
-                    .use_delimiter(true)
-                    .help(&format!(
-                        "Defines window class/app_id on X11 [default: {}]",
-                        DEFAULT_NAME
-                    )),
-            )
-            .arg(
-                Arg::with_name("embed").long("embed").takes_value(true).help(
-                    "Defines the X11 window ID (as a decimal integer) to embed Zterm within",
-                ),
             )
             .arg(
                 Arg::with_name("q")
