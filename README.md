@@ -1,3 +1,8 @@
+My fork of Alacritty. Alacritty is fine, but it's got a ton of features and I
+don't want any of those, I just want a terminal emulator. On Linux I would use
+`st` or `xterm`; on Mac my best option right now is the default Terminal.app.
+Maybe I can rectify that here.
+
 <p align="center">
     <img width="200" alt="Alacritty Logo" src="https://raw.githubusercontent.com/alacritty/alacritty/master/extra/logo/compat/alacritty-term%2Bscanlines.png">
 </p>
