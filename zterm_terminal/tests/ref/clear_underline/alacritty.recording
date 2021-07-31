@@ -1,5 +1,0 @@
-[undeadleech@undeadlap zterm]$ echo -e "\e[4mUNDERLINED"
-[4mUNDERLINED
-[undeadleech@undeadlap zterm]$ clear
-[3J[H[2J[undeadleech@undeadlap zterm]$ exit
-exit
