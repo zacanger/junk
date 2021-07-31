@@ -4,12 +4,6 @@ This document gives an overview over Alacritty's features beyond its terminal
 emulation capabilities. To get a list with supported control sequences take a
 look at [Alacritty's escape sequence support](./escape_support.md).
 
-### Motion
-
-The cursor motions are setup by default to mimic vi, however they are fully
-configurable. If you don't like vi's bindings, take a look at the [configuration
-file] to change the various movements.
-
 ### Selection
 
 One useful feature of vi mode is the ability to make selections and copy text to
@@ -54,13 +48,6 @@ the mouse or vi mode cursor is on top of it. Using the left mouse button or
 
 Hints can be configured in the `hints` and `colors.hints` sections in the
 Alacritty configuration file.
-
-## Selection expansion
-
-After making a selection, you can use the right mouse button to expand it.
-Double-clicking will expand the selection semantically, while triple-clicking
-will perform line selection. If you hold <kbd>Ctrl</kbd> while expanding the
-selection, it will switch to the block selection mode.
 
 ## Opening URLs with the mouse
 

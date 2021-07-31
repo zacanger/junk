@@ -13,18 +13,10 @@ pub struct Colors {
     pub bright: BrightColors,
     pub dim: Option<DimColors>,
     pub indexed_colors: Vec<IndexedColor>,
-    pub search: SearchColors,
     pub line_indicator: LineIndicatorColors,
 }
 
 impl Colors {
-    pub fn search_bar_foreground(&self) -> Rgb {
-        self.search.bar.foreground.unwrap_or(self.primary.background)
-    }
-
-    pub fn search_bar_background(&self) -> Rgb {
-        self.search.bar.background.unwrap_or(self.primary.foreground)
-    }
 }
 
 #[derive(ConfigDeserialize, Copy, Clone, Default, Debug, PartialEq, Eq)]
@@ -80,13 +72,6 @@ impl Default for InvertedCellColors {
     fn default() -> Self {
         Self { foreground: CellRgb::CellBackground, background: CellRgb::CellForeground }
     }
-}
-
-#[derive(ConfigDeserialize, Debug, Copy, Clone, Default, PartialEq, Eq)]
-pub struct SearchColors {
-    pub focused_match: FocusedMatchColors,
-    pub matches: MatchColors,
-    bar: BarColors,
 }
 
 #[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]

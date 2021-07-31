@@ -34,7 +34,6 @@ use alacritty_terminal::grid::{Dimensions, Scroll};
 use alacritty_terminal::index::{Boundary, Column, Direction, Line, Point, Side};
 use alacritty_terminal::selection::{Selection, SelectionType};
 use alacritty_terminal::sync::FairMutex;
-use alacritty_terminal::term::search::{Match, RegexSearch};
 use alacritty_terminal::term::{ClipboardType, SizeInfo, Term, TermMode};
 #[cfg(not(windows))]
 use alacritty_terminal::tty;
@@ -51,15 +50,6 @@ use crate::macos;
 use crate::message_bar::{Message, MessageBuffer};
 use crate::scheduler::{Scheduler, TimerId};
 
-/// Duration after the last user input until an unlimited search is performed.
-pub const TYPING_SEARCH_DELAY: Duration = Duration::from_millis(500);
-
-/// Maximum number of lines for the blocking search while still typing the search regex.
-const MAX_SEARCH_WHILE_TYPING: Option<usize> = Some(1000);
-
-/// Maximum number of search terms stored in the history.
-const MAX_SEARCH_HISTORY_SIZE: usize = 255;
-
 /// Events dispatched through the UI event loop.
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -69,7 +59,6 @@ pub enum Event {
     ConfigReload(PathBuf),
     Message(Message),
     BlinkCursor,
-    SearchNext,
 }
 
 impl From<Event> for GlutinEvent<'_, Event> {
@@ -81,76 +70,6 @@ impl From<Event> for GlutinEvent<'_, Event> {
 impl From<TerminalEvent> for Event {
     fn from(event: TerminalEvent) -> Self {
         Event::Terminal(event)
-    }
-}
-
-/// Regex search state.
-pub struct SearchState {
-    /// Search direction.
-    direction: Direction,
-
-    /// Change in display offset since the beginning of the search.
-    display_offset_delta: i32,
-
-    /// Search origin in viewport coordinates relative to original display offset.
-    origin: Point,
-
-    /// Focused match during active search.
-    focused_match: Option<Match>,
-
-    /// Search regex and history.
-    ///
-    /// During an active search, the first element is the user's current input.
-    ///
-    /// While going through history, the [`SearchState::history_index`] will point to the element
-    /// in history which is currently being previewed.
-    history: VecDeque<String>,
-
-    /// Current position in the search history.
-    history_index: Option<usize>,
-
-    /// Compiled search automatons.
-    dfas: Option<RegexSearch>,
-}
-
-impl SearchState {
-    /// Search regex text if a search is active.
-    pub fn regex(&self) -> Option<&String> {
-        self.history_index.and_then(|index| self.history.get(index))
-    }
-
-    /// Direction of the search from the search origin.
-    pub fn direction(&self) -> Direction {
-        self.direction
-    }
-
-    /// Focused match during vi-less search.
-    pub fn focused_match(&self) -> Option<&Match> {
-        self.focused_match.as_ref()
-    }
-
-    /// Active search dfas.
-    pub fn dfas(&self) -> Option<&RegexSearch> {
-        self.dfas.as_ref()
-    }
-
-    /// Search regex text if a search is active.
-    fn regex_mut(&mut self) -> Option<&mut String> {
-        self.history_index.and_then(move |index| self.history.get_mut(index))
-    }
-}
-
-impl Default for SearchState {
-    fn default() -> Self {
-        Self {
-            direction: Direction::Right,
-            display_offset_delta: Default::default(),
-            focused_match: Default::default(),
-            history_index: Default::default(),
-            history: Default::default(),
-            origin: Default::default(),
-            dfas: Default::default(),
-        }
     }
 }
 
@@ -168,7 +87,6 @@ pub struct ActionContext<'a, N, T> {
     pub config: &'a mut Config,
     pub event_loop: &'a EventLoopWindowTarget<Event>,
     pub scheduler: &'a mut Scheduler,
-    pub search_state: &'a mut SearchState,
     cli_options: &'a CLIOptions,
     font_size: &'a mut Size,
     dirty: &'a mut bool,
@@ -195,12 +113,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         let old_offset = self.terminal.grid().display_offset() as i32;
 
         self.terminal.scroll_display(scroll);
-
-        // Keep track of manual display offset changes during search.
-        if self.search_active() {
-            let display_offset = self.terminal.grid().display_offset();
-            self.search_state.display_offset_delta += old_offset - display_offset as i32;
-        }
 
         if self.mouse.left_button_state == ElementState::Pressed
             || self.mouse.right_button_state == ElementState::Pressed
@@ -390,171 +302,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         }
     }
 
-    #[inline]
-    fn start_search(&mut self, direction: Direction) {
-        // Only create new history entry if the previous regex wasn't empty.
-        if self.search_state.history.get(0).map_or(true, |regex| !regex.is_empty()) {
-            self.search_state.history.push_front(String::new());
-            self.search_state.history.truncate(MAX_SEARCH_HISTORY_SIZE);
-        }
-
-        self.search_state.history_index = Some(0);
-        self.search_state.direction = direction;
-        self.search_state.focused_match = None;
-
-        // Store original search position as origin and reset location.
-        let viewport_top = Line(-(self.terminal.grid().display_offset() as i32)) - 1;
-        let viewport_bottom = viewport_top + self.terminal.bottommost_line();
-        let last_column = self.terminal.last_column();
-        self.search_state.origin = match direction {
-            Direction::Right => Point::new(viewport_top, Column(0)),
-            Direction::Left => Point::new(viewport_bottom, last_column),
-        };
-
-        self.display_update_pending.dirty = true;
-        *self.dirty = true;
-    }
-
-    #[inline]
-    fn cancel_search(&mut self) {
-        if let Some(focused_match) = &self.search_state.focused_match {
-            // Create a selection for the focused match.
-            let start = *focused_match.start();
-            let end = *focused_match.end();
-            self.start_selection(SelectionType::Simple, start, Side::Left);
-            self.update_selection(end, Side::Right);
-            self.copy_selection(ClipboardType::Selection);
-        }
-
-        self.search_state.dfas = None;
-
-        self.exit_search();
-    }
-
-    #[inline]
-    fn search_input(&mut self, c: char) {
-        match self.search_state.history_index {
-            Some(0) => (),
-            // When currently in history, replace active regex with history on change.
-            Some(index) => {
-                self.search_state.history[0] = self.search_state.history[index].clone();
-                self.search_state.history_index = Some(0);
-            },
-            None => return,
-        }
-        let regex = &mut self.search_state.history[0];
-
-        match c {
-            // Handle backspace/ctrl+h.
-            '\x08' | '\x7f' => {
-                let _ = regex.pop();
-            },
-            // Add ascii and unicode text.
-            ' '..='~' | '\u{a0}'..='\u{10ffff}' => regex.push(c),
-            // Ignore non-printable characters.
-            _ => return,
-        }
-
-        self.update_search();
-    }
-
-    #[inline]
-    fn search_pop_word(&mut self) {
-        if let Some(regex) = self.search_state.regex_mut() {
-            *regex = regex.trim_end().to_owned();
-            regex.truncate(regex.rfind(' ').map(|i| i + 1).unwrap_or(0));
-            self.update_search();
-        }
-    }
-
-    /// Go to the previous regex in the search history.
-    #[inline]
-    fn search_history_previous(&mut self) {
-        let index = match &mut self.search_state.history_index {
-            None => return,
-            Some(index) if *index + 1 >= self.search_state.history.len() => return,
-            Some(index) => index,
-        };
-
-        *index += 1;
-        self.update_search();
-    }
-
-    /// Go to the previous regex in the search history.
-    #[inline]
-    fn search_history_next(&mut self) {
-        let index = match &mut self.search_state.history_index {
-            Some(0) | None => return,
-            Some(index) => index,
-        };
-
-        *index -= 1;
-        self.update_search();
-    }
-
-    #[inline]
-    fn advance_search_origin(&mut self, direction: Direction) {
-        // Use focused match as new search origin if available.
-        if let Some(focused_match) = &self.search_state.focused_match {
-            let new_origin = match direction {
-                Direction::Right => focused_match.end().add(self.terminal, Boundary::None, 1),
-                Direction::Left => focused_match.start().sub(self.terminal, Boundary::None, 1),
-            };
-
-            self.terminal.scroll_to_point(new_origin);
-
-            self.search_state.display_offset_delta = 0;
-            self.search_state.origin = new_origin;
-        }
-
-        // Search for the next match using the supplied direction.
-        let search_direction = mem::replace(&mut self.search_state.direction, direction);
-        self.goto_match(None);
-        self.search_state.direction = search_direction;
-
-        // If we found a match, we set the search origin right in front of it to make sure that
-        // after modifications to the regex the search is started without moving the focused match
-        // around.
-        let focused_match = match &self.search_state.focused_match {
-            Some(focused_match) => focused_match,
-            None => return,
-        };
-
-        // Set new origin to the left/right of the match, depending on search direction.
-        let new_origin = match self.search_state.direction {
-            Direction::Right => *focused_match.start(),
-            Direction::Left => *focused_match.end(),
-        };
-
-        // Store the search origin with display offset by checking how far we need to scroll to it.
-        let old_display_offset = self.terminal.grid().display_offset() as i32;
-        self.terminal.scroll_to_point(new_origin);
-        let new_display_offset = self.terminal.grid().display_offset() as i32;
-        self.search_state.display_offset_delta = new_display_offset - old_display_offset;
-
-        // Store origin and scroll back to the match.
-        self.terminal.scroll_display(Scroll::Delta(-self.search_state.display_offset_delta));
-        self.search_state.origin = new_origin;
-    }
-
-    /// Find the next search match.
-    fn search_next(&mut self, origin: Point, direction: Direction, side: Side) -> Option<Match> {
-        self.search_state
-            .dfas
-            .as_ref()
-            .and_then(|dfas| self.terminal.search_next(dfas, origin, direction, side, None))
-    }
-
-    #[inline]
-    fn search_direction(&self) -> Direction {
-        self.search_state.direction
-    }
-
-    #[inline]
-    fn search_active(&self) -> bool {
-        self.search_state.history_index.is_some()
-    }
-
     /// Handle keyboard typing start.
     ///
     /// This will temporarily disable some features like terminal cursor blinking or the mouse
@@ -608,11 +355,7 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 
     /// Paste a text into the terminal.
     fn paste(&mut self, text: &str) {
-        if self.search_active() {
-            for c in text.chars() {
-                self.search_input(c);
-            }
-        } else if self.terminal().mode().contains(TermMode::BRACKETED_PASTE) {
+        if self.terminal().mode().contains(TermMode::BRACKETED_PASTE) {
             self.write_to_pty(&b"\x1b[200~"[..]);
             self.write_to_pty(text.replace("\x1b", "").into_bytes());
             self.write_to_pty(&b"\x1b[201~"[..]);
@@ -649,103 +392,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 }
 
 impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
-    fn update_search(&mut self) {
-        let regex = match self.search_state.regex() {
-            Some(regex) => regex,
-            None => return,
-        };
-
-        // Hide cursor while typing into the search bar.
-        if self.config.ui_config.mouse.hide_when_typing {
-            self.display.window.set_mouse_visible(false);
-        }
-
-        if regex.is_empty() {
-            // Stop search if there's nothing to search for.
-            self.search_reset_state();
-            self.search_state.dfas = None;
-        } else {
-            // Create search dfas for the new regex string.
-            self.search_state.dfas = RegexSearch::new(regex).ok();
-
-            // Update search highlighting.
-            self.goto_match(MAX_SEARCH_WHILE_TYPING);
-        }
-
-        *self.dirty = true;
-    }
-
-    /// Reset terminal to the state before search was started.
-    fn search_reset_state(&mut self) {
-        // Unschedule pending timers.
-        self.scheduler.unschedule(TimerId::DelayedSearch);
-
-        // Clear focused match.
-        self.search_state.focused_match = None;
-        return;
-    }
-
-    /// Jump to the first regex match from the search origin.
-    fn goto_match(&mut self, mut limit: Option<usize>) {
-        let dfas = match &self.search_state.dfas {
-            Some(dfas) => dfas,
-            None => return,
-        };
-
-        // Limit search only when enough lines are available to run into the limit.
-        limit = limit.filter(|&limit| limit <= self.terminal.total_lines());
-
-        // Jump to the next match.
-        let direction = self.search_state.direction;
-        let clamped_origin = self.search_state.origin.grid_clamp(self.terminal, Boundary::Grid);
-        match self.terminal.search_next(dfas, clamped_origin, direction, Side::Left, limit) {
-            Some(regex_match) => {
-                let old_offset = self.terminal.grid().display_offset() as i32;
-
-                // Select the match.
-                self.terminal.scroll_to_point(*regex_match.start());
-
-                // Update the focused match.
-                self.search_state.focused_match = Some(regex_match);
-
-                // Store number of lines the viewport had to be moved.
-                let display_offset = self.terminal.grid().display_offset();
-                self.search_state.display_offset_delta += old_offset - display_offset as i32;
-
-                // Since we found a result, we require no delayed re-search.
-                self.scheduler.unschedule(TimerId::DelayedSearch);
-            },
-            // Reset viewport only when we know there is no match, to prevent unnecessary jumping.
-            None if limit.is_none() => self.search_reset_state(),
-            None => {
-                // Schedule delayed search if we ran into our search limit.
-                if !self.scheduler.scheduled(TimerId::DelayedSearch) {
-                    self.scheduler.schedule(
-                        Event::SearchNext.into(),
-                        TYPING_SEARCH_DELAY,
-                        false,
-                        TimerId::DelayedSearch,
-                    );
-                }
-
-                // Clear focused match.
-                self.search_state.focused_match = None;
-            },
-        }
-
-        *self.dirty = true;
-    }
-
-    /// Cleanup the search state.
-    fn exit_search(&mut self) {
-        self.display_update_pending.dirty = true;
-        self.search_state.history_index = None;
-        *self.dirty = true;
-
-        // Clear focused match.
-        self.search_state.focused_match = None;
-    }
-
     /// Update the cursor blinking state.
     fn update_cursor_blinking(&mut self) {
         // Get config cursor style.
@@ -845,7 +491,6 @@ pub struct Processor<N> {
     display: Display,
     font_size: Size,
     event_queue: Vec<GlutinEvent<'static, Event>>,
-    search_state: SearchState,
     cli_options: CLIOptions,
     dirty: bool,
 }
@@ -870,7 +515,6 @@ impl<N: Notify + OnResize> Processor<N> {
             config,
             received_count: Default::default(),
             suppress_chars: Default::default(),
-            search_state: Default::default(),
             event_queue: Default::default(),
             modifiers: Default::default(),
             mouse: Default::default(),
@@ -971,7 +615,6 @@ impl<N: Notify + OnResize> Processor<N> {
             let mut terminal = terminal.lock();
 
             let mut display_update_pending = DisplayUpdate::default();
-            let old_is_searching = self.search_state.history_index.is_some();
 
             let context = ActionContext {
                 terminal: &mut terminal,
@@ -987,7 +630,6 @@ impl<N: Notify + OnResize> Processor<N> {
                 font_size: &mut self.font_size,
                 config: &mut self.config,
                 scheduler: &mut scheduler,
-                search_state: &mut self.search_state,
                 cli_options: &self.cli_options,
                 dirty: &mut self.dirty,
                 event_loop,
@@ -1000,7 +642,7 @@ impl<N: Notify + OnResize> Processor<N> {
 
             // Process DisplayUpdate events.
             if display_update_pending.dirty {
-                self.submit_display_update(&mut terminal, old_is_searching, display_update_pending);
+                self.submit_display_update(&mut terminal, display_update_pending);
             }
 
             // Skip rendering on Wayland until we get frame event from compositor.
@@ -1021,7 +663,7 @@ impl<N: Notify + OnResize> Processor<N> {
                 }
 
                 // Redraw screen.
-                self.display.draw(terminal, &self.message_buffer, &self.config, &self.search_state);
+                self.display.draw(terminal, &self.message_buffer, &self.config);
             }
         });
 
@@ -1060,7 +702,6 @@ impl<N: Notify + OnResize> Processor<N> {
                     processor.ctx.display_update_pending.dirty = true;
                     *processor.ctx.dirty = true;
                 },
-                Event::SearchNext => processor.ctx.goto_match(None),
                 Event::ConfigReload(path) => Self::reload_config(&path, processor),
                 Event::Scroll(scroll) => processor.ctx.scroll(scroll),
                 Event::BlinkCursor => {
@@ -1295,7 +936,6 @@ impl<N: Notify + OnResize> Processor<N> {
     fn submit_display_update<T>(
         &mut self,
         terminal: &mut Term<T>,
-        old_is_searching: bool,
         display_update_pending: DisplayUpdate,
     ) where
         T: EventListener,
@@ -1303,27 +943,14 @@ impl<N: Notify + OnResize> Processor<N> {
         // Compute cursor positions before resize.
         let num_lines = terminal.screen_lines();
         let cursor_at_bottom = terminal.grid().cursor.point.line + 1 == num_lines;
-        let origin_at_bottom = self.search_state.direction == Direction::Left;
 
         self.display.handle_update(
             terminal,
             &mut self.notifier,
             &self.message_buffer,
-            self.search_state.history_index.is_some(),
             &self.config,
             display_update_pending,
         );
-
-        let new_is_searching = self.search_state.history_index.is_some();
-        if !old_is_searching && new_is_searching {
-            // Scroll on search start to make sure origin is visible with minimal viewport motion.
-            let display_offset = terminal.grid().display_offset();
-            if display_offset == 0 && cursor_at_bottom && !origin_at_bottom {
-                terminal.scroll_display(Scroll::Delta(1));
-            } else if display_offset != 0 && origin_at_bottom {
-                terminal.scroll_display(Scroll::Delta(-1));
-            }
-        }
     }
 
     /// Write the ref test results to the disk.

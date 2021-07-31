@@ -10,13 +10,11 @@ use alacritty_terminal::grid::{Dimensions, Indexed};
 use alacritty_terminal::index::{Column, Direction, Line, Point};
 use alacritty_terminal::term::cell::{Cell, Flags};
 use alacritty_terminal::term::color::{CellRgb, Rgb};
-use alacritty_terminal::term::search::{Match, RegexIter, RegexSearch};
 use alacritty_terminal::term::{RenderableContent as TerminalContent, Term};
 
 use crate::config::ui_config::UiConfig;
 use crate::display::color::{List, DIM_FACTOR};
-use crate::display::{self, Display, MAX_SEARCH_LINES};
-use crate::event::SearchState;
+use crate::display::{self, Display};
 
 /// Minimum contrast between a fixed cursor color and the cell's background.
 pub const MIN_CURSOR_CONTRAST: f64 = 1.5;
@@ -29,10 +27,8 @@ pub struct RenderableContent<'a> {
     cursor: Option<RenderableCursor>,
     cursor_shape: CursorShape,
     cursor_point: Point<usize>,
-    search: Option<Regex<'a>>,
     config: &'a Config<UiConfig>,
     colors: &'a List,
-    focused_match: Option<&'a Match>,
 }
 
 impl<'a> RenderableContent<'a> {
@@ -40,16 +36,12 @@ impl<'a> RenderableContent<'a> {
         config: &'a Config<UiConfig>,
         display: &'a mut Display,
         term: &'a Term<T>,
-        search_state: &'a SearchState,
     ) -> Self {
-        let search = search_state.dfas().map(|dfas| Regex::new(term, dfas));
-        let focused_match = search_state.focused_match();
         let terminal_content = term.renderable_content();
 
         // Find terminal cursor shape.
         let cursor_shape = if terminal_content.cursor.shape == CursorShape::Hidden
             || display.cursor_hidden
-            || search_state.regex().is_some()
         {
             CursorShape::Hidden
         } else if !term.is_focused && config.cursor.unfocused_hollow {
@@ -67,10 +59,8 @@ impl<'a> RenderableContent<'a> {
             colors: &display.colors,
             cursor: None,
             terminal_content,
-            focused_match,
             cursor_shape,
             cursor_point,
-            search,
             config,
         }
     }
@@ -210,14 +200,6 @@ impl RenderableCell {
                 bg = content.color(NamedColor::Foreground as usize);
                 bg_alpha = 1.0;
             }
-        } else if content.search.as_mut().map_or(false, |search| search.advance(cell.point)) {
-            let focused = content.focused_match.map_or(false, |fm| fm.contains(&cell.point));
-            let (config_fg, config_bg) = if focused {
-                (colors.search.focused_match.foreground, colors.search.focused_match.background)
-            } else {
-                (colors.search.matches.foreground, colors.search.matches.background)
-            };
-            Self::compute_cell_rgb(&mut fg, &mut bg, &mut bg_alpha, config_fg, config_bg);
         }
 
         // Convert cell point to viewport position.
@@ -353,82 +335,5 @@ impl RenderableCursor {
 
     pub fn point(&self) -> Point<usize> {
         self.point
-    }
-}
-
-/// Wrapper for finding visible regex matches.
-#[derive(Default, Clone)]
-pub struct RegexMatches(pub Vec<RangeInclusive<Point>>);
-
-impl RegexMatches {
-    /// Find all visible matches.
-    pub fn new<T>(term: &Term<T>, dfas: &RegexSearch) -> Self {
-        let viewport_start = Line(-(term.grid().display_offset() as i32));
-        let viewport_end = viewport_start + term.bottommost_line();
-
-        // Compute start of the first and end of the last line.
-        let start_point = Point::new(viewport_start, Column(0));
-        let mut start = term.line_search_left(start_point);
-        let end_point = Point::new(viewport_end, term.last_column());
-        let mut end = term.line_search_right(end_point);
-
-        // Set upper bound on search before/after the viewport to prevent excessive blocking.
-        start.line = max(start.line, viewport_start - MAX_SEARCH_LINES);
-        end.line = min(end.line, viewport_end + MAX_SEARCH_LINES);
-
-        // Create an iterater for the current regex search for all visible matches.
-        let iter = RegexIter::new(start, end, Direction::Right, term, dfas)
-            .skip_while(move |rm| rm.end().line < viewport_start)
-            .take_while(move |rm| rm.start().line <= viewport_end);
-
-        Self(iter.collect())
-    }
-}
-
-impl Deref for RegexMatches {
-    type Target = Vec<RangeInclusive<Point>>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for RegexMatches {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
-/// Visible regex match tracking.
-#[derive(Default)]
-struct Regex<'a> {
-    /// All visible matches.
-    matches: Cow<'a, RegexMatches>,
-
-    /// Index of the last match checked.
-    index: usize,
-}
-
-impl<'a> Regex<'a> {
-    /// Create a new renderable regex iterator.
-    fn new<T>(term: &Term<T>, dfas: &RegexSearch) -> Self {
-        let matches = Cow::Owned(RegexMatches::new(term, dfas));
-        Self { index: 0, matches }
-    }
-
-    /// Advance the regex tracker to the next point.
-    ///
-    /// This will return `true` if the point passed is part of a regex match.
-    fn advance(&mut self, point: Point) -> bool {
-        while let Some(regex_match) = self.matches.get(self.index) {
-            if regex_match.start() > &point {
-                break;
-            } else if regex_match.end() < &point {
-                self.index += 1;
-            } else {
-                return true;
-            }
-        }
-        false
     }
 }

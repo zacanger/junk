@@ -24,7 +24,6 @@ use alacritty_terminal::event::EventListener;
 use alacritty_terminal::grid::{Dimensions, Scroll};
 use alacritty_terminal::index::{Column, Direction, Point, Side};
 use alacritty_terminal::selection::SelectionType;
-use alacritty_terminal::term::search::Match;
 use alacritty_terminal::term::{ClipboardType, SizeInfo, Term, TermMode};
 
 use crate::clipboard::Clipboard;
@@ -32,7 +31,7 @@ use crate::config::{Action, BindingMode, Config, Key};
 use crate::daemon::start_daemon;
 use crate::display::window::Window;
 use crate::display::Display;
-use crate::event::{ClickState, Event, Mouse, TYPING_SEARCH_DELAY};
+use crate::event::{ClickState, Event, Mouse};
 use crate::message_bar::{self, Message};
 use crate::scheduler::{Scheduler, TimerId};
 
@@ -87,17 +86,6 @@ pub trait ActionContext<T: EventListener> {
     fn mouse_mode(&self) -> bool;
     fn clipboard_mut(&mut self) -> &mut Clipboard;
     fn scheduler_mut(&mut self) -> &mut Scheduler;
-    fn start_search(&mut self, _direction: Direction) {}
-    fn confirm_search(&mut self) {}
-    fn cancel_search(&mut self) {}
-    fn search_input(&mut self, _c: char) {}
-    fn search_pop_word(&mut self) {}
-    fn search_history_previous(&mut self) {}
-    fn search_history_next(&mut self) {}
-    fn search_next(&mut self, origin: Point, direction: Direction, side: Side) -> Option<Match>;
-    fn advance_search_origin(&mut self, _direction: Direction) {}
-    fn search_direction(&self) -> Direction;
-    fn search_active(&self) -> bool;
     fn on_typing_start(&mut self) {}
     fn expand_selection(&mut self) {}
     fn paste(&mut self, _text: &str) {}
@@ -547,13 +535,6 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
 
     /// Process key input.
     pub fn key_input(&mut self, input: KeyboardInput) {
-        // Reset search delay when the user is still typing.
-        if self.ctx.search_active() {
-            if let Some(timer) = self.ctx.scheduler_mut().get_mut(TimerId::DelayedSearch) {
-                timer.deadline = Instant::now() + TYPING_SEARCH_DELAY;
-            }
-        }
-
         match input.state {
             ElementState::Pressed => {
                 *self.ctx.received_count() = 0;
@@ -583,13 +564,7 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
     pub fn received_char(&mut self, c: char) {
         let suppress_chars = *self.ctx.suppress_chars();
 
-        // Pass keys to search and ignore them during `suppress_chars`.
-        let search_active = self.ctx.search_active();
-        if suppress_chars || search_active {
-            if search_active && !suppress_chars {
-                self.ctx.search_input(c);
-            }
-
+        if suppress_chars {
             return;
         }
 
@@ -623,7 +598,7 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
     /// The provided mode, mods, and key must match what is allowed by a binding
     /// for its action to be executed.
     fn process_key_bindings(&mut self, input: KeyboardInput) {
-        let mode = BindingMode::new(self.ctx.terminal().mode(), self.ctx.search_active());
+        let mode = BindingMode::new(self.ctx.terminal().mode());
         let mods = *self.ctx.modifiers();
         let mut suppress_chars = None;
 
@@ -654,7 +629,7 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
     /// The provided mode, mods, and key must match what is allowed by a binding
     /// for its action to be executed.
     fn process_mouse_bindings(&mut self, button: MouseButton) {
-        let mode = BindingMode::new(self.ctx.terminal().mode(), self.ctx.search_active());
+        let mode = BindingMode::new(self.ctx.terminal().mode());
         let mouse_mode = self.ctx.mouse_mode();
         let mods = *self.ctx.modifiers();
 
@@ -674,13 +649,10 @@ impl<T: EventListener, A: ActionContext<T>> Processor<T, A> {
 
     /// Check mouse icon state in relation to the message bar.
     fn message_bar_cursor_state(&self) -> Option<CursorIcon> {
-        // Since search is above the message bar, the button is offset by search's height.
-        let search_height = if self.ctx.search_active() { 1 } else { 0 };
-
         // Calculate Y position of the end of the last terminal line.
         let size = self.ctx.size_info();
         let terminal_end = size.padding_y() as usize
-            + size.cell_height() as usize * (size.screen_lines() + search_height);
+            + size.cell_height() as usize * (size.screen_lines());
 
         let mouse = self.ctx.mouse();
         let display_offset = self.ctx.terminal().grid().display_offset();
@@ -781,23 +753,6 @@ mod tests {
     }
 
     impl<'a, T: EventListener> super::ActionContext<T> for ActionContext<'a, T> {
-        fn search_next(
-            &mut self,
-            _origin: Point,
-            _direction: Direction,
-            _side: Side,
-        ) -> Option<Match> {
-            None
-        }
-
-        fn search_direction(&self) -> Direction {
-            Direction::Right
-        }
-
-        fn search_active(&self) -> bool {
-            false
-        }
-
         fn terminal(&self) -> &Term<T> {
             self.terminal
         }

@@ -38,7 +38,6 @@ use crate::display::content::RenderableContent;
 use crate::display::cursor::IntoRects;
 use crate::display::meter::Meter;
 use crate::display::window::Window;
-use crate::event::{SearchState};
 use crate::message_bar::{MessageBuffer, MessageType};
 use crate::renderer::rects::{RenderLines, RenderRect};
 use crate::renderer::{self, GlyphCache, QuadRenderer};
@@ -52,15 +51,6 @@ mod color;
 mod meter;
 #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
 mod wayland_theme;
-
-/// Maximum number of linewraps followed outside of the viewport during search highlighting.
-pub const MAX_SEARCH_LINES: usize = 100;
-
-/// Label for the forward terminal search bar.
-const FORWARD_SEARCH_LABEL: &str = "Search: ";
-
-/// Label for the backward terminal search bar.
-const BACKWARD_SEARCH_LABEL: &str = "Backward Search: ";
 
 #[derive(Debug)]
 pub enum Error {
@@ -392,7 +382,6 @@ impl Display {
         terminal: &mut Term<T>,
         pty_resize_handle: &mut dyn OnResize,
         message_buffer: &MessageBuffer,
-        search_active: bool,
         config: &Config,
         update_pending: DisplayUpdate,
     ) where
@@ -433,8 +422,6 @@ impl Display {
         // Update number of column/lines in the viewport.
         let message_bar_lines =
             message_buffer.message().map(|m| m.text(&self.size_info).len()).unwrap_or(0);
-        let search_lines = if search_active { 1 } else { 0 };
-        self.size_info.reserve_lines(message_bar_lines + search_lines);
 
         // Resize PTY.
         pty_resize_handle.on_resize(&self.size_info);
@@ -462,10 +449,9 @@ impl Display {
         terminal: MutexGuard<'_, Term<T>>,
         message_buffer: &MessageBuffer,
         config: &Config,
-        search_state: &SearchState,
     ) {
         // Collect renderable content before the terminal is dropped.
-        let mut content = RenderableContent::new(config, self, &terminal, search_state);
+        let mut content = RenderableContent::new(config, self, &terminal);
         let mut grid_cells = Vec::new();
         for cell in &mut content {
             grid_cells.push(cell);
@@ -527,11 +513,10 @@ impl Display {
         }
 
         if let Some(message) = message_buffer.message() {
-            let search_offset = if search_state.regex().is_some() { 1 } else { 0 };
             let text = message.text(&size_info);
 
             // Create a new rectangle for the background.
-            let start_line = size_info.screen_lines() + search_offset;
+            let start_line = size_info.screen_lines();
             let y = size_info.cell_height().mul_add(start_line as f32, size_info.padding_y());
 
             let bg = match message.ty() {
@@ -563,26 +548,8 @@ impl Display {
         }
 
         self.draw_render_timer(config, &size_info);
-
         // Handle search and IME positioning.
-        let ime_position = match search_state.regex() {
-            Some(regex) => {
-                let search_label = match search_state.direction() {
-                    Direction::Right => FORWARD_SEARCH_LABEL,
-                    Direction::Left => BACKWARD_SEARCH_LABEL,
-                };
-
-                let search_text = Self::format_search(&size_info, regex, search_label);
-
-                // Render the search bar.
-                self.draw_search(config, &size_info, &search_text);
-
-                // Compute IME position.
-                let line = Line(size_info.screen_lines() as i32 + 1);
-                Point::new(line, Column(search_text.chars().count() - 1))
-            },
-            None => cursor_point,
-        };
+        let ime_position = cursor_point;
 
         // Update IME position.
         self.window.update_ime_position(ime_position, &self.size_info);
@@ -609,54 +576,6 @@ impl Display {
     pub fn update_config(&mut self, config: &Config) {
         self.visual_bell.update_config(&config.ui_config.bell);
         self.colors = List::from(&config.ui_config.colors);
-    }
-
-    /// Format search regex to account for the cursor and fullwidth characters.
-    fn format_search(size_info: &SizeInfo, search_regex: &str, search_label: &str) -> String {
-        // Add spacers for wide chars.
-        let mut formatted_regex = String::with_capacity(search_regex.len());
-        for c in search_regex.chars() {
-            formatted_regex.push(c);
-            if c.width() == Some(2) {
-                formatted_regex.push(' ');
-            }
-        }
-
-        // Add cursor to show whitespace.
-        formatted_regex.push('_');
-
-        // Truncate beginning of the search regex if it exceeds the viewport width.
-        let num_cols = size_info.columns();
-        let label_len = search_label.chars().count();
-        let regex_len = formatted_regex.chars().count();
-        let truncate_len = min((regex_len + label_len).saturating_sub(num_cols), regex_len);
-        let index = formatted_regex.char_indices().nth(truncate_len).map(|(i, _c)| i).unwrap_or(0);
-        let truncated_regex = &formatted_regex[index..];
-
-        // Add search label to the beginning of the search regex.
-        let mut bar_text = format!("{}{}", search_label, truncated_regex);
-
-        // Make sure the label alone doesn't exceed the viewport width.
-        bar_text.truncate(num_cols);
-
-        bar_text
-    }
-
-    /// Draw current search regex.
-    fn draw_search(&mut self, config: &Config, size_info: &SizeInfo, text: &str) {
-        let glyph_cache = &mut self.glyph_cache;
-        let num_cols = size_info.columns();
-
-        // Assure text length is at least num_cols.
-        let text = format!("{:<1$}", text, num_cols);
-
-        let point = Point::new(size_info.screen_lines(), Column(0));
-        let fg = config.ui_config.colors.search_bar_foreground();
-        let bg = config.ui_config.colors.search_bar_background();
-
-        self.renderer.with_api(&config.ui_config, size_info, |mut api| {
-            api.render_string(glyph_cache, point, fg, bg, &text);
-        });
     }
 
     /// Draw render timer.

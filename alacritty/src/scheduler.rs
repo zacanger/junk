@@ -13,7 +13,6 @@ type Event = GlutinEvent<'static, AlacrittyEvent>;
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum TimerId {
     SelectionScrolling,
-    DelayedSearch,
     BlinkCursor,
 }
 
