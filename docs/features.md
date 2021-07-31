@@ -1,8 +1,8 @@
 # Features
 
-This document gives an overview over Alacritty's features beyond its terminal
+This document gives an overview over Zterm's features beyond its terminal
 emulation capabilities. To get a list with supported control sequences take a
-look at [Alacritty's escape sequence support](./escape_support.md).
+look at [Zterm's escape sequence support](./escape_support.md).
 
 ### Selection
 
@@ -14,4 +14,4 @@ line (<kbd>Shift</kbd> <kbd>v</kbd>) and block selection (<kbd>Ctrl</kbd>
 <kbd>v</kbd>). You can also toggle between them while the selection is still
 active.
 
-[configuration file]: ../alacritty.yml
+[configuration file]: ../zterm.yml

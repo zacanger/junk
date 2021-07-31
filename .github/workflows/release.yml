@@ -20,8 +20,8 @@ jobs:
         run: make dmg
       - name: Upload Application
         run: |
-          mv ./target/release/osx/Alacritty.dmg ./Alacritty-${GITHUB_REF##*/}.dmg
-          ./.github/workflows/upload_asset.sh ./Alacritty-${GITHUB_REF##*/}.dmg $GITHUB_TOKEN
+          mv ./target/release/osx/Zterm.dmg ./Zterm-${GITHUB_REF##*/}.dmg
+          ./.github/workflows/upload_asset.sh ./Zterm-${GITHUB_REF##*/}.dmg $GITHUB_TOKEN
 
   windows:
     runs-on: windows-latest
@@ -38,22 +38,22 @@ jobs:
         run: cargo build --release
       - name: Upload portable executable
         run: |
-          cp ./target/release/alacritty.exe ./Alacritty-${GITHUB_REF##*/}-portable.exe
+          cp ./target/release/zterm.exe ./Zterm-${GITHUB_REF##*/}-portable.exe
           ./.github/workflows/upload_asset.sh \
-            ./Alacritty-${GITHUB_REF##*/}-portable.exe $GITHUB_TOKEN
+            ./Zterm-${GITHUB_REF##*/}-portable.exe $GITHUB_TOKEN
       - name: Install WiX
         run: nuget install WiX
       - name: Crate msi installer
         run: |
           ./WiX.*/tools/candle.exe -nologo -arch "x64" -ext WixUIExtension -ext WixUtilExtension \
-            -out "./alacritty.wixobj" "extra/windows/wix/alacritty.wxs"
+            -out "./zterm.wixobj" "extra/windows/wix/zterm.wxs"
           ./WiX.*/tools/light.exe -nologo -ext WixUIExtension -ext WixUtilExtension \
-            -out "./Alacritty-${GITHUB_REF##*/}-installer.msi" -sice:ICE61 -sice:ICE91 \
-            "./alacritty.wixobj"
+            -out "./Zterm-${GITHUB_REF##*/}-installer.msi" -sice:ICE61 -sice:ICE91 \
+            "./zterm.wixobj"
       - name: Upload msi installer
         run: |
           ./.github/workflows/upload_asset.sh \
-            ./Alacritty-${GITHUB_REF##*/}-installer.msi $GITHUB_TOKEN
+            ./Zterm-${GITHUB_REF##*/}-installer.msi $GITHUB_TOKEN
 
   linux:
     runs-on: ubuntu-latest
@@ -67,15 +67,15 @@ jobs:
       - name: Test
         run: cargo test --release
       - name: Gzip manpage
-        run: gzip -c "./extra/alacritty.man" > "./alacritty.1.gz"
+        run: gzip -c "./extra/zterm.man" > "./zterm.1.gz"
       - name: Upload Assets
         run: |
-          mv ./extra/logo/alacritty-term.svg ./Alacritty.svg
-          ./.github/workflows/upload_asset.sh ./Alacritty.svg $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./alacritty.1.gz $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./extra/completions/alacritty.bash $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./extra/completions/alacritty.fish $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./extra/completions/_alacritty $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./extra/linux/Alacritty.desktop $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./extra/alacritty.info $GITHUB_TOKEN
-          ./.github/workflows/upload_asset.sh ./alacritty.yml $GITHUB_TOKEN
+          mv ./extra/logo/zterm-term.svg ./Zterm.svg
+          ./.github/workflows/upload_asset.sh ./Zterm.svg $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./zterm.1.gz $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./extra/completions/zterm.bash $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./extra/completions/zterm.fish $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./extra/completions/_zterm $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./extra/linux/Zterm.desktop $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./extra/zterm.info $GITHUB_TOKEN
+          ./.github/workflows/upload_asset.sh ./zterm.yml $GITHUB_TOKEN

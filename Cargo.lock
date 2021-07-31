@@ -15,73 +15,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
 
 [[package]]
-name = "alacritty"
-version = "0.10.0-dev"
-dependencies = [
- "alacritty_config_derive",
- "alacritty_terminal",
- "bitflags",
- "clap",
- "cocoa 0.24.0",
- "copypasta",
- "crossfont",
- "dirs",
- "fnv",
- "gl_generator",
- "glutin",
- "libc",
- "log",
- "notify",
- "objc",
- "parking_lot",
- "png",
- "raw-window-handle",
- "serde",
- "serde_json",
- "serde_yaml",
- "time",
- "unicode-width",
- "wayland-client",
- "x11-dl",
- "xdg",
-]
-
-[[package]]
-name = "alacritty_config_derive"
-version = "0.1.0"
-dependencies = [
- "log",
- "proc-macro2",
- "quote",
- "serde",
- "serde_yaml",
- "syn",
-]
-
-[[package]]
-name = "alacritty_terminal"
-version = "0.15.1-dev"
-dependencies = [
- "alacritty_config_derive",
- "base64",
- "bitflags",
- "dirs",
- "libc",
- "log",
- "mio",
- "mio-extras",
- "nix 0.22.0",
- "parking_lot",
- "regex-automata",
- "serde",
- "serde_json",
- "serde_yaml",
- "signal-hook",
- "unicode-width",
- "vte",
-]
-
-[[package]]
 name = "andrew"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1870,4 +1803,71 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
 dependencies = [
  "linked-hash-map",
+]
+
+[[package]]
+name = "zterm"
+version = "0.10.0-dev"
+dependencies = [
+ "bitflags",
+ "clap",
+ "cocoa 0.24.0",
+ "copypasta",
+ "crossfont",
+ "dirs",
+ "fnv",
+ "gl_generator",
+ "glutin",
+ "libc",
+ "log",
+ "notify",
+ "objc",
+ "parking_lot",
+ "png",
+ "raw-window-handle",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "time",
+ "unicode-width",
+ "wayland-client",
+ "x11-dl",
+ "xdg",
+ "zterm_config_derive",
+ "zterm_terminal",
+]
+
+[[package]]
+name = "zterm_config_derive"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_yaml",
+ "syn",
+]
+
+[[package]]
+name = "zterm_terminal"
+version = "0.15.1-dev"
+dependencies = [
+ "base64",
+ "bitflags",
+ "dirs",
+ "libc",
+ "log",
+ "mio",
+ "mio-extras",
+ "nix 0.22.0",
+ "parking_lot",
+ "regex-automata",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "signal-hook",
+ "unicode-width",
+ "vte",
+ "zterm_config_derive",
 ]

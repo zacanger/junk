@@ -1,23 +1,12 @@
-TARGET = alacritty
-
-ASSETS_DIR = extra
-RELEASE_DIR = target/release
-MANPAGE = $(ASSETS_DIR)/alacritty.man
-TERMINFO = $(ASSETS_DIR)/alacritty.info
-
-vpath $(TARGET) $(RELEASE_DIR)
-
 all: build
 
-build: | $(TARGET)
-$(TARGET):
+build:
 	cargo build
 
-release: | $(TARGET)
-$(TARGET):
+release:
 	cargo build --release
 
-.PHONY: build clean $(TARGET)
+.PHONY: build clean
 
 clean:
 	-rm -rf target

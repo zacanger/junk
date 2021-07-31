@@ -1,8 +1,8 @@
 [workspace]
 members = [
-    "alacritty",
-    "alacritty_terminal",
-    "alacritty_config_derive",
+    "zterm",
+    "zterm_terminal",
+    "zterm_config_derive",
 ]
 
 [profile.release]
