@@ -112,7 +112,7 @@ struct Size(FontSize);
 
 impl Default for Size {
     fn default() -> Self {
-        Self(FontSize::new(11.))
+        Self(FontSize::new(14.))
     }
 }
 

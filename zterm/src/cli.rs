@@ -86,7 +86,7 @@ impl Options {
                     .takes_value(true)
                     .use_delimiter(true)
                     .help(&format!(
-                        "Defines window class/app_id on X11/Wayland [default: {}]",
+                        "Defines window class/app_id on X11 [default: {}]",
                         DEFAULT_NAME
                     )),
             )

@@ -51,10 +51,8 @@ objc = "0.2.2"
 
 [target.'cfg(not(any(target_os="windows", target_os="macos")))'.dependencies]
 x11-dl = { version = "2", optional = true }
-wayland-client = { version = "0.28.0", features = ["dlopen"], optional = true }
 
 [features]
-default = ["wayland", "x11"]
+default = ["x11"]
 x11 = ["copypasta/x11", "glutin/x11", "x11-dl", "png"]
-wayland = ["copypasta/wayland", "glutin/wayland", "wayland-client"]
 nightly = []

@@ -8,17 +8,6 @@ use {
 };
 
 #[rustfmt::skip]
-#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-use {
-    wayland_client::protocol::wl_surface::WlSurface,
-    wayland_client::{Attached, EventQueue, Proxy},
-    glutin::platform::unix::EventLoopWindowTargetExtUnix,
-
-    crate::config::color::Colors,
-    crate::display::wayland_theme::ZtermWaylandTheme,
-};
-
-#[rustfmt::skip]
 #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 use {
     std::io::Cursor,
@@ -118,7 +107,6 @@ fn create_gl_window<E>(
     mut window: WindowBuilder,
     event_loop: &EventLoop<E>,
     srgb: bool,
-    vsync: bool,
     dimensions: Option<PhysicalSize<u32>>,
 ) -> Result<WindowedContext<PossiblyCurrent>> {
     if let Some(dimensions) = dimensions {
@@ -127,7 +115,6 @@ fn create_gl_window<E>(
 
     let windowed_context = ContextBuilder::new()
         .with_srgb(srgb)
-        .with_vsync(vsync)
         .with_hardware_acceleration(None)
         .build_windowed(window, event_loop)?;
 
@@ -145,10 +132,6 @@ pub struct Window {
     #[cfg(not(any(target_os = "macos")))]
     pub should_draw: Arc<AtomicBool>,
 
-    /// Attached Wayland surface to request new frame events.
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-    pub wayland_surface: Option<Attached<WlSurface>>,
-
     /// Cached DPR for quickly scaling pixel sizes.
     pub dpr: f64,
 
@@ -165,22 +148,14 @@ impl Window {
         event_loop: &EventLoop<E>,
         config: &Config,
         size: Option<PhysicalSize<u32>>,
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-        wayland_event_queue: Option<&EventQueue>,
     ) -> Result<Window> {
         let window_config = &config.ui_config.window;
         let window_builder = Window::get_platform_window(&window_config.title, window_config);
 
-        // Check if we're running Wayland to disable vsync.
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-        let is_wayland = event_loop.is_wayland();
-        #[cfg(any(not(feature = "wayland"), target_os = "macos"))]
-        let is_wayland = false;
-
         let windowed_context =
-            create_gl_window(window_builder.clone(), event_loop, false, !is_wayland, size)
+            create_gl_window(window_builder.clone(), event_loop, false, size)
                 .or_else(|_| {
-                    create_gl_window(window_builder, event_loop, true, !is_wayland, size)
+                    create_gl_window(window_builder, event_loop, true, size)
                 })?;
 
         // Text cursor.
@@ -191,33 +166,17 @@ impl Window {
         gl::load_with(|symbol| windowed_context.get_proc_address(symbol) as *const _);
 
         #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-        if !is_wayland {
-            // On X11, embed the window inside another if the parent ID has been set.
-            if let Some(parent_window_id) = window_config.embed {
-                x_embed_window(windowed_context.window(), parent_window_id);
-            }
+        // On X11, embed the window inside another if the parent ID has been set.
+        if let Some(parent_window_id) = window_config.embed {
+            x_embed_window(windowed_context.window(), parent_window_id);
         }
-
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-        let wayland_surface = if is_wayland {
-            // Apply client side decorations theme.
-            let theme = ZtermWaylandTheme::new(&config.ui_config.colors);
-            windowed_context.window().set_wayland_theme(theme);
-
-            // Attach surface to Zterm's internal wayland queue to handle frame callbacks.
-            let surface = windowed_context.window().wayland_surface().unwrap();
-            let proxy: Proxy<WlSurface> = unsafe { Proxy::from_c_ptr(surface as _) };
-            Some(proxy.attach(wayland_event_queue.as_ref().unwrap().token()))
-        } else {
-            None
-        };
 
         #[allow(unused_mut)]
         let mut dpr = windowed_context.window().scale_factor();
 
         // Handle winit reporting invalid values due to incorrect XRandr monitor metrics.
         #[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
-        if !is_wayland && dpr > MAX_X11_DPR {
+        if dpr > MAX_X11_DPR {
             dpr = 1.;
         }
 
@@ -227,8 +186,6 @@ impl Window {
             windowed_context,
             #[cfg(not(any(target_os = "macos")))]
             should_draw: Arc::new(AtomicBool::new(true)),
-            #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-            wayland_surface,
             dpr,
         })
     }
@@ -288,9 +245,6 @@ impl Window {
 
         #[cfg(feature = "x11")]
         let builder = builder.with_window_icon(icon.ok());
-
-        #[cfg(feature = "wayland")]
-        let builder = builder.with_app_id(window_config.class.instance.to_owned());
 
         #[cfg(feature = "x11")]
         let builder = builder.with_class(
@@ -357,16 +311,6 @@ impl Window {
     #[cfg(not(any(target_os = "macos")))]
     pub fn set_maximized(&self, maximized: bool) {
         self.window().set_maximized(maximized);
-    }
-
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-    pub fn wayland_surface(&self) -> Option<&Attached<WlSurface>> {
-        self.wayland_surface.as_ref()
-    }
-
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-    pub fn set_wayland_theme(&mut self, colors: &Colors) {
-        self.window().set_wayland_theme(ZtermWaylandTheme::new(colors));
     }
 
     /// Adjust the IME editor position according to the new location of the cursor.

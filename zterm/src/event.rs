@@ -20,8 +20,6 @@ use glutin::dpi::PhysicalSize;
 use glutin::event::{ElementState, Event as GlutinEvent, ModifiersState, MouseButton, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop, EventLoopProxy, EventLoopWindowTarget};
 use glutin::platform::run_return::EventLoopExtRunReturn;
-#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-use glutin::platform::unix::EventLoopWindowTargetExtUnix;
 use log::info;
 use serde_json as json;
 
@@ -479,25 +477,7 @@ impl<N: Notify + OnResize> Processor<N> {
 
     /// Return `true` if `event_queue` is empty, `false` otherwise.
     #[inline]
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-    fn event_queue_empty(&mut self) -> bool {
-        let wayland_event_queue = match self.display.wayland_event_queue.as_mut() {
-            Some(wayland_event_queue) => wayland_event_queue,
-            // Since frame callbacks do not exist on X11, just check for event queue.
-            None => return self.event_queue.is_empty(),
-        };
-
-        // Check for pending frame callbacks on Wayland.
-        let events_dispatched = wayland_event_queue
-            .dispatch_pending(&mut (), |_, _, _| {})
-            .expect("failed to dispatch event queue");
-
-        self.event_queue.is_empty() && events_dispatched == 0
-    }
-
-    /// Return `true` if `event_queue` is empty, `false` otherwise.
-    #[inline]
-    #[cfg(any(not(feature = "wayland"), target_os = "macos"))]
+    #[cfg(any(target_os = "macos"))]
     fn event_queue_empty(&mut self) -> bool {
         self.event_queue.is_empty()
     }
@@ -639,7 +619,7 @@ impl<N: Notify + OnResize> Processor<N> {
                     let font = processor.ctx.config.ui_config.font.clone();
                     display_update_pending.set_font(font.with_size(*processor.ctx.font_size));
 
-                    // Resize to event's dimensions, since no resize event is emitted on Wayland.
+                    // Resize to event's dimensions.
                     display_update_pending.set_dimensions(PhysicalSize::new(width, height));
 
                     processor.ctx.window().dpr = scale_factor;
@@ -845,11 +825,6 @@ impl<N: Notify + OnResize> Processor<N> {
             || processor.ctx.config.ui_config.window.title != config.ui_config.window.title
         {
             processor.ctx.window().set_title(&config.ui_config.window.title);
-        }
-
-        #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
-        if processor.ctx.event_loop.is_wayland() {
-            processor.ctx.window().set_wayland_theme(&config.ui_config.colors);
         }
 
         // Set subpixel anti-aliasing.

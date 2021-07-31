@@ -3,8 +3,8 @@
 #![warn(rust_2018_idioms, future_incompatible)]
 #![deny(clippy::all, clippy::if_not_else, clippy::enum_glob_use)]
 #![cfg_attr(feature = "cargo-clippy", deny(warnings))]
-#[cfg(not(any(feature = "x11", feature = "wayland", target_os = "macos")))]
-compile_error!(r#"at least one of the "x11"/"wayland" features must be enabled"#);
+#[cfg(not(any(feature = "x11", target_os = "macos")))]
+compile_error!(r#"at least one of the "x11" features must be enabled"#);
 
 #[cfg(target_os = "macos")]
 use std::env;
