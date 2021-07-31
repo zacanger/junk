@@ -1,17 +1,17 @@
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 use std::ffi::c_void;
 
 use log::{debug, warn};
 
 use alacritty_terminal::term::ClipboardType;
 
-#[cfg(any(test, not(any(feature = "x11", target_os = "macos", windows))))]
+#[cfg(any(test, not(any(feature = "x11", target_os = "macos"))))]
 use copypasta::nop_clipboard::NopClipboardContext;
-#[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
 use copypasta::wayland_clipboard;
-#[cfg(all(feature = "x11", not(any(target_os = "macos", windows))))]
+#[cfg(all(feature = "x11", not(any(target_os = "macos"))))]
 use copypasta::x11_clipboard::{Primary as X11SelectionClipboard, X11ClipboardContext};
-#[cfg(any(feature = "x11", target_os = "macos", windows))]
+#[cfg(any(feature = "x11", target_os = "macos"))]
 use copypasta::ClipboardContext;
 use copypasta::ClipboardProvider;
 
@@ -21,12 +21,12 @@ pub struct Clipboard {
 }
 
 impl Clipboard {
-    #[cfg(any(not(feature = "wayland"), target_os = "macos", windows))]
+    #[cfg(any(not(feature = "wayland"), target_os = "macos"))]
     pub fn new() -> Self {
         Self::default()
     }
 
-    #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
+    #[cfg(all(feature = "wayland", not(any(target_os = "macos"))))]
     pub unsafe fn new(display: Option<*mut c_void>) -> Self {
         match display {
             Some(display) => {
@@ -40,7 +40,7 @@ impl Clipboard {
 
     /// Used for tests and to handle missing clipboard provider when built without the `x11`
     /// feature.
-    #[cfg(any(test, not(any(feature = "x11", target_os = "macos", windows))))]
+    #[cfg(any(test, not(any(feature = "x11", target_os = "macos"))))]
     pub fn new_nop() -> Self {
         Self { clipboard: Box::new(NopClipboardContext::new().unwrap()), selection: None }
     }

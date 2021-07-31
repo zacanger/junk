@@ -2,7 +2,6 @@
 
 use std::borrow::Cow;
 use std::cmp::{max, min};
-use std::collections::VecDeque;
 use std::env;
 use std::f32;
 use std::fmt::Debug;
@@ -31,7 +30,7 @@ use crossfont::{self, Size};
 use alacritty_terminal::config::LOG_TARGET_CONFIG;
 use alacritty_terminal::event::{Event as TerminalEvent, EventListener, Notify, OnResize};
 use alacritty_terminal::grid::{Dimensions, Scroll};
-use alacritty_terminal::index::{Boundary, Column, Direction, Line, Point, Side};
+use alacritty_terminal::index::{Column, Point, Side};
 use alacritty_terminal::selection::{Selection, SelectionType};
 use alacritty_terminal::sync::FairMutex;
 use alacritty_terminal::term::{ClipboardType, SizeInfo, Term, TermMode};
@@ -110,8 +109,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
     }
 
     fn scroll(&mut self, scroll: Scroll) {
-        let old_offset = self.terminal.grid().display_offset() as i32;
-
         self.terminal.scroll_display(scroll);
 
         if self.mouse.left_button_state == ElementState::Pressed
@@ -940,14 +937,9 @@ impl<N: Notify + OnResize> Processor<N> {
     ) where
         T: EventListener,
     {
-        // Compute cursor positions before resize.
-        let num_lines = terminal.screen_lines();
-        let cursor_at_bottom = terminal.grid().cursor.point.line + 1 == num_lines;
-
         self.display.handle_update(
             terminal,
             &mut self.notifier,
-            &self.message_buffer,
             &self.config,
             display_update_pending,
         );

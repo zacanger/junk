@@ -22,7 +22,7 @@ use glutin::window::CursorIcon;
 use alacritty_terminal::ansi::{ClearMode, Handler};
 use alacritty_terminal::event::EventListener;
 use alacritty_terminal::grid::{Dimensions, Scroll};
-use alacritty_terminal::index::{Column, Direction, Point, Side};
+use alacritty_terminal::index::{Column, Point, Side};
 use alacritty_terminal::selection::SelectionType;
 use alacritty_terminal::term::{ClipboardType, SizeInfo, Term, TermMode};
 

@@ -1,13 +1,10 @@
-use std::borrow::Cow;
-use std::cmp::{max, min};
 use std::mem;
-use std::ops::{Deref, DerefMut, RangeInclusive};
 
 use alacritty_terminal::ansi::{Color, CursorShape, NamedColor};
 use alacritty_terminal::config::Config;
 use alacritty_terminal::event::EventListener;
-use alacritty_terminal::grid::{Dimensions, Indexed};
-use alacritty_terminal::index::{Column, Direction, Line, Point};
+use alacritty_terminal::grid::{Indexed};
+use alacritty_terminal::index::{Point};
 use alacritty_terminal::term::cell::{Cell, Flags};
 use alacritty_terminal::term::color::{CellRgb, Rgb};
 use alacritty_terminal::term::{RenderableContent as TerminalContent, Term};

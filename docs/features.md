@@ -14,26 +14,6 @@ line (<kbd>Shift</kbd> <kbd>v</kbd>) and block selection (<kbd>Ctrl</kbd>
 <kbd>v</kbd>). You can also toggle between them while the selection is still
 active.
 
-## Search
-
-Search allows you to find anything in Alacritty's scrollback buffer. You can
-search forward using <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>f</kbd> and
-backward using <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>b</kbd>.
-
-### Vi Search
-
-In vi mode the search is bound to <kbd>/</kbd> for forward and <kbd>?</kbd> for
-backward search. This allows you to move around quickly and help with selecting
-content. The `SearchStart` and `SearchEnd` keybinding actions can be bound if
-you're looking for a way to jump to the start or the end of a match.
-
-### Normal Search
-
-During normal search you don't have the opportunity to move around freely, but
-you can still jump between matches using <kbd>Enter</kbd> and <kbd>Shift</kbd>
-<kbd>Enter</kbd>. After leaving search with <kbd>Escape</kbd> your active match
-stays selected, allowing you to easily copy it.
-
 ## Hints
 
 Terminal hints allow easily interacting with visible text without having to

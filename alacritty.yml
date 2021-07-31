@@ -110,7 +110,6 @@
     # Default:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
-    #   - (Windows) Consolas
     #family: monospace
 
     # The `style` can be specified to pick a specific face.
@@ -345,7 +344,6 @@
 # Default:
 #   - (macOS) /bin/bash --login
 #   - (Linux/BSD) user login shell
-#   - (Windows) powershell
 #shell:
 #  program: /bin/bash
 #  args:
@@ -527,7 +525,7 @@
   #- { key: Home,      mods: Shift,   mode: ~Alt,        action: ScrollToTop,   }
   #- { key: End,       mods: Shift,   mode: ~Alt,        action: ScrollToBottom }
 
-  # (Windows, Linux, and BSD only)
+  # (Linux and BSD only)
   #- { key: V,              mods: Control|Shift, mode: ~Vi,        action: Paste            }
   #- { key: C,              mods: Control|Shift,                   action: Copy             }
   #- { key: Insert,         mods: Shift,                           action: PasteSelection   }
@@ -537,9 +535,6 @@
   #- { key: NumpadAdd,      mods: Control,                         action: IncreaseFontSize }
   #- { key: Minus,          mods: Control,                         action: DecreaseFontSize }
   #- { key: NumpadSubtract, mods: Control,                         action: DecreaseFontSize }
-
-  # (Windows only)
-  #- { key: Return,   mods: Alt,           action: ToggleFullscreen }
 
   # (macOS only)
   #- { key: Key0,           mods: Command,                    action: ResetFontSize         }

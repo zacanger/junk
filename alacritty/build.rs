@@ -14,9 +14,6 @@ fn main() {
     Registry::new(Api::Gl, (3, 3), Profile::Core, Fallbacks::All, ["GL_ARB_blend_func_extended"])
         .write_bindings(GlobalGenerator, &mut file)
         .unwrap();
-
-    #[cfg(windows)]
-    embed_resource::compile("./windows/windows.rc");
 }
 
 fn commit_hash() -> String {

@@ -1,7 +1,6 @@
 //! The display subsystem including window management, font rasterization, and
 //! GPU drawing.
 
-use std::cmp::min;
 use std::convert::TryFrom;
 use std::f64;
 use std::fmt::{self, Formatter};
@@ -15,7 +14,6 @@ use glutin::event_loop::EventLoop;
 use glutin::platform::unix::EventLoopWindowTargetExtUnix;
 use log::{debug, info};
 use parking_lot::MutexGuard;
-use unicode_width::UnicodeWidthChar;
 #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
 use wayland_client::{Display as WaylandDisplay, EventQueue};
 
@@ -24,7 +22,7 @@ use crossfont::{self, Rasterize, Rasterizer};
 use alacritty_terminal::ansi::NamedColor;
 use alacritty_terminal::event::{EventListener, OnResize};
 use alacritty_terminal::grid::Dimensions as _;
-use alacritty_terminal::index::{Column, Direction, Line, Point};
+use alacritty_terminal::index::{Column, Line, Point};
 use alacritty_terminal::term::{SizeInfo, Term, MIN_COLUMNS, MIN_SCREEN_LINES};
 
 use crate::config::font::Font;
@@ -381,7 +379,6 @@ impl Display {
         &mut self,
         terminal: &mut Term<T>,
         pty_resize_handle: &mut dyn OnResize,
-        message_buffer: &MessageBuffer,
         config: &Config,
         update_pending: DisplayUpdate,
     ) where
@@ -418,10 +415,6 @@ impl Display {
             padding.1,
             config.ui_config.window.dynamic_padding,
         );
-
-        // Update number of column/lines in the viewport.
-        let message_bar_lines =
-            message_buffer.message().map(|m| m.text(&self.size_info).len()).unwrap_or(0);
 
         // Resize PTY.
         pty_resize_handle.on_resize(&self.size_info);
@@ -548,7 +541,7 @@ impl Display {
         }
 
         self.draw_render_timer(config, &size_info);
-        // Handle search and IME positioning.
+        // Handle IME positioning.
         let ime_position = cursor_point;
 
         // Update IME position.

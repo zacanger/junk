@@ -92,8 +92,6 @@ impl SelectionRange {
 pub enum SelectionType {
     Simple,
     Block,
-    Semantic,
-    Lines,
 }
 
 /// Describes a region of a 2-dimensional area.
@@ -219,7 +217,6 @@ impl Selection {
                         && start.side == Side::Left
                         && end.side == Side::Right)
             },
-            SelectionType::Semantic | SelectionType::Lines => false,
         }
     }
 
@@ -288,37 +285,7 @@ impl Selection {
         match self.ty {
             SelectionType::Simple => self.range_simple(start, end, columns),
             SelectionType::Block => self.range_block(start, end),
-            SelectionType::Semantic => Some(Self::range_semantic(term, start.point, end.point)),
-            SelectionType::Lines => Some(Self::range_lines(term, start.point, end.point)),
         }
-    }
-
-    fn range_semantic<T>(term: &Term<T>, mut start: Point, mut end: Point) -> SelectionRange {
-        if start == end {
-            if let Some(matching) = term.bracket_search(start) {
-                if (matching.line == start.line && matching.column < start.column)
-                    || (matching.line > start.line)
-                {
-                    start = matching;
-                } else {
-                    end = matching;
-                }
-
-                return SelectionRange { start, end, is_block: false };
-            }
-        }
-
-        let start = term.semantic_search_left(start);
-        let end = term.semantic_search_right(end);
-
-        SelectionRange { start, end, is_block: false }
-    }
-
-    fn range_lines<T>(term: &Term<T>, start: Point, end: Point) -> SelectionRange {
-        let start = term.line_search_left(start);
-        let end = term.line_search_right(end);
-
-        SelectionRange { start, end, is_block: false }
     }
 
     fn range_simple(
@@ -516,7 +483,7 @@ mod tests {
     fn line_selection() {
         let size = (10, 5);
         let mut selection =
-            Selection::new(SelectionType::Lines, Point::new(Line(9), Column(1)), Side::Left);
+            Selection::new(Point::new(Line(9), Column(1)), Side::Left);
         selection.update(Point::new(Line(4), Column(1)), Side::Right);
         selection = selection.rotate(&size, &(Line(0)..Line(size.0 as i32)), 4).unwrap();
 
@@ -531,7 +498,7 @@ mod tests {
     fn semantic_selection() {
         let size = (10, 5);
         let mut selection =
-            Selection::new(SelectionType::Semantic, Point::new(Line(9), Column(3)), Side::Left);
+            Selection::new(Point::new(Line(9), Column(3)), Side::Left);
         selection.update(Point::new(Line(4), Column(1)), Side::Right);
         selection = selection.rotate(&size, &(Line(0)..Line(size.0 as i32)), 4).unwrap();
 
@@ -648,7 +615,7 @@ mod tests {
     #[test]
     fn range_intersection() {
         let mut selection =
-            Selection::new(SelectionType::Lines, Point::new(Line(3), Column(1)), Side::Left);
+            Selection::new(Point::new(Line(3), Column(1)), Side::Left);
         selection.update(Point::new(Line(6), Column(1)), Side::Right);
 
         assert!(selection.intersects_range(..));

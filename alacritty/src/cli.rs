@@ -11,10 +11,8 @@ use crate::config::serde_utils;
 use crate::config::window::DEFAULT_NAME;
 use crate::config::Config;
 
-#[cfg(not(any(target_os = "macos", windows)))]
+#[cfg(not(any(target_os = "macos")))]
 const CONFIG_PATH: &str = "$XDG_CONFIG_HOME/alacritty/alacritty.yml";
-#[cfg(windows)]
-const CONFIG_PATH: &str = "%APPDATA%\\alacritty\\alacritty.yml";
 #[cfg(target_os = "macos")]
 const CONFIG_PATH: &str = "$HOME/.config/alacritty/alacritty.yml";
 

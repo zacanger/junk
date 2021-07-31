@@ -8,8 +8,6 @@ const INACTIVE_OPACITY: u8 = 127;
 
 #[derive(Debug, Clone)]
 pub struct AlacrittyWaylandTheme {
-    pub foreground: ARGBColor,
-    pub background: ARGBColor,
     pub dim_foreground: ARGBColor,
     pub hovered_close_icon: ARGBColor,
     pub hovered_maximize_icon: ARGBColor,
@@ -21,15 +19,11 @@ impl AlacrittyWaylandTheme {
         let hovered_close_icon = colors.normal.red.into_rgba();
         let hovered_maximize_icon = colors.normal.green.into_rgba();
         let hovered_minimize_icon = colors.normal.yellow.into_rgba();
-        let foreground = colors.search_bar_foreground().into_rgba();
-        let background = colors.search_bar_background().into_rgba();
 
         let mut dim_foreground = foreground;
         dim_foreground.a = INACTIVE_OPACITY;
 
         Self {
-            foreground,
-            background,
             dim_foreground,
             hovered_close_icon,
             hovered_maximize_icon,

@@ -23,7 +23,6 @@ use crate::term::color::{Colors, Rgb};
 
 pub mod cell;
 pub mod color;
-pub mod search;
 
 /// Minimum number of columns.
 ///
@@ -143,7 +142,7 @@ impl SizeInfo {
 
     /// Check if coordinates are inside the terminal grid.
     ///
-    /// The padding, message bar or search are not counted as part of the grid.
+    /// The padding or message bar are not counted as part of the grid.
     #[inline]
     pub fn contains_point(&self, x: usize, y: usize) -> bool {
         x <= (self.padding_x + self.columns as f32 * self.cell_width) as usize
