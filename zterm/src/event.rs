@@ -10,7 +10,7 @@ use std::io::Write;
 use std::mem;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
 use glutin::dpi::PhysicalSize;
 use glutin::event::{ElementState, Event as GlutinEvent, ModifiersState, MouseButton, WindowEvent};
@@ -37,7 +37,7 @@ use crate::display::{self, Display, DisplayUpdate};
 use crate::input::{self, ActionContext as _};
 use crate::macos;
 use crate::message_bar::{Message, MessageBuffer};
-use crate::scheduler::{Scheduler, TimerId};
+use crate::scheduler::{Scheduler};
 
 /// Events dispatched through the UI event loop.
 #[derive(Debug, Clone)]
@@ -47,7 +47,6 @@ pub enum Event {
     Scroll(Scroll),
     ConfigReload(PathBuf),
     Message(Message),
-    BlinkCursor,
 }
 
 impl From<Event> for GlutinEvent<'_, Event> {
@@ -200,20 +199,11 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 
     /// Handle keyboard typing start.
     ///
-    /// This will temporarily disable some features like terminal cursor blinking or the mouse
-    /// cursor.
+    /// This will temporarily disable some features like mouse cursor.
     ///
     /// All features are re-enabled again automatically.
     #[inline]
     fn on_typing_start(&mut self) {
-        // Disable cursor blinking.
-        let blink_interval = self.config.cursor.blink_interval();
-        if let Some(timer) = self.scheduler.get_mut(TimerId::BlinkCursor) {
-            timer.deadline = Instant::now() + Duration::from_millis(blink_interval);
-            self.display.cursor_hidden = false;
-            *self.dirty = true;
-        }
-
         // Hide mouse cursor.
         if self.config.ui_config.mouse.hide_when_typing {
             self.display.window.set_mouse_visible(false);
@@ -238,29 +228,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 }
 
 impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
-    /// Update the cursor blinking state.
-    fn update_cursor_blinking(&mut self) {
-        // Get config cursor style.
-        let cursor_style = self.config.cursor.style;
-
-        // Check terminal cursor style.
-        let terminal_blinking = self.terminal.cursor_style().blinking;
-        let blinking = cursor_style.blinking_override().unwrap_or(terminal_blinking);
-
-        // Update cursor blinking state.
-        self.scheduler.unschedule(TimerId::BlinkCursor);
-        if blinking && self.terminal.is_focused {
-            self.scheduler.schedule(
-                GlutinEvent::UserEvent(Event::BlinkCursor),
-                Duration::from_millis(self.config.cursor.blink_interval()),
-                true,
-                TimerId::BlinkCursor,
-            )
-        } else {
-            self.display.cursor_hidden = false;
-            *self.dirty = true;
-        }
-    }
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -380,12 +347,6 @@ impl<N: Notify + OnResize> Processor<N> {
         T: EventListener,
     {
         let mut scheduler = Scheduler::new();
-
-        // Start the initial cursor blinking timer.
-        if self.config.cursor.style().blinking {
-            let event: Event = TerminalEvent::CursorBlinkingChange(true).into();
-            self.event_queue.push(event.into());
-        }
 
         event_loop.run_return(|event, event_loop, control_flow| {
             if self.config.ui_config.debug.print_events {
@@ -518,10 +479,6 @@ impl<N: Notify + OnResize> Processor<N> {
                 },
                 Event::ConfigReload(path) => Self::reload_config(&path, processor),
                 Event::Scroll(scroll) => processor.ctx.scroll(scroll),
-                Event::BlinkCursor => {
-                    processor.ctx.display.cursor_hidden ^= true;
-                    *processor.ctx.dirty = true;
-                },
                 Event::Terminal(event) => match event {
                     TerminalEvent::Title(title) => {
                         let ui_config = &processor.ctx.config.ui_config;
@@ -558,9 +515,6 @@ impl<N: Notify + OnResize> Processor<N> {
                     TerminalEvent::PtyWrite(text) => processor.ctx.write_to_pty(text.into_bytes()),
                     TerminalEvent::MouseCursorDirty => processor.reset_mouse_cursor(),
                     TerminalEvent::Exit => (),
-                    TerminalEvent::CursorBlinkingChange(_) => {
-                        processor.ctx.update_cursor_blinking();
-                    },
                 },
             },
             GlutinEvent::RedrawRequested(_) => *processor.ctx.dirty = true,
@@ -605,7 +559,6 @@ impl<N: Notify + OnResize> Processor<N> {
                                 processor.ctx.window().set_mouse_visible(true);
                             }
 
-                            processor.ctx.update_cursor_blinking();
                             processor.on_focus_change(is_focused);
                         }
                     },
@@ -720,9 +673,6 @@ impl<N: Notify + OnResize> Processor<N> {
         processor.ctx.window().set_has_shadow(config.ui_config.background_opacity() >= 1.0);
 
         *processor.ctx.config = config;
-
-        // Update cursor blinking.
-        processor.ctx.update_cursor_blinking();
 
         *processor.ctx.dirty = true;
     }

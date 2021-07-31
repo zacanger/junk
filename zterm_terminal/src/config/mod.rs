@@ -1,4 +1,3 @@
-use std::cmp::max;
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -13,7 +12,6 @@ use crate::ansi::{CursorShape, CursorStyle};
 pub use crate::config::scrolling::Scrolling;
 
 pub const LOG_TARGET_CONFIG: &str = "zterm_config_derive";
-const MIN_BLINK_INTERVAL: u64 = 10;
 
 pub type MockConfig = Config<HashMap<String, serde_yaml::Value>>;
 
@@ -50,7 +48,6 @@ pub struct Cursor {
     pub unfocused_hollow: bool,
 
     thickness: Percentage,
-    blink_interval: u64,
 }
 
 impl Default for Cursor {
@@ -58,7 +55,6 @@ impl Default for Cursor {
         Self {
             thickness: Percentage(0.15),
             unfocused_hollow: true,
-            blink_interval: 750,
             style: Default::default(),
         }
     }
@@ -74,23 +70,12 @@ impl Cursor {
     pub fn style(self) -> CursorStyle {
         self.style.into()
     }
-
-    #[inline]
-    pub fn blink_interval(self) -> u64 {
-        max(self.blink_interval, MIN_BLINK_INTERVAL)
-    }
 }
 
 #[derive(Deserialize, Debug, Copy, Clone, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum ConfigCursorStyle {
     Shape(CursorShape),
-    WithBlinking {
-        #[serde(default)]
-        shape: CursorShape,
-        #[serde(default)]
-        blinking: CursorBlinking,
-    },
 }
 
 impl Default for ConfigCursorStyle {
@@ -100,53 +85,13 @@ impl Default for ConfigCursorStyle {
 }
 
 impl ConfigCursorStyle {
-    /// Check if blinking is force enabled/disabled.
-    pub fn blinking_override(&self) -> Option<bool> {
-        match self {
-            Self::Shape(_) => None,
-            Self::WithBlinking { blinking, .. } => blinking.blinking_override(),
-        }
-    }
 }
 
 impl From<ConfigCursorStyle> for CursorStyle {
     fn from(config_style: ConfigCursorStyle) -> Self {
         match config_style {
-            ConfigCursorStyle::Shape(shape) => Self { shape, blinking: false },
-            ConfigCursorStyle::WithBlinking { shape, blinking } => {
-                Self { shape, blinking: blinking.into() }
-            },
+            ConfigCursorStyle::Shape(shape) => Self { shape },
         }
-    }
-}
-
-#[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum CursorBlinking {
-    Never,
-    Off,
-    On,
-    Always,
-}
-
-impl Default for CursorBlinking {
-    fn default() -> Self {
-        CursorBlinking::Off
-    }
-}
-
-impl CursorBlinking {
-    fn blinking_override(&self) -> Option<bool> {
-        match self {
-            Self::Never => Some(false),
-            Self::Off | Self::On => None,
-            Self::Always => Some(true),
-        }
-    }
-}
-
-impl From<CursorBlinking> for bool {
-    fn from(blinking: CursorBlinking) -> bool {
-        blinking == CursorBlinking::On || blinking == CursorBlinking::Always
     }
 }
 

@@ -456,7 +456,6 @@ pub trait Handler {
 #[derive(ConfigDeserialize, Default, Debug, Eq, PartialEq, Copy, Clone, Hash)]
 pub struct CursorStyle {
     pub shape: CursorShape,
-    pub blinking: bool,
 }
 
 /// Terminal cursor shape.
@@ -514,8 +513,6 @@ pub enum Mode {
     Origin = 6,
     /// ?7
     LineWrap = 7,
-    /// ?12
-    BlinkingCursor = 12,
     /// 20
     ///
     /// NB This is actually a private mode. We should consider adding a second
@@ -560,7 +557,6 @@ impl Mode {
                 3 => Mode::ColumnMode,
                 6 => Mode::Origin,
                 7 => Mode::LineWrap,
-                12 => Mode::BlinkingCursor,
                 25 => Mode::ShowCursor,
                 1000 => Mode::ReportMouseClicks,
                 1002 => Mode::ReportCellMouseMotion,
@@ -762,10 +758,6 @@ pub enum Attr {
     Underline,
     /// Underlined twice.
     DoubleUnderline,
-    /// Blink cursor slowly.
-    BlinkSlow,
-    /// Blink cursor fast.
-    BlinkFast,
     /// Invert colors.
     Reverse,
     /// Do not display characters.
@@ -780,8 +772,6 @@ pub enum Attr {
     CancelItalic,
     /// Cancel all underlines.
     CancelUnderline,
-    /// Cancel blink.
-    CancelBlink,
     /// Cancel inversion.
     CancelReverse,
     /// Cancel text hiding.
@@ -1204,7 +1194,7 @@ where
                     },
                 };
                 let cursor_style =
-                    shape.map(|shape| CursorStyle { shape, blinking: cursor_style_id % 2 == 1 });
+                    shape.map(|shape| CursorStyle { shape });
 
                 handler.set_cursor_style(cursor_style);
             },
@@ -1298,8 +1288,6 @@ fn attrs_from_sgr_parameters(params: &mut ParamsIter<'_>) -> Vec<Option<Attr>> {
             [4, 0] => Some(Attr::CancelUnderline),
             [4, 2] => Some(Attr::DoubleUnderline),
             [4, ..] => Some(Attr::Underline),
-            [5] => Some(Attr::BlinkSlow),
-            [6] => Some(Attr::BlinkFast),
             [7] => Some(Attr::Reverse),
             [8] => Some(Attr::Hidden),
             [9] => Some(Attr::Strike),
@@ -1307,7 +1295,6 @@ fn attrs_from_sgr_parameters(params: &mut ParamsIter<'_>) -> Vec<Option<Attr>> {
             [22] => Some(Attr::CancelBoldDim),
             [23] => Some(Attr::CancelItalic),
             [24] => Some(Attr::CancelUnderline),
-            [25] => Some(Attr::CancelBlink),
             [27] => Some(Attr::CancelReverse),
             [28] => Some(Attr::CancelHidden),
             [29] => Some(Attr::CancelStrike),

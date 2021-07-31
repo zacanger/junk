@@ -29,9 +29,6 @@ pub enum Event {
     /// Write some text to the PTY.
     PtyWrite(String),
 
-    /// Cursor blinking state has changed.
-    CursorBlinkingChange(bool),
-
     /// New terminal content available.
     Wakeup,
 
@@ -53,7 +50,6 @@ impl Debug for Event {
             Event::Wakeup => write!(f, "Wakeup"),
             Event::Bell => write!(f, "Bell"),
             Event::Exit => write!(f, "Exit"),
-            Event::CursorBlinkingChange(blinking) => write!(f, "CursorBlinking({})", blinking),
         }
     }
 }

@@ -1246,9 +1246,6 @@ impl<T: EventListener> Handler for Term<T> {
         self.title = None;
 
         self.mode.insert(TermMode::default());
-
-        let blinking = self.cursor_style().blinking;
-        self.event_proxy.send_event(Event::CursorBlinkingChange(blinking));
     }
 
     #[inline]
@@ -1298,9 +1295,6 @@ impl<T: EventListener> Handler for Term<T> {
             Attr::CancelHidden => cursor.template.flags.remove(Flags::HIDDEN),
             Attr::Strike => cursor.template.flags.insert(Flags::STRIKEOUT),
             Attr::CancelStrike => cursor.template.flags.remove(Flags::STRIKEOUT),
-            _ => {
-                debug!("Term got unhandled attr: {:?}", attr);
-            },
         }
     }
 
@@ -1349,11 +1343,6 @@ impl<T: EventListener> Handler for Term<T> {
             ansi::Mode::Origin => self.mode.insert(TermMode::ORIGIN),
             ansi::Mode::ColumnMode => self.deccolm(),
             ansi::Mode::Insert => self.mode.insert(TermMode::INSERT),
-            ansi::Mode::BlinkingCursor => {
-                let style = self.cursor_style.get_or_insert(self.default_cursor_style);
-                style.blinking = true;
-                self.event_proxy.send_event(Event::CursorBlinkingChange(true));
-            },
         }
     }
 
@@ -1391,11 +1380,6 @@ impl<T: EventListener> Handler for Term<T> {
             ansi::Mode::Origin => self.mode.remove(TermMode::ORIGIN),
             ansi::Mode::ColumnMode => self.deccolm(),
             ansi::Mode::Insert => self.mode.remove(TermMode::INSERT),
-            ansi::Mode::BlinkingCursor => {
-                let style = self.cursor_style.get_or_insert(self.default_cursor_style);
-                style.blinking = false;
-                self.event_proxy.send_event(Event::CursorBlinkingChange(false));
-            },
         }
     }
 
@@ -1452,10 +1436,6 @@ impl<T: EventListener> Handler for Term<T> {
     fn set_cursor_style(&mut self, style: Option<CursorStyle>) {
         trace!("Setting cursor style {:?}", style);
         self.cursor_style = style;
-
-        // Notify UI about blinking changes.
-        let blinking = style.unwrap_or(self.default_cursor_style).blinking;
-        self.event_proxy.send_event(Event::CursorBlinkingChange(blinking));
     }
 
     #[inline]

@@ -12,7 +12,6 @@ type Event = GlutinEvent<'static, ZtermEvent>;
 /// ID uniquely identifying a timer.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum TimerId {
-    BlinkCursor,
 }
 
 /// Event scheduled to be emitted at a specific time.
@@ -81,16 +80,5 @@ impl Scheduler {
         let interval = if repeat { Some(interval) } else { None };
 
         self.timers.insert(index, Timer { interval, deadline, event, id: timer_id });
-    }
-
-    /// Cancel a scheduled event.
-    pub fn unschedule(&mut self, id: TimerId) -> Option<Event> {
-        let index = self.timers.iter().position(|timer| timer.id == id)?;
-        self.timers.remove(index).map(|timer| timer.event)
-    }
-
-    /// Access a staged event by ID.
-    pub fn get_mut(&mut self, id: TimerId) -> Option<&mut Timer> {
-        self.timers.iter_mut().find(|timer| timer.id == id)
     }
 }
