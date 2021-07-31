@@ -16,11 +16,10 @@ use crate::ansi::{
 use crate::config::Config;
 use crate::event::{Event, EventListener};
 use crate::grid::{Dimensions, Grid, GridIterator, Scroll};
-use crate::index::{self, Boundary, Column, Direction, Line, Point, Side};
+use crate::index::{self, Boundary, Column, Direction, Line, Point};
 use crate::selection::{Selection, SelectionRange};
 use crate::term::cell::{Cell, Flags, LineLength};
 use crate::term::color::{Colors, Rgb};
-use crate::vi_mode::{ViModeCursor, ViMotion};
 
 pub mod cell;
 pub mod color;
@@ -212,8 +211,6 @@ pub struct Term<T> {
     pub is_focused: bool,
 
     /// Cursor for keyboard selection.
-    pub vi_mode_cursor: ViModeCursor,
-
     pub selection: Option<Selection>,
 
     /// Currently active grid.
@@ -253,9 +250,6 @@ pub struct Term<T> {
     /// Default style for resetting the cursor.
     default_cursor_style: CursorStyle,
 
-    /// Style of the vi mode cursor.
-    vi_mode_cursor_style: Option<CursorStyle>,
-
     /// Proxy for sending events to the event loop.
     event_proxy: T,
 
@@ -279,13 +273,6 @@ impl<T> Term<T> {
     {
         self.grid.scroll_display(scroll);
         self.event_proxy.send_event(Event::MouseCursorDirty);
-
-        // Clamp vi mode cursor to the viewport.
-        let viewport_start = -(self.grid.display_offset() as i32);
-        let viewport_end = viewport_start + self.bottommost_line().0;
-        let vi_cursor_line = &mut self.vi_mode_cursor.point.line.0;
-        *vi_cursor_line = min(viewport_end, max(viewport_start, *vi_cursor_line));
-        self.vi_mode_recompute_selection();
     }
 
     pub fn new<C>(config: &Config<C>, size: SizeInfo, event_proxy: T) -> Term<T> {
@@ -304,7 +291,6 @@ impl<T> Term<T> {
             grid,
             inactive_grid: alt,
             active_charset: Default::default(),
-            vi_mode_cursor: Default::default(),
             tabs,
             mode: Default::default(),
             scroll_region,
@@ -312,7 +298,6 @@ impl<T> Term<T> {
             semantic_escape_chars: config.selection.semantic_escape_chars.to_owned(),
             cursor_style: None,
             default_cursor_style: config.cursor.style(),
-            vi_mode_cursor_style: config.cursor.vi_mode_style(),
             event_proxy,
             is_focused: true,
             title: None,
@@ -329,7 +314,6 @@ impl<T> Term<T> {
     {
         self.semantic_escape_chars = config.selection.semantic_escape_chars.to_owned();
         self.default_cursor_style = config.cursor.style();
-        self.vi_mode_cursor_style = config.cursor.vi_mode_style();
 
         let title_event = match &self.title {
             Some(title) => Event::Title(title.clone()),
@@ -493,7 +477,6 @@ impl<T> Term<T> {
         let mut delta = num_lines as i32 - old_lines as i32;
         let min_delta = min(0, num_lines as i32 - self.grid.cursor.point.line.0 - 1);
         delta = min(max(delta, min_delta), history_size as i32);
-        self.vi_mode_cursor.point.line += delta;
 
         // Invalidate selection and tabs only when necessary.
         if old_cols != num_cols {
@@ -509,13 +492,6 @@ impl<T> Term<T> {
         let is_alt = self.mode.contains(TermMode::ALT_SCREEN);
         self.grid.resize(!is_alt, num_lines, num_cols);
         self.inactive_grid.resize(is_alt, num_lines, num_cols);
-
-        // Clamp vi cursor to viewport.
-        let vi_point = self.vi_mode_cursor.point;
-        let viewport_top = Line(-(self.grid.display_offset() as i32));
-        let viewport_bottom = viewport_top + self.bottommost_line();
-        self.vi_mode_cursor.point.line = max(min(vi_point.line, viewport_bottom), viewport_top);
-        self.vi_mode_cursor.point.column = min(vi_point.column, self.last_column());
 
         // Reset scrolling region.
         self.scroll_region = Line(0)..Line(self.screen_lines() as i32);
@@ -562,12 +538,6 @@ impl<T> Term<T> {
         self.selection =
             self.selection.take().and_then(|s| s.rotate(self, &region, -(lines as i32)));
 
-        // Scroll vi mode cursor.
-        let line = &mut self.vi_mode_cursor.point.line;
-        if region.start <= *line && region.end > *line {
-            *line = min(*line + lines, region.end - 1);
-        }
-
         // Scroll between origin and bottom
         self.grid.scroll_down(&region, lines);
     }
@@ -586,14 +556,6 @@ impl<T> Term<T> {
 
         // Scroll selection.
         self.selection = self.selection.take().and_then(|s| s.rotate(self, &region, lines as i32));
-
-        // Scroll vi mode cursor.
-        let viewport_top = Line(-(self.grid.display_offset() as i32));
-        let top = if region.start == 0 { viewport_top } else { region.start };
-        let line = &mut self.vi_mode_cursor.point.line;
-        if (top <= *line) && region.end > *line {
-            *line = max(*line - lines, top);
-        }
 
         // Scroll from origin to bottom less number of lines.
         self.grid.scroll_up(&region, lines);
@@ -617,76 +579,6 @@ impl<T> Term<T> {
         T: EventListener,
     {
         self.event_proxy.send_event(Event::Exit);
-    }
-
-    /// Toggle the vi mode.
-    #[inline]
-    pub fn toggle_vi_mode(&mut self)
-    where
-        T: EventListener,
-    {
-        self.mode ^= TermMode::VI;
-
-        if self.mode.contains(TermMode::VI) {
-            let display_offset = self.grid.display_offset() as i32;
-            if self.grid.cursor.point.line > self.bottommost_line() - display_offset {
-                // Move cursor to top-left if terminal cursor is not visible.
-                let point = Point::new(Line(-display_offset), Column(0));
-                self.vi_mode_cursor = ViModeCursor::new(point);
-            } else {
-                // Reset vi mode cursor position to match primary cursor.
-                self.vi_mode_cursor = ViModeCursor::new(self.grid.cursor.point);
-            }
-        }
-
-        // Update UI about cursor blinking state changes.
-        self.event_proxy.send_event(Event::CursorBlinkingChange(self.cursor_style().blinking));
-    }
-
-    /// Move vi mode cursor.
-    #[inline]
-    pub fn vi_motion(&mut self, motion: ViMotion)
-    where
-        T: EventListener,
-    {
-        // Require vi mode to be active.
-        if !self.mode.contains(TermMode::VI) {
-            return;
-        }
-
-        // Move cursor.
-        self.vi_mode_cursor = self.vi_mode_cursor.motion(self, motion);
-        self.vi_mode_recompute_selection();
-    }
-
-    /// Move vi cursor to a point in the grid.
-    #[inline]
-    pub fn vi_goto_point(&mut self, point: Point)
-    where
-        T: EventListener,
-    {
-        // Move viewport to make point visible.
-        self.scroll_to_point(point);
-
-        // Move vi cursor to the point.
-        self.vi_mode_cursor.point = point;
-
-        self.vi_mode_recompute_selection();
-    }
-
-    /// Update the active selection to match the vi mode cursor position.
-    #[inline]
-    fn vi_mode_recompute_selection(&mut self) {
-        // Require vi mode to be active.
-        if !self.mode.contains(TermMode::VI) {
-            return;
-        }
-
-        // Update only if non-empty selection is present.
-        if let Some(selection) = self.selection.as_mut().filter(|s| !s.is_empty()) {
-            selection.update(self.vi_mode_cursor.point, Side::Left);
-            selection.include_all();
-        }
     }
 
     /// Scroll display to point if it is outside of viewport.
@@ -746,11 +638,7 @@ impl<T> Term<T> {
     pub fn cursor_style(&self) -> CursorStyle {
         let cursor_style = self.cursor_style.unwrap_or(self.default_cursor_style);
 
-        if self.mode.contains(TermMode::VI) {
-            self.vi_mode_cursor_style.unwrap_or(cursor_style)
-        } else {
-            cursor_style
-        }
+        cursor_style
     }
 
     /// Insert a linebreak at the current cursor position.
@@ -1467,8 +1355,6 @@ impl<T: EventListener> Handler for Term<T> {
         self.title = None;
         self.selection = None;
 
-        // Preserve vi mode across resets.
-        self.mode &= TermMode::VI;
         self.mode.insert(TermMode::default());
 
         let blinking = self.cursor_style().blinking;
@@ -1825,14 +1711,13 @@ pub struct RenderableCursor {
 impl RenderableCursor {
     fn new<T>(term: &Term<T>) -> Self {
         // Cursor position.
-        let vi_mode = term.mode().contains(TermMode::VI);
-        let mut point = if vi_mode { term.vi_mode_cursor.point } else { term.grid.cursor.point };
+        let mut point = term.grid.cursor.point;
         if term.grid[point].flags.contains(Flags::WIDE_CHAR_SPACER) {
             point.column -= 1;
         }
 
         // Cursor shape.
-        let shape = if !vi_mode && !term.mode().contains(TermMode::SHOW_CURSOR) {
+        let shape = if !term.mode().contains(TermMode::SHOW_CURSOR) {
             CursorShape::Hidden
         } else {
             term.cursor_style().shape
@@ -1958,17 +1843,14 @@ mod tests {
 
         // Scrollable amount to top is 11.
         term.scroll_display(Scroll::PageUp);
-        assert_eq!(term.vi_mode_cursor.point, Point::new(Line(-1), Column(0)));
         assert_eq!(term.grid.display_offset(), 10);
 
         // Scrollable amount to top is 1.
         term.scroll_display(Scroll::PageUp);
-        assert_eq!(term.vi_mode_cursor.point, Point::new(Line(-2), Column(0)));
         assert_eq!(term.grid.display_offset(), 11);
 
         // Scrollable amount to top is 0.
         term.scroll_display(Scroll::PageUp);
-        assert_eq!(term.vi_mode_cursor.point, Point::new(Line(-2), Column(0)));
         assert_eq!(term.grid.display_offset(), 11);
     }
 
@@ -1984,21 +1866,17 @@ mod tests {
 
         // Change display_offset to topmost.
         term.grid_mut().scroll_display(Scroll::Top);
-        term.vi_mode_cursor = ViModeCursor::new(Point::new(Line(-11), Column(0)));
 
         // Scrollable amount to bottom is 11.
         term.scroll_display(Scroll::PageDown);
-        assert_eq!(term.vi_mode_cursor.point, Point::new(Line(-1), Column(0)));
         assert_eq!(term.grid.display_offset(), 1);
 
         // Scrollable amount to bottom is 1.
         term.scroll_display(Scroll::PageDown);
-        assert_eq!(term.vi_mode_cursor.point, Point::new(Line(0), Column(0)));
         assert_eq!(term.grid.display_offset(), 0);
 
         // Scrollable amount to bottom is 0.
         term.scroll_display(Scroll::PageDown);
-        assert_eq!(term.vi_mode_cursor.point, Point::new(Line(0), Column(0)));
         assert_eq!(term.grid.display_offset(), 0);
     }
 

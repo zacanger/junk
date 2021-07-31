@@ -15,7 +15,6 @@ pub mod sync;
 pub mod term;
 pub mod thread;
 pub mod tty;
-pub mod vi_mode;
 
 pub use crate::grid::Grid;
 pub use crate::term::Term;

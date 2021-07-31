@@ -10,11 +10,9 @@ use std::sync::atomic::Ordering;
 use std::time::Instant;
 
 use glutin::dpi::{PhysicalPosition, PhysicalSize};
-use glutin::event::ModifiersState;
 use glutin::event_loop::EventLoop;
 #[cfg(not(any(target_os = "macos", windows)))]
 use glutin::platform::unix::EventLoopWindowTargetExtUnix;
-use glutin::window::CursorIcon;
 use log::{debug, info};
 use parking_lot::MutexGuard;
 use unicode_width::UnicodeWidthChar;
@@ -27,9 +25,7 @@ use alacritty_terminal::ansi::NamedColor;
 use alacritty_terminal::event::{EventListener, OnResize};
 use alacritty_terminal::grid::Dimensions as _;
 use alacritty_terminal::index::{Column, Direction, Line, Point};
-use alacritty_terminal::selection::Selection;
-use alacritty_terminal::term::cell::Flags;
-use alacritty_terminal::term::{SizeInfo, Term, TermMode, MIN_COLUMNS, MIN_SCREEN_LINES};
+use alacritty_terminal::term::{SizeInfo, Term, MIN_COLUMNS, MIN_SCREEN_LINES};
 
 use crate::config::font::Font;
 use crate::config::window::Dimensions;
@@ -40,17 +36,15 @@ use crate::display::bell::VisualBell;
 use crate::display::color::List;
 use crate::display::content::RenderableContent;
 use crate::display::cursor::IntoRects;
-use crate::display::hint::{HintMatch, HintState};
 use crate::display::meter::Meter;
 use crate::display::window::Window;
-use crate::event::{Mouse, SearchState};
+use crate::event::{SearchState};
 use crate::message_bar::{MessageBuffer, MessageType};
 use crate::renderer::rects::{RenderLines, RenderRect};
 use crate::renderer::{self, GlyphCache, QuadRenderer};
 
 pub mod content;
 pub mod cursor;
-pub mod hint;
 pub mod window;
 
 mod bell;
@@ -172,12 +166,6 @@ pub struct Display {
     pub size_info: SizeInfo,
     pub window: Window,
 
-    /// Hint highlighted by the mouse.
-    pub highlighted_hint: Option<HintMatch>,
-
-    /// Hint highlighted by the vi mode cursor.
-    pub vi_highlighted_hint: Option<HintMatch>,
-
     #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
     pub wayland_event_queue: Option<EventQueue>,
 
@@ -191,9 +179,6 @@ pub struct Display {
 
     /// Mapped RGB values for each terminal color.
     pub colors: List,
-
-    /// State of the keyboard hints.
-    pub hint_state: HintState,
 
     renderer: QuadRenderer,
     glyph_cache: GlyphCache,
@@ -331,17 +316,12 @@ impl Display {
             _ => (),
         }
 
-        let hint_state = HintState::new(config.ui_config.hints.alphabet());
-
         Ok(Self {
             window,
             renderer,
             glyph_cache,
-            hint_state,
             meter: Meter::new(),
             size_info,
-            highlighted_hint: None,
-            vi_highlighted_hint: None,
             #[cfg(not(any(target_os = "macos", windows)))]
             is_x11,
             #[cfg(all(feature = "wayland", not(any(target_os = "macos", windows))))]
@@ -499,9 +479,6 @@ impl Display {
         let metrics = self.glyph_cache.font_metrics();
         let size_info = self.size_info;
 
-        let vi_mode = terminal.mode().contains(TermMode::VI);
-        let vi_mode_cursor = if vi_mode { Some(terminal.vi_mode_cursor) } else { None };
-
         // Drop terminal as early as possible to free lock.
         drop(terminal);
 
@@ -516,19 +493,9 @@ impl Display {
             let _sampler = self.meter.sampler();
 
             let glyph_cache = &mut self.glyph_cache;
-            let highlighted_hint = &self.highlighted_hint;
-            let vi_highlighted_hint = &self.vi_highlighted_hint;
             self.renderer.with_api(&config.ui_config, &size_info, |mut api| {
                 // Iterate over all non-empty cells in the grid.
-                for mut cell in grid_cells {
-                    // Underline hints hovered by mouse or vi mode cursor.
-                    let point = viewport_to_point(display_offset, cell.point);
-                    if highlighted_hint.as_ref().map_or(false, |h| h.bounds.contains(&point))
-                        || vi_highlighted_hint.as_ref().map_or(false, |h| h.bounds.contains(&point))
-                    {
-                        cell.flags.insert(Flags::UNDERLINE);
-                    }
-
+                for cell in grid_cells {
                     // Update underline/strikeout.
                     lines.update(&cell);
 
@@ -539,16 +506,6 @@ impl Display {
         }
 
         let mut rects = lines.rects(&metrics, &size_info);
-
-        if let Some(vi_mode_cursor) = vi_mode_cursor {
-            // Indicate vi mode by showing the cursor's position in the top right corner.
-            let vi_point = vi_mode_cursor.point;
-            let line = (-vi_point.line.0 + size_info.bottommost_line().0) as usize;
-            self.draw_line_indicator(config, &size_info, total_lines, Some(vi_point), line);
-        } else if search_state.regex().is_some() {
-            // Show current display offset in vi-less search to indicate match position.
-            self.draw_line_indicator(config, &size_info, total_lines, None, display_offset);
-        }
 
         // Push the cursor rects for rendering.
         if let Some(cursor) = cursor {
@@ -656,55 +613,6 @@ impl Display {
         self.colors = List::from(&config.ui_config.colors);
     }
 
-    /// Update the mouse/vi mode cursor hint highlighting.
-    ///
-    /// This will return whether the highlighted hints changed.
-    pub fn update_highlighted_hints<T>(
-        &mut self,
-        term: &Term<T>,
-        config: &Config,
-        mouse: &Mouse,
-        modifiers: ModifiersState,
-    ) -> bool {
-        // Update vi mode cursor hint.
-        let vi_highlighted_hint = if term.mode().contains(TermMode::VI) {
-            let mods = ModifiersState::all();
-            let point = term.vi_mode_cursor.point;
-            hint::highlighted_at(term, config, point, mods)
-        } else {
-            None
-        };
-        let mut dirty = vi_highlighted_hint != self.vi_highlighted_hint;
-        self.vi_highlighted_hint = vi_highlighted_hint;
-
-        // Abort if mouse highlighting conditions are not met.
-        if !mouse.inside_text_area || !term.selection.as_ref().map_or(true, Selection::is_empty) {
-            dirty |= self.highlighted_hint.is_some();
-            self.highlighted_hint = None;
-            return dirty;
-        }
-
-        // Find highlighted hint at mouse position.
-        let point = mouse.point(&self.size_info, term.grid().display_offset());
-        let highlighted_hint = hint::highlighted_at(term, config, point, modifiers);
-
-        // Update cursor shape.
-        if highlighted_hint.is_some() {
-            self.window.set_mouse_cursor(CursorIcon::Hand);
-        } else if self.highlighted_hint.is_some() {
-            if term.mode().intersects(TermMode::MOUSE_MODE) && !term.mode().contains(TermMode::VI) {
-                self.window.set_mouse_cursor(CursorIcon::Default);
-            } else {
-                self.window.set_mouse_cursor(CursorIcon::Text);
-            }
-        }
-
-        dirty |= self.highlighted_hint != highlighted_hint;
-        self.highlighted_hint = highlighted_hint;
-
-        dirty
-    }
-
     /// Format search regex to account for the cursor and fullwidth characters.
     fn format_search(size_info: &SizeInfo, search_regex: &str, search_label: &str) -> String {
         // Add spacers for wide chars.
@@ -769,30 +677,6 @@ impl Display {
         self.renderer.with_api(&config.ui_config, size_info, |mut api| {
             api.render_string(glyph_cache, point, fg, bg, &timing);
         });
-    }
-
-    /// Draw an indicator for the position of a line in history.
-    fn draw_line_indicator(
-        &mut self,
-        config: &Config,
-        size_info: &SizeInfo,
-        total_lines: usize,
-        vi_mode_point: Option<Point>,
-        line: usize,
-    ) {
-        let text = format!("[{}/{}]", line, total_lines - 1);
-        let column = Column(size_info.columns().saturating_sub(text.len()));
-        let colors = &config.ui_config.colors;
-        let fg = colors.line_indicator.foreground.unwrap_or(colors.primary.background);
-        let bg = colors.line_indicator.background.unwrap_or(colors.primary.foreground);
-
-        // Do not render anything if it would obscure the vi mode cursor.
-        if vi_mode_point.map_or(true, |point| point.line != 0 || point.column < column) {
-            let glyph_cache = &mut self.glyph_cache;
-            self.renderer.with_api(&config.ui_config, size_info, |mut api| {
-                api.render_string(glyph_cache, Point::new(0, column), fg, bg, &text);
-            });
-        }
     }
 
     /// Requst a new frame for a window on Wayland.

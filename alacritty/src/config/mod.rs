@@ -23,7 +23,7 @@ mod mouse;
 
 use crate::cli::Options;
 pub use crate::config::bindings::{
-    Action, Binding, BindingMode, Key, MouseAction, SearchAction, ViAction,
+    Action, Binding, BindingMode, Key,
 };
 #[cfg(test)]
 pub use crate::config::mouse::{ClickHandler, Mouse};
@@ -140,9 +140,6 @@ pub fn reload(config_path: &Path, options: &Options) -> Result<Config> {
 fn after_loading(config: &mut Config, options: &Options) {
     // Override config with CLI options.
     options.override_config(config);
-
-    // Create key bindings for regex hints.
-    config.ui_config.generate_hint_bindings();
 }
 
 /// Load configuration file and log errors.

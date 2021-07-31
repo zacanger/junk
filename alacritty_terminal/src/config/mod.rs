@@ -64,7 +64,6 @@ impl Default for Selection {
 #[derive(ConfigDeserialize, Copy, Clone, Debug, PartialEq)]
 pub struct Cursor {
     pub style: ConfigCursorStyle,
-    pub vi_mode_style: Option<ConfigCursorStyle>,
     pub unfocused_hollow: bool,
 
     thickness: Percentage,
@@ -78,7 +77,6 @@ impl Default for Cursor {
             unfocused_hollow: true,
             blink_interval: 750,
             style: Default::default(),
-            vi_mode_style: Default::default(),
         }
     }
 }
@@ -92,11 +90,6 @@ impl Cursor {
     #[inline]
     pub fn style(self) -> CursorStyle {
         self.style.into()
-    }
-
-    #[inline]
-    pub fn vi_mode_style(self) -> Option<CursorStyle> {
-        self.vi_mode_style.map(From::from)
     }
 
     #[inline]

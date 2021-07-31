@@ -11,11 +11,10 @@ use alacritty_terminal::index::{Column, Direction, Line, Point};
 use alacritty_terminal::term::cell::{Cell, Flags};
 use alacritty_terminal::term::color::{CellRgb, Rgb};
 use alacritty_terminal::term::search::{Match, RegexIter, RegexSearch};
-use alacritty_terminal::term::{RenderableContent as TerminalContent, Term, TermMode};
+use alacritty_terminal::term::{RenderableContent as TerminalContent, Term};
 
 use crate::config::ui_config::UiConfig;
 use crate::display::color::{List, DIM_FACTOR};
-use crate::display::hint::HintState;
 use crate::display::{self, Display, MAX_SEARCH_LINES};
 use crate::event::SearchState;
 
@@ -31,7 +30,6 @@ pub struct RenderableContent<'a> {
     cursor_shape: CursorShape,
     cursor_point: Point<usize>,
     search: Option<Regex<'a>>,
-    hint: Option<Hint<'a>>,
     config: &'a Config<UiConfig>,
     colors: &'a List,
     focused_match: Option<&'a Match>,
@@ -65,13 +63,6 @@ impl<'a> RenderableContent<'a> {
         let display_offset = terminal_content.display_offset;
         let cursor_point = display::point_to_viewport(display_offset, cursor_point).unwrap();
 
-        let hint = if display.hint_state.active() {
-            display.hint_state.update_matches(term);
-            Some(Hint::from(&display.hint_state))
-        } else {
-            None
-        };
-
         Self {
             colors: &display.colors,
             cursor: None,
@@ -81,7 +72,6 @@ impl<'a> RenderableContent<'a> {
             cursor_point,
             search,
             config,
-            hint,
         }
     }
 
@@ -112,11 +102,7 @@ impl<'a> RenderableContent<'a> {
         }
 
         // Cursor colors.
-        let color = if self.terminal_content.mode.contains(TermMode::VI) {
-            self.config.ui_config.colors.vi_mode_cursor
-        } else {
-            self.config.ui_config.colors.cursor
-        };
+        let color = self.config.ui_config.colors.cursor;
         let mut cursor_color =
             self.terminal_content.colors[NamedColor::Cursor].map_or(color.background, CellRgb::Rgb);
         let mut text_color = color.foreground;
@@ -217,20 +203,9 @@ impl RenderableCell {
         let display_offset = content.terminal_content.display_offset;
         let viewport_start = Point::new(Line(-(display_offset as i32)), Column(0));
         let colors = &content.config.ui_config.colors;
-        let mut character = cell.c;
+        let character = cell.c;
 
-        if let Some((c, is_first)) =
-            content.hint.as_mut().and_then(|hint| hint.advance(viewport_start, cell.point))
-        {
-            let (config_fg, config_bg) = if is_first {
-                (colors.hints.start.foreground, colors.hints.start.background)
-            } else {
-                (colors.hints.end.foreground, colors.hints.end.background)
-            };
-            Self::compute_cell_rgb(&mut fg, &mut bg, &mut bg_alpha, config_fg, config_bg);
-
-            character = c;
-        } else if is_selected {
+        if is_selected {
             let config_fg = colors.selection.foreground;
             let config_bg = colors.selection.background;
             Self::compute_cell_rgb(&mut fg, &mut bg, &mut bg_alpha, config_fg, config_bg);
@@ -384,52 +359,6 @@ impl RenderableCursor {
 
     pub fn point(&self) -> Point<usize> {
         self.point
-    }
-}
-
-/// Regex hints for keyboard shortcuts.
-struct Hint<'a> {
-    /// Hint matches and position.
-    regex: Regex<'a>,
-
-    /// Last match checked against current cell position.
-    labels: &'a Vec<Vec<char>>,
-}
-
-impl<'a> Hint<'a> {
-    /// Advance the hint iterator.
-    ///
-    /// If the point is within a hint, the keyboard shortcut character that should be displayed at
-    /// this position will be returned.
-    ///
-    /// The tuple's [`bool`] will be `true` when the character is the first for this hint.
-    fn advance(&mut self, viewport_start: Point, point: Point) -> Option<(char, bool)> {
-        // Check if we're within a match at all.
-        if !self.regex.advance(point) {
-            return None;
-        }
-
-        // Match starting position on this line; linebreaks interrupt the hint labels.
-        let start = self
-            .regex
-            .matches
-            .get(self.regex.index)
-            .map(|regex_match| max(*regex_match.start(), viewport_start))
-            .filter(|start| start.line == point.line)?;
-
-        // Position within the hint label.
-        let label_position = point.column.0 - start.column.0;
-        let is_first = label_position == 0;
-
-        // Hint label character.
-        self.labels[self.regex.index].get(label_position).copied().map(|c| (c, is_first))
-    }
-}
-
-impl<'a> From<&'a HintState> for Hint<'a> {
-    fn from(hint_state: &'a HintState) -> Self {
-        let regex = Regex { matches: Cow::Borrowed(hint_state.matches()), index: 0 };
-        Self { labels: hint_state.labels(), regex }
     }
 }
 

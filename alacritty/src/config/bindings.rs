@@ -14,9 +14,6 @@ use alacritty_config_derive::ConfigDeserialize;
 
 use alacritty_terminal::config::Program;
 use alacritty_terminal::term::TermMode;
-use alacritty_terminal::vi_mode::ViMotion;
-
-use crate::config::ui_config::Hint;
 
 /// Describes a state and action to take in that state.
 ///
@@ -92,26 +89,6 @@ pub enum Action {
     /// Run given command.
     #[config(skip)]
     Command(Program),
-
-    /// Regex keyboard hints.
-    #[config(skip)]
-    Hint(Hint),
-
-    /// Move vi mode cursor.
-    #[config(skip)]
-    ViMotion(ViMotion),
-
-    /// Perform vi mode action.
-    #[config(skip)]
-    Vi(ViAction),
-
-    /// Perform search mode action.
-    #[config(skip)]
-    Search(SearchAction),
-
-    /// Perform mouse binding exclusive action.
-    #[config(skip)]
-    Mouse(MouseAction),
 
     /// Paste contents of system clipboard.
     Paste,
@@ -191,17 +168,8 @@ pub enum Action {
     /// Clear active selection.
     ClearSelection,
 
-    /// Toggle vi mode.
-    ToggleViMode,
-
     /// Allow receiving char input.
     ReceiveChar,
-
-    /// Start a forward buffer search.
-    SearchForward,
-
-    /// Start a backward buffer search.
-    SearchBackward,
 
     /// No action.
     None,
@@ -213,92 +181,13 @@ impl From<&'static str> for Action {
     }
 }
 
-impl From<ViAction> for Action {
-    fn from(action: ViAction) -> Self {
-        Self::Vi(action)
-    }
-}
-
-impl From<ViMotion> for Action {
-    fn from(motion: ViMotion) -> Self {
-        Self::ViMotion(motion)
-    }
-}
-
-impl From<SearchAction> for Action {
-    fn from(action: SearchAction) -> Self {
-        Self::Search(action)
-    }
-}
-
-impl From<MouseAction> for Action {
-    fn from(action: MouseAction) -> Self {
-        Self::Mouse(action)
-    }
-}
-
 /// Display trait used for error logging.
 impl Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Action::ViMotion(motion) => motion.fmt(f),
-            Action::Vi(action) => action.fmt(f),
-            Action::Mouse(action) => action.fmt(f),
             _ => write!(f, "{:?}", self),
         }
     }
-}
-
-/// Vi mode specific actions.
-#[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum ViAction {
-    /// Toggle normal vi selection.
-    ToggleNormalSelection,
-    /// Toggle line vi selection.
-    ToggleLineSelection,
-    /// Toggle block vi selection.
-    ToggleBlockSelection,
-    /// Toggle semantic vi selection.
-    ToggleSemanticSelection,
-    /// Jump to the beginning of the next match.
-    SearchNext,
-    /// Jump to the beginning of the previous match.
-    SearchPrevious,
-    /// Jump to the next start of a match to the left of the origin.
-    SearchStart,
-    /// Jump to the next end of a match to the right of the origin.
-    SearchEnd,
-    /// Launch the URL below the vi mode cursor.
-    Open,
-}
-
-/// Search mode specific actions.
-#[allow(clippy::enum_variant_names)]
-#[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum SearchAction {
-    /// Move the focus to the next search match.
-    SearchFocusNext,
-    /// Move the focus to the previous search match.
-    SearchFocusPrevious,
-    /// Confirm the active search.
-    SearchConfirm,
-    /// Cancel the active search.
-    SearchCancel,
-    /// Reset the search regex.
-    SearchClear,
-    /// Delete the last word in the search regex.
-    SearchDeleteWord,
-    /// Go to the previous regex in the search history.
-    SearchHistoryPrevious,
-    /// Go to the next regex in the search history.
-    SearchHistoryNext,
-}
-
-/// Mouse binding specific actions.
-#[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum MouseAction {
-    /// Expand the selection to the current mouse cursor position.
-    ExpandSelection,
 }
 
 macro_rules! bindings {
@@ -361,7 +250,6 @@ macro_rules! bindings {
 pub fn default_mouse_bindings() -> Vec<MouseBinding> {
     bindings!(
         MouseBinding;
-        MouseButton::Right;                    MouseAction::ExpandSelection;
         MouseButton::Middle, ~BindingMode::VI; Action::PasteSelection;
     )
 }
@@ -443,18 +331,12 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
         F19,         ~BindingMode::VI, ~BindingMode::SEARCH; Action::Esc("\x1b[33~".into());
         F20,         ~BindingMode::VI, ~BindingMode::SEARCH; Action::Esc("\x1b[34~".into());
         NumpadEnter, ~BindingMode::VI, ~BindingMode::SEARCH; Action::Esc("\n".into());
-        Space, ModifiersState::SHIFT | ModifiersState::CTRL, ~BindingMode::SEARCH;
-            Action::ToggleViMode;
         Space, ModifiersState::SHIFT | ModifiersState::CTRL, +BindingMode::VI, ~BindingMode::SEARCH;
             Action::ScrollToBottom;
         Escape,                        +BindingMode::VI, ~BindingMode::SEARCH;
             Action::ClearSelection;
         I,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            Action::ToggleViMode;
-        I,                             +BindingMode::VI, ~BindingMode::SEARCH;
             Action::ScrollToBottom;
-        C,      ModifiersState::CTRL,  +BindingMode::VI, ~BindingMode::SEARCH;
-            Action::ToggleViMode;
         Y,      ModifiersState::CTRL,  +BindingMode::VI, ~BindingMode::SEARCH;
             Action::ScrollLineUp;
         E,      ModifiersState::CTRL,  +BindingMode::VI, ~BindingMode::SEARCH;
@@ -474,80 +356,6 @@ pub fn default_key_bindings() -> Vec<KeyBinding> {
         Y,                             +BindingMode::VI, ~BindingMode::SEARCH; Action::Copy;
         Y,                             +BindingMode::VI, ~BindingMode::SEARCH;
             Action::ClearSelection;
-        Slash,                         +BindingMode::VI, ~BindingMode::SEARCH;
-            Action::SearchForward;
-        Slash,  ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            Action::SearchBackward;
-        V,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::ToggleNormalSelection;
-        V,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::ToggleLineSelection;
-        V,      ModifiersState::CTRL,  +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::ToggleBlockSelection;
-        V,      ModifiersState::ALT,   +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::ToggleSemanticSelection;
-        N,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::SearchNext;
-        N,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::SearchPrevious;
-        Return,                        +BindingMode::VI, ~BindingMode::SEARCH;
-            ViAction::Open;
-        K,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Up;
-        J,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Down;
-        H,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Left;
-        L,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Right;
-        Up,                            +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Up;
-        Down,                          +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Down;
-        Left,                          +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Left;
-        Right,                         +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Right;
-        Key0,                          +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::First;
-        Key4,   ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Last;
-        Key6,   ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::FirstOccupied;
-        H,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::High;
-        M,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Middle;
-        L,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Low;
-        B,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::SemanticLeft;
-        W,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::SemanticRight;
-        E,                             +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::SemanticRightEnd;
-        B,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::WordLeft;
-        W,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::WordRight;
-        E,      ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::WordRightEnd;
-        Key5,   ModifiersState::SHIFT, +BindingMode::VI, ~BindingMode::SEARCH;
-            ViMotion::Bracket;
-        Return,                        +BindingMode::SEARCH, +BindingMode::VI;
-            SearchAction::SearchConfirm;
-        Escape,                        +BindingMode::SEARCH; SearchAction::SearchCancel;
-        C,      ModifiersState::CTRL,  +BindingMode::SEARCH; SearchAction::SearchCancel;
-        U,      ModifiersState::CTRL,  +BindingMode::SEARCH; SearchAction::SearchClear;
-        W,      ModifiersState::CTRL,  +BindingMode::SEARCH; SearchAction::SearchDeleteWord;
-        P,      ModifiersState::CTRL,  +BindingMode::SEARCH; SearchAction::SearchHistoryPrevious;
-        N,      ModifiersState::CTRL,  +BindingMode::SEARCH; SearchAction::SearchHistoryNext;
-        Up,                            +BindingMode::SEARCH; SearchAction::SearchHistoryPrevious;
-        Down,                          +BindingMode::SEARCH; SearchAction::SearchHistoryNext;
-        Return,                        +BindingMode::SEARCH, ~BindingMode::VI;
-            SearchAction::SearchFocusNext;
-        Return, ModifiersState::SHIFT, +BindingMode::SEARCH, ~BindingMode::VI;
-            SearchAction::SearchFocusPrevious;
     );
 
     //   Code     Modifiers
@@ -657,10 +465,6 @@ fn common_keybindings() -> Vec<KeyBinding> {
         KeyBinding;
         V,        ModifiersState::CTRL | ModifiersState::SHIFT, ~BindingMode::VI; Action::Paste;
         C,        ModifiersState::CTRL | ModifiersState::SHIFT; Action::Copy;
-        F,        ModifiersState::CTRL | ModifiersState::SHIFT, ~BindingMode::SEARCH;
-            Action::SearchForward;
-        B,        ModifiersState::CTRL | ModifiersState::SHIFT, ~BindingMode::SEARCH;
-            Action::SearchBackward;
         C,        ModifiersState::CTRL | ModifiersState::SHIFT,
             +BindingMode::VI, ~BindingMode::SEARCH; Action::ClearSelection;
         Insert,   ModifiersState::SHIFT, ~BindingMode::VI; Action::PasteSelection;
@@ -713,8 +517,6 @@ pub fn platform_key_bindings() -> Vec<KeyBinding> {
         M, ModifiersState::LOGO; Action::Minimize;
         Q, ModifiersState::LOGO; Action::Quit;
         W, ModifiersState::LOGO; Action::Quit;
-        F, ModifiersState::LOGO, ~BindingMode::SEARCH; Action::SearchForward;
-        B, ModifiersState::LOGO, ~BindingMode::SEARCH; Action::SearchBackward;
     )
 }
 
@@ -1038,19 +840,7 @@ impl<'a> Deserialize<'a> for RawBinding {
 
                             let value = map.next_value::<SerdeValue>()?;
 
-                            action = if let Ok(vi_action) = ViAction::deserialize(value.clone()) {
-                                Some(vi_action.into())
-                            } else if let Ok(vi_motion) = ViMotion::deserialize(value.clone()) {
-                                Some(vi_motion.into())
-                            } else if let Ok(search_action) =
-                                SearchAction::deserialize(value.clone())
-                            {
-                                Some(search_action.into())
-                            } else if let Ok(mouse_action) = MouseAction::deserialize(value.clone())
-                            {
-                                Some(mouse_action.into())
-                            } else {
-                                match Action::deserialize(value.clone()).map_err(V::Error::custom) {
+                            action = match Action::deserialize(value.clone()).map_err(V::Error::custom) {
                                     Ok(action) => Some(action),
                                     Err(err) => {
                                         let value = match value {
@@ -1072,7 +862,6 @@ impl<'a> Deserialize<'a> for RawBinding {
                                         )));
                                     },
                                 }
-                            };
                         },
                         Field::Chars => {
                             if chars.is_some() {
@@ -1103,36 +892,6 @@ impl<'a> Deserialize<'a> for RawBinding {
                 let mods = mods.unwrap_or_else(ModifiersState::default);
 
                 let action = match (action, chars, command) {
-                    (Some(action @ Action::ViMotion(_)), None, None)
-                    | (Some(action @ Action::Vi(_)), None, None) => {
-                        if !mode.intersects(BindingMode::VI) || not_mode.intersects(BindingMode::VI)
-                        {
-                            return Err(V::Error::custom(format!(
-                                "action `{}` is only available in vi mode, try adding `mode: Vi`",
-                                action,
-                            )));
-                        }
-                        action
-                    },
-                    (Some(action @ Action::Search(_)), None, None) => {
-                        if !mode.intersects(BindingMode::SEARCH) {
-                            return Err(V::Error::custom(format!(
-                                "action `{}` is only available in search mode, try adding `mode: \
-                                 Search`",
-                                action,
-                            )));
-                        }
-                        action
-                    },
-                    (Some(action @ Action::Mouse(_)), None, None) => {
-                        if mouse.is_none() {
-                            return Err(V::Error::custom(format!(
-                                "action `{}` is only available for mouse bindings",
-                                action,
-                            )));
-                        }
-                        action
-                    },
                     (Some(action), None, None) => action,
                     (None, Some(chars), None) => Action::Esc(chars),
                     (None, None, Some(cmd)) => Action::Command(cmd),

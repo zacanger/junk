@@ -1,11 +1,7 @@
-use std::time::Duration;
-
 use alacritty_config_derive::ConfigDeserialize;
 
 #[derive(ConfigDeserialize, Default, Clone, Debug, PartialEq, Eq)]
 pub struct Mouse {
-    pub double_click: ClickHandler,
-    pub triple_click: ClickHandler,
     pub hide_when_typing: bool,
     #[config(deprecated = "use `hints` section instead")]
     pub url: Option<serde_yaml::Value>,
@@ -23,7 +19,4 @@ impl Default for ClickHandler {
 }
 
 impl ClickHandler {
-    pub fn threshold(&self) -> Duration {
-        Duration::from_millis(self.threshold as u64)
-    }
 }

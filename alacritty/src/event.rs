@@ -41,10 +41,8 @@ use alacritty_terminal::tty;
 
 use crate::cli::Options as CLIOptions;
 use crate::clipboard::Clipboard;
-use crate::config::ui_config::{HintAction, HintInternalAction};
 use crate::config::{self, Config};
 use crate::daemon::start_daemon;
-use crate::display::hint::HintMatch;
 use crate::display::window::Window;
 use crate::display::{self, Display, DisplayUpdate};
 use crate::input::{self, ActionContext as _, FONT_SIZE_STEP};
@@ -204,12 +202,7 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
             self.search_state.display_offset_delta += old_offset - display_offset as i32;
         }
 
-        // Update selection.
-        if self.terminal.mode().contains(TermMode::VI)
-            && self.terminal.selection.as_ref().map_or(true, |s| !s.is_empty())
-        {
-            self.update_selection(self.terminal.vi_mode_cursor.point, Side::Right);
-        } else if self.mouse.left_button_state == ElementState::Pressed
+        if self.mouse.left_button_state == ElementState::Pressed
             || self.mouse.right_button_state == ElementState::Pressed
         {
             let display_offset = self.terminal.grid().display_offset();
@@ -255,12 +248,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         // Update selection.
         selection.update(point, side);
 
-        // Move vi cursor and expand selection.
-        if self.terminal.mode().contains(TermMode::VI) && !self.search_active() {
-            self.terminal.vi_mode_cursor.point = point;
-            selection.include_all();
-        }
-
         self.terminal.selection = Some(selection);
         *self.dirty = true;
     }
@@ -290,7 +277,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
     #[inline]
     fn mouse_mode(&self) -> bool {
         self.terminal.mode().intersects(TermMode::MOUSE_MODE)
-            && !self.terminal.mode().contains(TermMode::VI)
     }
 
     #[inline]
@@ -417,45 +403,21 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         self.search_state.focused_match = None;
 
         // Store original search position as origin and reset location.
-        if self.terminal.mode().contains(TermMode::VI) {
-            self.search_state.origin = self.terminal.vi_mode_cursor.point;
-            self.search_state.display_offset_delta = 0;
-        } else {
-            let viewport_top = Line(-(self.terminal.grid().display_offset() as i32)) - 1;
-            let viewport_bottom = viewport_top + self.terminal.bottommost_line();
-            let last_column = self.terminal.last_column();
-            self.search_state.origin = match direction {
-                Direction::Right => Point::new(viewport_top, Column(0)),
-                Direction::Left => Point::new(viewport_bottom, last_column),
-            };
-        }
+        let viewport_top = Line(-(self.terminal.grid().display_offset() as i32)) - 1;
+        let viewport_bottom = viewport_top + self.terminal.bottommost_line();
+        let last_column = self.terminal.last_column();
+        self.search_state.origin = match direction {
+            Direction::Right => Point::new(viewport_top, Column(0)),
+            Direction::Left => Point::new(viewport_bottom, last_column),
+        };
 
         self.display_update_pending.dirty = true;
         *self.dirty = true;
     }
 
     #[inline]
-    fn confirm_search(&mut self) {
-        // Just cancel search when not in vi mode.
-        if !self.terminal.mode().contains(TermMode::VI) {
-            self.cancel_search();
-            return;
-        }
-
-        // Force unlimited search if the previous one was interrupted.
-        if self.scheduler.scheduled(TimerId::DelayedSearch) {
-            self.goto_match(None);
-        }
-
-        self.exit_search();
-    }
-
-    #[inline]
     fn cancel_search(&mut self) {
-        if self.terminal.mode().contains(TermMode::VI) {
-            // Recover pre-search state in vi mode.
-            self.search_reset_state();
-        } else if let Some(focused_match) = &self.search_state.focused_match {
+        if let Some(focused_match) = &self.search_state.focused_match {
             // Create a selection for the focused match.
             let start = *focused_match.start();
             let end = *focused_match.end();
@@ -491,11 +453,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
             ' '..='~' | '\u{a0}'..='\u{10ffff}' => regex.push(c),
             // Ignore non-printable characters.
             _ => return,
-        }
-
-        if !self.terminal.mode().contains(TermMode::VI) {
-            // Clear selection so we do not obstruct any matches.
-            self.terminal.selection = None;
         }
 
         self.update_search();
@@ -620,57 +577,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         }
     }
 
-    /// Process a new character for keyboard hints.
-    fn hint_input(&mut self, c: char) {
-        if let Some(hint) = self.display.hint_state.keyboard_input(self.terminal, c) {
-            self.mouse.block_hint_launcher = false;
-            self.trigger_hint(&hint);
-        }
-        *self.dirty = true;
-    }
-
-    /// Trigger a hint action.
-    fn trigger_hint(&mut self, hint: &HintMatch) {
-        if self.mouse.block_hint_launcher {
-            return;
-        }
-
-        match &hint.action {
-            // Launch an external program.
-            HintAction::Command(command) => {
-                let text = self.terminal.bounds_to_string(*hint.bounds.start(), *hint.bounds.end());
-                let mut args = command.args().to_vec();
-                args.push(text);
-                start_daemon(command.program(), &args);
-            },
-            // Copy the text to the clipboard.
-            HintAction::Action(HintInternalAction::Copy) => {
-                let text = self.terminal.bounds_to_string(*hint.bounds.start(), *hint.bounds.end());
-                self.clipboard.store(ClipboardType::Clipboard, text);
-            },
-            // Write the text to the PTY/search.
-            HintAction::Action(HintInternalAction::Paste) => {
-                let text = self.terminal.bounds_to_string(*hint.bounds.start(), *hint.bounds.end());
-                self.paste(&text);
-            },
-            // Select the text.
-            HintAction::Action(HintInternalAction::Select) => {
-                self.start_selection(SelectionType::Simple, *hint.bounds.start(), Side::Left);
-                self.update_selection(*hint.bounds.end(), Side::Right);
-                self.copy_selection(ClipboardType::Selection);
-            },
-            // Move the vi mode cursor.
-            HintAction::Action(HintInternalAction::MoveViModeCursor) => {
-                // Enter vi mode if we're not in it already.
-                if !self.terminal.mode().contains(TermMode::VI) {
-                    self.terminal.toggle_vi_mode();
-                }
-
-                self.terminal.vi_goto_point(*hint.bounds.start());
-            },
-        }
-    }
-
     /// Expand the selection to the current mouse cursor position.
     #[inline]
     fn expand_selection(&mut self) {
@@ -682,8 +588,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
                     SelectionType::Simple
                 }
             },
-            ClickState::DoubleClick => SelectionType::Semantic,
-            ClickState::TripleClick => SelectionType::Lines,
             ClickState::None => return,
         };
 
@@ -700,11 +604,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 
         selection.ty = selection_type;
         self.update_selection(point, cell_side);
-
-        // Move vi mode cursor to mouse click position.
-        if self.terminal().mode().contains(TermMode::VI) && !self.search_active() {
-            self.terminal_mut().vi_mode_cursor.point = point;
-        }
     }
 
     /// Paste a text into the terminal.
@@ -726,19 +625,6 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
             // style) with a single carriage return (\r, which is what the Enter key produces).
             self.write_to_pty(text.replace("\r\n", "\r").replace("\n", "\r").into_bytes());
         }
-    }
-
-    /// Toggle the vi mode status.
-    #[inline]
-    fn toggle_vi_mode(&mut self) {
-        if !self.terminal.mode().contains(TermMode::VI) {
-            self.clear_selection();
-        }
-
-        self.cancel_search();
-        self.terminal.toggle_vi_mode();
-
-        *self.dirty = true;
     }
 
     fn message(&self) -> Option<&Message> {
@@ -800,17 +686,7 @@ impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
         // The viewport reset logic is only needed for vi mode, since without it our origin is
         // always at the current display offset instead of at the vi cursor position which we need
         // to recover to.
-        if !self.terminal.mode().contains(TermMode::VI) {
-            return;
-        }
-
-        // Reset display offset and cursor position.
-        self.terminal.scroll_display(Scroll::Delta(self.search_state.display_offset_delta));
-        self.search_state.display_offset_delta = 0;
-        self.terminal.vi_mode_cursor.point =
-            self.search_state.origin.grid_clamp(self.terminal, Boundary::Grid);
-
-        *self.dirty = true;
+        return;
     }
 
     /// Jump to the first regex match from the search origin.
@@ -830,13 +706,8 @@ impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
             Some(regex_match) => {
                 let old_offset = self.terminal.grid().display_offset() as i32;
 
-                if self.terminal.mode().contains(TermMode::VI) {
-                    // Move vi cursor to the start of the match.
-                    self.terminal.vi_goto_point(*regex_match.start());
-                } else {
-                    // Select the match when vi mode is not active.
-                    self.terminal.scroll_to_point(*regex_match.start());
-                }
+                // Select the match.
+                self.terminal.scroll_to_point(*regex_match.start());
 
                 // Update the focused match.
                 self.search_state.focused_match = Some(regex_match);
@@ -883,9 +754,6 @@ impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
     fn update_cursor_blinking(&mut self) {
         // Get config cursor style.
         let mut cursor_style = self.config.cursor.style;
-        if self.terminal.mode().contains(TermMode::VI) {
-            cursor_style = self.config.cursor.vi_mode_style.unwrap_or(cursor_style);
-        };
 
         // Check terminal cursor style.
         let terminal_blinking = self.terminal.cursor_style().blinking;
@@ -911,8 +779,6 @@ impl<'a, N: Notify + 'a, T: EventListener> ActionContext<'a, N, T> {
 pub enum ClickState {
     None,
     Click,
-    DoubleClick,
-    TripleClick,
 }
 
 /// State of the mouse.
@@ -927,8 +793,6 @@ pub struct Mouse {
     pub scroll_px: f64,
     pub cell_side: Side,
     pub lines_scrolled: f32,
-    pub block_hint_launcher: bool,
-    pub hint_highlight_dirty: bool,
     pub inside_text_area: bool,
     pub x: usize,
     pub y: usize,
@@ -944,8 +808,6 @@ impl Default for Mouse {
             right_button_state: ElementState::Released,
             click_state: ClickState::None,
             cell_side: Side::Left,
-            hint_highlight_dirty: Default::default(),
-            block_hint_launcher: Default::default(),
             inside_text_area: Default::default(),
             lines_scrolled: Default::default(),
             scroll_px: Default::default(),
@@ -1151,16 +1013,6 @@ impl<N: Notify + OnResize> Processor<N> {
                 return;
             }
 
-            if self.dirty || self.mouse.hint_highlight_dirty {
-                self.dirty |= self.display.update_highlighted_hints(
-                    &terminal,
-                    &self.config,
-                    &self.mouse,
-                    self.modifiers,
-                );
-                self.mouse.hint_highlight_dirty = false;
-            }
-
             if self.dirty {
                 self.dirty = false;
 
@@ -1325,9 +1177,6 @@ impl<N: Notify + OnResize> Processor<N> {
                     WindowEvent::CursorLeft { .. } => {
                         processor.ctx.mouse.inside_text_area = false;
 
-                        if processor.ctx.display().highlighted_hint.is_some() {
-                            *processor.ctx.dirty = true;
-                        }
                     },
                     WindowEvent::KeyboardInput { is_synthetic: true, .. }
                     | WindowEvent::TouchpadPressure { .. }
@@ -1438,9 +1287,6 @@ impl<N: Notify + OnResize> Processor<N> {
         #[cfg(target_os = "macos")]
         processor.ctx.window().set_has_shadow(config.ui_config.background_opacity() >= 1.0);
 
-        // Update hint keys.
-        processor.ctx.display.hint_state.update_alphabet(config.ui_config.hints.alphabet());
-
         *processor.ctx.config = config;
 
         // Update cursor blinking.
@@ -1461,11 +1307,7 @@ impl<N: Notify + OnResize> Processor<N> {
         // Compute cursor positions before resize.
         let num_lines = terminal.screen_lines();
         let cursor_at_bottom = terminal.grid().cursor.point.line + 1 == num_lines;
-        let origin_at_bottom = if terminal.mode().contains(TermMode::VI) {
-            terminal.vi_mode_cursor.point.line == num_lines - 1
-        } else {
-            self.search_state.direction == Direction::Left
-        };
+        let origin_at_bottom = self.search_state.direction == Direction::Left;
 
         self.display.handle_update(
             terminal,
