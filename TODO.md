@@ -6,7 +6,6 @@
     * Remove config monitoring
 * Collapse repo structure to just one src dir
 * Consider porting to native macOS gui toolkit later on
-* New icons
 * Remove cursor changing when typing (just pick one style and keep it there)
 * Go through and read everything and find more stuff to delete
 * Remove nested configs (the import statement)

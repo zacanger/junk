@@ -34,7 +34,8 @@ $(APP_NAME): $(TARGET)
 	@echo "Created '$@' in '$(APP_DIR)'"
 
 install:
-	@mv -f $(APP_DIR)/$(APP_NAME) /Applications
+	@rm -rf /Applications/$(APP_NAME)
+	@mv -f $(APP_DIR)/$(APP_NAME) /Applications/
 
 .PHONY: app binary clean dmg install $(TARGET)
 
