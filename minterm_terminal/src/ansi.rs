@@ -268,9 +268,6 @@ impl<'a, H: Handler + 'a> Performer<'a, H> {
 /// XXX Should probably not provide default impls for everything, but it makes
 /// writing specific handler impls for tests far easier.
 pub trait Handler {
-    /// OSC to set window title.
-    fn set_title(&mut self, _: Option<String>) {}
-
     /// Set the cursor style.
     fn set_cursor_style(&mut self, _: Option<CursorStyle>) {}
 
@@ -438,12 +435,6 @@ pub trait Handler {
 
     /// Run the decaln routine.
     fn decaln(&mut self) {}
-
-    /// Push a title onto the stack.
-    fn push_title(&mut self) {}
-
-    /// Pop the last title from the stack.
-    fn pop_title(&mut self) {}
 
     /// Report text area size in pixels.
     fn text_area_size_pixels(&mut self) {}
@@ -936,22 +927,6 @@ where
         }
 
         match params[0] {
-            // Set window title.
-            b"0" | b"2" => {
-                if params.len() >= 2 {
-                    let title = params[1..]
-                        .iter()
-                        .flat_map(|x| str::from_utf8(x))
-                        .collect::<Vec<&str>>()
-                        .join(";")
-                        .trim()
-                        .to_owned();
-                    self.handler.set_title(Some(title));
-                    return;
-                }
-                unhandled(params);
-            },
-
             // Set color index.
             b"4" => {
                 if params.len() > 1 && params.len() % 2 != 0 {
@@ -1211,8 +1186,6 @@ where
             ('t', []) => match next_param_or(1) as usize {
                 14 => handler.text_area_size_pixels(),
                 18 => handler.text_area_size_chars(),
-                22 => handler.push_title(),
-                23 => handler.pop_title(),
                 _ => unhandled!(),
             },
             ('u', []) => handler.restore_cursor_position(),

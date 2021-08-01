@@ -8,7 +8,6 @@ use serde_yaml::Value;
 use minterm_terminal::config::Program;
 
 use crate::config::serde_utils;
-use crate::config::window::DEFAULT_NAME;
 use crate::config::Config;
 
 const CONFIG_PATH: &str = "$HOME/.minterm.yml";
@@ -17,7 +16,6 @@ const CONFIG_PATH: &str = "$HOME/.minterm.yml";
 pub struct Options {
     pub print_events: bool,
     pub ref_test: bool,
-    pub title: Option<String>,
     pub class_instance: Option<String>,
     pub class_general: Option<String>,
     pub embed: Option<String>,
@@ -34,7 +32,6 @@ impl Default for Options {
         Options {
             print_events: false,
             ref_test: false,
-            title: None,
             class_instance: None,
             class_general: None,
             embed: None,
@@ -68,13 +65,6 @@ impl Options {
                 Arg::with_name("print-events")
                     .long("print-events")
                     .help("Print all events to stdout"),
-            )
-            .arg(
-                Arg::with_name("title")
-                    .long("title")
-                    .short("t")
-                    .takes_value(true)
-                    .help(&format!("Defines the window title [default: {}]", DEFAULT_NAME)),
             )
             .arg(
                 Arg::with_name("q")
@@ -132,7 +122,6 @@ impl Options {
             options.class_general = class.next().map(|general| general.to_owned());
         }
 
-        options.title = matches.value_of("title").map(ToOwned::to_owned);
         options.embed = matches.value_of("embed").map(ToOwned::to_owned);
 
         match matches.occurrences_of("q") {
@@ -209,9 +198,6 @@ impl Options {
 
         config.hold = self.hold;
 
-        if let Some(title) = self.title.clone() {
-            config.ui_config.window.title = title
-        }
         if let Some(class_instance) = self.class_instance.clone() {
             config.ui_config.window.class.instance = class_instance;
         }
@@ -219,7 +205,6 @@ impl Options {
             config.ui_config.window.class.general = class_general;
         }
 
-        config.ui_config.window.dynamic_title &= self.title.is_none();
         config.ui_config.window.embed = self.embed.as_ref().and_then(|embed| embed.parse().ok());
         config.ui_config.debug.print_events |= self.print_events;
         config.ui_config.debug.log_level = max(config.ui_config.debug.log_level, self.log_level);
@@ -262,36 +247,6 @@ mod tests {
     use super::*;
 
     use serde_yaml::mapping::Mapping;
-
-    #[test]
-    fn dynamic_title_ignoring_options_by_default() {
-        let mut config = Config::default();
-        let old_dynamic_title = config.ui_config.window.dynamic_title;
-
-        Options::default().override_config(&mut config);
-
-        assert_eq!(old_dynamic_title, config.ui_config.window.dynamic_title);
-    }
-
-    #[test]
-    fn dynamic_title_overridden_by_options() {
-        let mut config = Config::default();
-
-        let options = Options { title: Some("foo".to_owned()), ..Options::default() };
-        options.override_config(&mut config);
-
-        assert!(!config.ui_config.window.dynamic_title);
-    }
-
-    #[test]
-    fn dynamic_title_not_overridden_by_config() {
-        let mut config = Config::default();
-
-        config.ui_config.window.title = "foo".to_owned();
-        Options::default().override_config(&mut config);
-
-        assert!(config.ui_config.window.dynamic_title);
-    }
 
     #[test]
     fn valid_option_as_value() {

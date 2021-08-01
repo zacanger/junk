@@ -43,9 +43,6 @@ Minterm looks for the configuration file at the path $HOME/minterm.yml
 \fB\-o\fR, \fB\-\-option\fR <option>...
 Override configuration file options [example: cursor.style=Beam]
 .TP
-\fB\-t\fR, \fB\-\-title\fR <title>
-Defines the window title [default: Minterm]
-.TP
 \fB\-\-working\-directory\fR <working\-directory>
 Start the shell in the specified working directory
 .SH "SEE ALSO"

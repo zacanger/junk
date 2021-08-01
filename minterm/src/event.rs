@@ -480,18 +480,6 @@ impl<N: Notify + OnResize> Processor<N> {
                 Event::ConfigReload(path) => Self::reload_config(&path, processor),
                 Event::Scroll(scroll) => processor.ctx.scroll(scroll),
                 Event::Terminal(event) => match event {
-                    TerminalEvent::Title(title) => {
-                        let ui_config = &processor.ctx.config.ui_config;
-                        if ui_config.window.dynamic_title {
-                            processor.ctx.window().set_title(&title);
-                        }
-                    },
-                    TerminalEvent::ResetTitle => {
-                        let ui_config = &processor.ctx.config.ui_config;
-                        if ui_config.window.dynamic_title {
-                            processor.ctx.display.window.set_title(&ui_config.window.title);
-                        }
-                    },
                     TerminalEvent::Wakeup => *processor.ctx.dirty = true,
                     TerminalEvent::Bell => {
                         // Set window urgency.
@@ -657,13 +645,6 @@ impl<N: Notify + OnResize> Processor<N> {
             || window_config.dynamic_padding != config.ui_config.window.dynamic_padding
         {
             processor.ctx.display_update_pending.dirty = true;
-        }
-
-        // Live title reload.
-        if !config.ui_config.window.dynamic_title
-            || processor.ctx.config.ui_config.window.title != config.ui_config.window.title
-        {
-            processor.ctx.window().set_title(&config.ui_config.window.title);
         }
 
         // Set subpixel anti-aliasing.

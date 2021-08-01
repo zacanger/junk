@@ -26,9 +26,6 @@ pub struct WindowConfig {
     /// Spread out additional padding evenly.
     pub dynamic_padding: bool,
 
-    /// Use dynamic title.
-    pub dynamic_title: bool,
-
     /// Window title.
     pub title: String,
 
@@ -45,7 +42,6 @@ pub struct WindowConfig {
 impl Default for WindowConfig {
     fn default() -> Self {
         Self {
-            dynamic_title: true,
             title: DEFAULT_NAME.into(),
             position: Default::default(),
             embed: Default::default(),

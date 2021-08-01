@@ -154,12 +154,6 @@ impl Window {
         self.window().set_visible(visibility);
     }
 
-    /// Set the window title.
-    #[inline]
-    pub fn set_title(&self, title: &str) {
-        self.window().set_title(title);
-    }
-
     #[inline]
     pub fn set_mouse_cursor(&mut self, cursor: CursorIcon) {
         if cursor != self.current_mouse_cursor {

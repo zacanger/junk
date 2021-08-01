@@ -14,12 +14,6 @@ pub enum Event {
     /// Grid has changed possibly requiring a mouse cursor shape change.
     MouseCursorDirty,
 
-    /// Window title change.
-    Title(String),
-
-    /// Reset to the default window title.
-    ResetTitle,
-
     /// Request to write the RGB value of a color to the PTY.
     ///
     /// The attached function is a formatter which will corectly transform the RGB color into the
@@ -43,8 +37,6 @@ impl Debug for Event {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Event::MouseCursorDirty => write!(f, "MouseCursorDirty"),
-            Event::Title(title) => write!(f, "Title({})", title),
-            Event::ResetTitle => write!(f, "ResetTitle"),
             Event::ColorRequest(index, _) => write!(f, "ColorRequest({})", index),
             Event::PtyWrite(text) => write!(f, "PtyWrite({})", text),
             Event::Wakeup => write!(f, "Wakeup"),

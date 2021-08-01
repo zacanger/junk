@@ -31,9 +31,6 @@ pub const MIN_COLUMNS: usize = 2;
 /// Minimum number of visible lines.
 pub const MIN_SCREEN_LINES: usize = 1;
 
-/// Max size of the window title stack.
-const TITLE_STACK_MAX_DEPTH: usize = 4096;
-
 /// Default tab interval, corresponding to terminfo `it` value.
 const INITIAL_TABSTOPS: usize = 8;
 
@@ -246,13 +243,6 @@ pub struct Term<T> {
     /// Proxy for sending events to the event loop.
     event_proxy: T,
 
-    /// Current title of the window.
-    title: Option<String>,
-
-    /// Stack of saved window titles. When a title is popped from this stack, the `title` for the
-    /// term is set.
-    title_stack: Vec<Option<String>>,
-
     /// Information about cell dimensions.
     cell_width: usize,
     cell_height: usize,
@@ -292,8 +282,6 @@ impl<T> Term<T> {
             default_cursor_style: config.cursor.style(),
             event_proxy,
             is_focused: true,
-            title: None,
-            title_stack: Vec::new(),
             cell_width: size.cell_width as usize,
             cell_height: size.cell_height as usize,
         }
@@ -304,13 +292,6 @@ impl<T> Term<T> {
         T: EventListener,
     {
         self.default_cursor_style = config.cursor.style();
-
-        let title_event = match &self.title {
-            Some(title) => Event::Title(title.clone()),
-            None => Event::ResetTitle,
-        };
-
-        self.event_proxy.send_event(title_event);
 
         if self.mode.contains(TermMode::ALT_SCREEN) {
             self.inactive_grid.update_history(config.scrolling.history() as usize);
@@ -1242,8 +1223,6 @@ impl<T: EventListener> Handler for Term<T> {
         self.inactive_grid.reset();
         self.scroll_region = Line(0)..Line(self.screen_lines() as i32);
         self.tabs = TabStops::new(self.columns());
-        self.title_stack = Vec::new();
-        self.title = None;
 
         self.mode.insert(TermMode::default());
     }
@@ -1444,45 +1423,6 @@ impl<T: EventListener> Handler for Term<T> {
 
         let style = self.cursor_style.get_or_insert(self.default_cursor_style);
         style.shape = shape;
-    }
-
-    #[inline]
-    fn set_title(&mut self, title: Option<String>) {
-        trace!("Setting title to '{:?}'", title);
-
-        self.title = title.clone();
-
-        let title_event = match title {
-            Some(title) => Event::Title(title),
-            None => Event::ResetTitle,
-        };
-
-        self.event_proxy.send_event(title_event);
-    }
-
-    #[inline]
-    fn push_title(&mut self) {
-        trace!("Pushing '{:?}' onto title stack", self.title);
-
-        if self.title_stack.len() >= TITLE_STACK_MAX_DEPTH {
-            let removed = self.title_stack.remove(0);
-            trace!(
-                "Removing '{:?}' from bottom of title stack that exceeds its maximum depth",
-                removed
-            );
-        }
-
-        self.title_stack.push(self.title.clone());
-    }
-
-    #[inline]
-    fn pop_title(&mut self) {
-        trace!("Attempting to pop title from stack...");
-
-        if let Some(popped) = self.title_stack.pop() {
-            trace!("Title '{:?}' popped from stack", popped);
-            self.set_title(popped);
-        }
     }
 
     #[inline]
@@ -1877,54 +1817,6 @@ mod tests {
 
         assert_eq!(term.history_size(), 15);
         assert_eq!(term.grid.cursor.point, Point::new(Line(4), Column(0)));
-    }
-
-    #[test]
-    fn window_title() {
-        let size = SizeInfo::new(21.0, 51.0, 3.0, 3.0, 0.0, 0.0, false);
-        let mut term = Term::new(&MockConfig::default(), size, ());
-
-        // Title None by default.
-        assert_eq!(term.title, None);
-
-        // Title can be set.
-        term.set_title(Some("Test".into()));
-        assert_eq!(term.title, Some("Test".into()));
-
-        // Title can be pushed onto stack.
-        term.push_title();
-        term.set_title(Some("Next".into()));
-        assert_eq!(term.title, Some("Next".into()));
-        assert_eq!(term.title_stack.get(0).unwrap(), &Some("Test".into()));
-
-        // Title can be popped from stack and set as the window title.
-        term.pop_title();
-        assert_eq!(term.title, Some("Test".into()));
-        assert!(term.title_stack.is_empty());
-
-        // Title stack doesn't grow infinitely.
-        for _ in 0..4097 {
-            term.push_title();
-        }
-        assert_eq!(term.title_stack.len(), 4096);
-
-        // Title and title stack reset when terminal state is reset.
-        term.push_title();
-        term.reset_state();
-        assert_eq!(term.title, None);
-        assert!(term.title_stack.is_empty());
-
-        // Title stack pops back to default.
-        term.title = None;
-        term.push_title();
-        term.set_title(Some("Test".into()));
-        term.pop_title();
-        assert_eq!(term.title, None);
-
-        // Title can be reset to default.
-        term.title = Some("Test".into());
-        term.set_title(None);
-        assert_eq!(term.title, None);
     }
 
     #[test]

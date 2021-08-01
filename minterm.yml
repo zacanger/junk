@@ -52,12 +52,6 @@
   # Spread additional padding evenly around the terminal content.
   #dynamic_padding: false
 
-  # Window title
-  #title: Minterm
-
-  # Allow terminal applications to change Minterm's window title.
-  #dynamic_title: true
-
 #scrolling:
   # Maximum number of lines in the scrollback buffer.
   # Specifying '0' will disable scrolling.

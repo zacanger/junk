@@ -9,6 +9,4 @@
 * Remove cursor changing when typing (just pick one style and keep it there)
 * Go through and read everything and find more stuff to delete
 * Remove nested configs (the import statement)
-* Remove padding
 * Remove scrolling and history
-* Remove setting title
