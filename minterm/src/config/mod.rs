@@ -27,9 +27,6 @@ pub use crate::config::bindings::{Action, Binding, BindingMode, Key};
 pub use crate::config::mouse::{ClickHandler, Mouse};
 use crate::config::ui_config::UiConfig;
 
-/// Maximum number of depth for the configuration file imports.
-const IMPORT_RECURSION_LIMIT: usize = 5;
-
 pub type Config = TermConfig<UiConfig>;
 
 /// Result from config loading.
@@ -154,7 +151,7 @@ fn load_from(path: &Path, cli_config: Value) -> Result<Config> {
 /// Deserialize configuration file from path.
 fn read_config(path: &Path, cli_config: Value) -> Result<Config> {
     let mut config_paths = Vec::new();
-    let mut config_value = parse_config(path, &mut config_paths, IMPORT_RECURSION_LIMIT)?;
+    let mut config_value = parse_config(path, &mut config_paths)?;
 
     // Override config with CLI options.
     config_value = serde_utils::merge(config_value, cli_config);
@@ -170,7 +167,6 @@ fn read_config(path: &Path, cli_config: Value) -> Result<Config> {
 fn parse_config(
     path: &Path,
     config_paths: &mut Vec<PathBuf>,
-    recursion_limit: usize,
 ) -> Result<Value> {
     config_paths.push(path.to_owned());
 
@@ -194,61 +190,7 @@ fn parse_config(
         },
     };
 
-    // Merge config with imports.
-    let imports = load_imports(&config, config_paths, recursion_limit);
-    Ok(serde_utils::merge(imports, config))
-}
-
-/// Load all referenced configuration files.
-fn load_imports(config: &Value, config_paths: &mut Vec<PathBuf>, recursion_limit: usize) -> Value {
-    let imports = match config.get("import") {
-        Some(Value::Sequence(imports)) => imports,
-        Some(_) => {
-            error!(target: LOG_TARGET_CONFIG, "Invalid import type: expected a sequence");
-            return Value::Null;
-        },
-        None => return Value::Null,
-    };
-
-    // Limit recursion to prevent infinite loops.
-    if !imports.is_empty() && recursion_limit == 0 {
-        error!(target: LOG_TARGET_CONFIG, "Exceeded maximum configuration import depth");
-        return Value::Null;
-    }
-
-    let mut merged = Value::Null;
-
-    for import in imports {
-        let mut path = match import {
-            Value::String(path) => PathBuf::from(path),
-            _ => {
-                error!(
-                    target: LOG_TARGET_CONFIG,
-                    "Invalid import element type: expected path string"
-                );
-                continue;
-            },
-        };
-
-        // Resolve paths relative to user's home directory.
-        if let (Ok(stripped), Some(home_dir)) = (path.strip_prefix("~/"), dirs::home_dir()) {
-            path = home_dir.join(stripped);
-        }
-
-        if !path.exists() {
-            info!(target: LOG_TARGET_CONFIG, "Config import not found:\n  {:?}", path.display());
-            continue;
-        }
-
-        match parse_config(&path, config_paths, recursion_limit - 1) {
-            Ok(config) => merged = serde_utils::merge(merged, config),
-            Err(err) => {
-                error!(target: LOG_TARGET_CONFIG, "Unable to import config {:?}: {}", path, err)
-            },
-        }
-    }
-
-    merged
+    Ok(config)
 }
 
 /// Resolve the config file
