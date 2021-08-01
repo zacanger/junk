@@ -15,7 +15,7 @@ use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use minterm_terminal::index::Point;
 use minterm_terminal::term::SizeInfo;
 
-use crate::config::window::{Decorations, WindowConfig};
+use crate::config::window::{WindowConfig};
 use crate::config::Config;
 use crate::gl;
 
@@ -178,25 +178,12 @@ impl Window {
     }
 
     pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
-        let window = WindowBuilder::new()
+        return WindowBuilder::new()
             .with_title(title)
             .with_visible(false)
             .with_transparent(true)
-            .with_maximized(window_config.maximized());
-
-        match window_config.decorations {
-            Decorations::Full => window,
-            Decorations::Transparent => window
-                .with_title_hidden(true)
-                .with_titlebar_transparent(true)
-                .with_fullsize_content_view(true),
-            Decorations::Buttonless => window
-                .with_title_hidden(true)
-                .with_titlebar_buttons_hidden(true)
-                .with_titlebar_transparent(true)
-                .with_fullsize_content_view(true),
-            Decorations::None => window.with_titlebar_hidden(true),
-        }
+            .with_maximized(window_config.maximized())
+            .with_titlebar_hidden(true);
     }
 
     pub fn set_urgent(&self, is_urgent: bool) {

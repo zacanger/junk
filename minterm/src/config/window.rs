@@ -19,9 +19,6 @@ pub struct WindowConfig {
     /// Initial position.
     pub position: Option<Delta<i32>>,
 
-    /// Draw the window with title bar / borders.
-    pub decorations: Decorations,
-
     /// Startup mode.
     pub startup_mode: StartupMode,
 
@@ -57,7 +54,6 @@ impl Default for WindowConfig {
             dynamic_title: true,
             title: DEFAULT_NAME.into(),
             position: Default::default(),
-            decorations: Default::default(),
             startup_mode: Default::default(),
             embed: Default::default(),
             gtk_theme_variant: Default::default(),
@@ -104,22 +100,6 @@ pub enum StartupMode {
 impl Default for StartupMode {
     fn default() -> StartupMode {
         StartupMode::Windowed
-    }
-}
-
-#[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum Decorations {
-    Full,
-    #[cfg(target_os = "macos")]
-    Transparent,
-    #[cfg(target_os = "macos")]
-    Buttonless,
-    None,
-}
-
-impl Default for Decorations {
-    fn default() -> Decorations {
-        Decorations::Full
     }
 }
 

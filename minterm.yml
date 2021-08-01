@@ -52,17 +52,6 @@
   # Spread additional padding evenly around the terminal content.
   #dynamic_padding: false
 
-  # Window decorations
-  #
-  # Values for `decorations`:
-  #     - full: Borders and title bar
-  #     - none: Neither borders nor title bar
-  #
-  # Values for `decorations`:
-  #     - transparent: Title bar, transparent background and title bar buttons
-  #     - buttonless: Title bar, transparent background and no title bar buttons
-  #decorations: full
-
   # Startup Mode (changes require restart)
   #
   # Values for `startup_mode`:
