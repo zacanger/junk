@@ -37,6 +37,9 @@ install:
 	@rm -rf /Applications/$(APP_NAME)
 	@mv -f $(APP_DIR)/$(APP_NAME) /Applications/
 
+count:
+	@cloc --exclude-dir=x,.git,.github .
+
 .PHONY: app binary clean dmg install $(TARGET)
 
 clean:
