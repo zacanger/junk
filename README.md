@@ -11,6 +11,11 @@ basic Unix principles and leads to terrible bugs (just search for "iterm
 vulnerability" if you're curious). This is also a chance for me to mess around
 with Rust a bit.
 
+There's no Linux or BSD support because there are already really good minimalist
+terminal emulators for X11 and Wayland. There's no Windows support because I
+don't have any interest in supporting Windows. Minterm is meant to fill a very
+specific gap: the lack of a good, simple, fast terminal emulator for macOS.
+
 Minterm is fast, but that's just about its only feature. For other features, use
 screen, tmux, or something similar.
 
