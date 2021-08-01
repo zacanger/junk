@@ -1,8 +1,8 @@
 [workspace]
 members = [
-    "zterm",
-    "zterm_terminal",
-    "zterm_config_derive",
+    "minterm",
+    "minterm_terminal",
+    "minterm_config_derive",
 ]
 
 [profile.release]

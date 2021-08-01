@@ -746,6 +746,69 @@ dependencies = [
 ]
 
 [[package]]
+name = "minterm"
+version = "0.0.1"
+dependencies = [
+ "bitflags",
+ "clap",
+ "cocoa 0.24.0",
+ "copypasta",
+ "crossfont",
+ "dirs",
+ "fnv",
+ "gl_generator",
+ "glutin",
+ "libc",
+ "log",
+ "minterm_config_derive",
+ "minterm_terminal",
+ "notify",
+ "objc",
+ "parking_lot",
+ "raw-window-handle",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "time",
+ "unicode-width",
+]
+
+[[package]]
+name = "minterm_config_derive"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_yaml",
+ "syn",
+]
+
+[[package]]
+name = "minterm_terminal"
+version = "0.15.1-dev"
+dependencies = [
+ "base64",
+ "bitflags",
+ "dirs",
+ "libc",
+ "log",
+ "minterm_config_derive",
+ "mio",
+ "mio-extras",
+ "nix",
+ "parking_lot",
+ "regex-automata",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "signal-hook",
+ "unicode-width",
+ "vte",
+]
+
+[[package]]
 name = "mio"
 version = "0.6.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1396,67 +1459,4 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
 dependencies = [
  "linked-hash-map",
-]
-
-[[package]]
-name = "zterm"
-version = "0.0.1"
-dependencies = [
- "bitflags",
- "clap",
- "cocoa 0.24.0",
- "copypasta",
- "crossfont",
- "dirs",
- "fnv",
- "gl_generator",
- "glutin",
- "libc",
- "log",
- "notify",
- "objc",
- "parking_lot",
- "raw-window-handle",
- "serde",
- "serde_json",
- "serde_yaml",
- "time",
- "unicode-width",
- "zterm_config_derive",
- "zterm_terminal",
-]
-
-[[package]]
-name = "zterm_config_derive"
-version = "0.1.0"
-dependencies = [
- "log",
- "proc-macro2",
- "quote",
- "serde",
- "serde_yaml",
- "syn",
-]
-
-[[package]]
-name = "zterm_terminal"
-version = "0.15.1-dev"
-dependencies = [
- "base64",
- "bitflags",
- "dirs",
- "libc",
- "log",
- "mio",
- "mio-extras",
- "nix",
- "parking_lot",
- "regex-automata",
- "serde",
- "serde_json",
- "serde_yaml",
- "signal-hook",
- "unicode-width",
- "vte",
- "zterm_config_derive",
 ]

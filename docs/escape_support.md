@@ -1,6 +1,6 @@
 # Escape Sequence Support
 
-This list includes all escape sequences Zterm currently supports.
+This list includes all escape sequences Minterm currently supports.
 
 ### Legend
 

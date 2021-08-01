@@ -1,0 +1,35 @@
+[package]
+name = "minterm_terminal"
+version = "0.15.1-dev"
+authors = ["Zac Anger"]
+license = "LGPL-3.0"
+description = "Library for writing terminal emulators"
+readme = "../README.md"
+homepage = "https://github.com/zacanger/minterm"
+edition = "2018"
+
+[dependencies.minterm_config_derive]
+path = "../minterm_config_derive"
+version = "0.1.0"
+
+[dependencies]
+libc = "0.2"
+bitflags = "1"
+parking_lot = "0.11.0"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.8"
+vte = { version = "0.10.0", default-features = false }
+mio = "0.6.20"
+mio-extras = "2"
+log = "0.4"
+unicode-width = "0.1"
+base64 = "0.13.0"
+regex-automata = "0.1.9"
+dirs = "3.0.1"
+
+[target.'cfg(unix)'.dependencies]
+nix = "0.22.0"
+signal-hook = { version = "0.1", features = ["mio-support"] }
+
+[dev-dependencies]
+serde_json = "1.0.0"

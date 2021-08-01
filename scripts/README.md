@@ -3,8 +3,8 @@ Scripts
 
 ## Flamegraph
 
-Run the release version of Zterm while recording call stacks. After the
-Zterm process exits, a flamegraph will be generated and it's URI printed
+Run the release version of Minterm while recording call stacks. After the
+Minterm process exits, a flamegraph will be generated and it's URI printed
 as the only output to STDOUT.
 
 ```sh
