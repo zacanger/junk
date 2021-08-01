@@ -11,7 +11,7 @@ use glutin::event_loop::EventLoop;
 use log::{debug, info};
 use parking_lot::MutexGuard;
 
-use crossfont::{self, Rasterize, Rasterizer};
+use minterm_crossfont::{self, Rasterize, Rasterizer};
 
 use minterm_terminal::ansi::NamedColor;
 use minterm_terminal::event::{EventListener, OnResize};
@@ -46,7 +46,7 @@ pub enum Error {
     Window(window::Error),
 
     /// Error dealing with fonts.
-    Font(crossfont::Error),
+    Font(minterm_crossfont::Error),
 
     /// Error in renderer.
     Render(renderer::Error),
@@ -83,8 +83,8 @@ impl From<window::Error> for Error {
     }
 }
 
-impl From<crossfont::Error> for Error {
-    fn from(val: crossfont::Error) -> Self {
+impl From<minterm_crossfont::Error> for Error {
+    fn from(val: minterm_crossfont::Error) -> Self {
         Error::Font(val)
     }
 }
@@ -229,7 +229,7 @@ impl Display {
         });
 
         // Set subpixel anti-aliasing.
-        crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
+        minterm_crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
 
         // Disable shadows for transparent windows.
         window.set_has_shadow(config.ui_config.background_opacity() >= 1.0);
@@ -527,7 +527,7 @@ pub fn viewport_to_point(display_offset: usize, point: Point<usize>) -> Point {
 ///
 /// This will return a tuple of the cell width and height.
 #[inline]
-fn compute_cell_size(config: &Config, metrics: &crossfont::Metrics) -> (f32, f32) {
+fn compute_cell_size(config: &Config, metrics: &minterm_crossfont::Metrics) -> (f32, f32) {
     let offset_x = f64::from(config.ui_config.font.offset.x);
     let offset_y = f64::from(config.ui_config.font.offset.y);
     (

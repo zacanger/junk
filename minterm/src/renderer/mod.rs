@@ -6,7 +6,7 @@ use std::mem::size_of;
 use std::ptr;
 
 use bitflags::bitflags;
-use crossfont::{
+use minterm_crossfont::{
     BitmapBuffer, Error as RasterizerError, FontDesc, FontKey, GlyphKey, Rasterize,
     RasterizedGlyph, Rasterizer, Size, Slant, Style, Weight,
 };
@@ -130,13 +130,13 @@ pub struct GlyphCache {
     bold_italic_key: FontKey,
 
     /// Font size.
-    font_size: crossfont::Size,
+    font_size: minterm_crossfont::Size,
 
     /// Glyph offset.
     glyph_offset: Delta<i8>,
 
     /// Font metrics.
-    metrics: crossfont::Metrics,
+    metrics: minterm_crossfont::Metrics,
 }
 
 impl GlyphCache {
@@ -144,7 +144,7 @@ impl GlyphCache {
         mut rasterizer: Rasterizer,
         font: &Font,
         loader: &mut L,
-    ) -> Result<GlyphCache, crossfont::Error>
+    ) -> Result<GlyphCache, minterm_crossfont::Error>
     where
         L: LoadGlyph,
     {
@@ -187,7 +187,7 @@ impl GlyphCache {
     fn compute_font_keys(
         font: &Font,
         rasterizer: &mut Rasterizer,
-    ) -> Result<(FontKey, FontKey, FontKey, FontKey), crossfont::Error> {
+    ) -> Result<(FontKey, FontKey, FontKey, FontKey), minterm_crossfont::Error> {
         let size = font.size();
 
         // Load regular font.
@@ -226,7 +226,7 @@ impl GlyphCache {
         rasterizer: &mut Rasterizer,
         description: &FontDesc,
         size: Size,
-    ) -> Result<FontKey, crossfont::Error> {
+    ) -> Result<FontKey, minterm_crossfont::Error> {
         match rasterizer.load_font(description, size) {
             Ok(font) => Ok(font),
             Err(err) => {
@@ -328,7 +328,7 @@ impl GlyphCache {
         font: &Font,
         dpr: f64,
         loader: &mut L,
-    ) -> Result<(), crossfont::Error> {
+    ) -> Result<(), minterm_crossfont::Error> {
         // Update dpi scaling.
         self.rasterizer.update_dpr(dpr as f32);
 
@@ -357,7 +357,7 @@ impl GlyphCache {
         Ok(())
     }
 
-    pub fn font_metrics(&self) -> crossfont::Metrics {
+    pub fn font_metrics(&self) -> minterm_crossfont::Metrics {
         self.metrics
     }
 
@@ -370,8 +370,8 @@ impl GlyphCache {
     }
 
     /// Calculate font metrics without access to a glyph cache.
-    pub fn static_metrics(font: Font, dpr: f64) -> Result<crossfont::Metrics, crossfont::Error> {
-        let mut rasterizer = crossfont::Rasterizer::new(dpr as f32, font.use_thin_strokes)?;
+    pub fn static_metrics(font: Font, dpr: f64) -> Result<minterm_crossfont::Metrics, minterm_crossfont::Error> {
+        let mut rasterizer = minterm_crossfont::Rasterizer::new(dpr as f32, font.use_thin_strokes)?;
         let regular_desc = GlyphCache::make_desc(font.normal(), Slant::Normal, Weight::Normal);
         let regular = Self::load_regular_font(&mut rasterizer, &regular_desc, font.size())?;
         rasterizer.get_glyph(GlyphKey { font_key: regular, character: 'm', size: font.size() })?;

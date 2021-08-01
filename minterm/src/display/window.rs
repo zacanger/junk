@@ -25,7 +25,7 @@ pub enum Error {
     ContextCreation(glutin::CreationError),
 
     /// Error dealing with fonts.
-    Font(crossfont::Error),
+    Font(minterm_crossfont::Error),
 
     /// Error manipulating the rendering context.
     Context(glutin::ContextError),
@@ -66,8 +66,8 @@ impl From<glutin::ContextError> for Error {
     }
 }
 
-impl From<crossfont::Error> for Error {
-    fn from(val: crossfont::Error) -> Self {
+impl From<minterm_crossfont::Error> for Error {
+    fn from(val: minterm_crossfont::Error) -> Self {
         Error::Font(val)
     }
 }

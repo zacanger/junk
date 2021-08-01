@@ -4,7 +4,6 @@
 #![deny(clippy::all, clippy::if_not_else, clippy::enum_glob_use)]
 #![cfg_attr(feature = "cargo-clippy", deny(warnings))]
 
-#[cfg(target_os = "macos")]
 use std::env;
 use std::error::Error;
 use std::fs;
@@ -27,7 +26,6 @@ mod display;
 mod event;
 mod input;
 mod logging;
-#[cfg(target_os = "macos")]
 mod macos;
 mod message_bar;
 mod renderer;
@@ -43,7 +41,6 @@ use crate::config::monitor;
 use crate::config::Config;
 use crate::display::Display;
 use crate::event::{Event, EventProxy, Processor};
-#[cfg(target_os = "macos")]
 use crate::macos::locale;
 use crate::message_bar::MessageBuffer;
 
@@ -65,10 +62,8 @@ fn main() {
     log::set_max_level(config.ui_config.debug.log_level);
 
     // Switch to home directory.
-    #[cfg(target_os = "macos")]
     env::set_current_dir(dirs::home_dir().unwrap()).unwrap();
     // Set locale.
-    #[cfg(target_os = "macos")]
     locale::set_locale_environment();
 
     // Store if log file should be deleted before moving config.

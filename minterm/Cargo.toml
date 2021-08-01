@@ -17,6 +17,10 @@ default-features = false
 path = "../minterm_config_derive"
 version = "0.1.0"
 
+[dependencies.minterm_crossfont]
+path = "../minterm_crossfont"
+version = "0.1.0"
+
 [dependencies]
 clap = "2"
 log = { version = "0.4", features = ["std", "serde"] }
@@ -28,7 +32,6 @@ serde_json = "1"
 glutin = { version = "0.26.0", default-features = false, features = ["serde"] }
 notify = "4"
 parking_lot = "0.11.0"
-crossfont = { version = "0.3.0", features = ["force_system_fontconfig"] }
 libc = "0.2"
 unicode-width = "0.1"
 bitflags = "1"

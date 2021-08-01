@@ -19,7 +19,7 @@ use glutin::platform::run_return::EventLoopExtRunReturn;
 use log::info;
 use serde_json as json;
 
-use crossfont::{self, Size};
+use minterm_crossfont::{self, Size};
 
 use minterm_terminal::config::LOG_TARGET_CONFIG;
 use minterm_terminal::event::{Event as TerminalEvent, EventListener, Notify, OnResize};
@@ -648,7 +648,7 @@ impl<N: Notify + OnResize> Processor<N> {
         }
 
         // Set subpixel anti-aliasing.
-        crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
+        minterm_crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
 
         // Disable shadows for transparent windows.
         processor.ctx.window().set_has_shadow(config.ui_config.background_opacity() >= 1.0);

@@ -38,7 +38,7 @@ install:
 	@mv -f $(APP_DIR)/$(APP_NAME) /Applications/
 
 count:
-	@cloc --exclude-dir=x,.git,.github .
+	@cloc --exclude-dir=x,.git,.github,target .
 
 .PHONY: app binary clean dmg install $(TARGET)
 

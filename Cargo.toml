@@ -3,6 +3,7 @@ members = [
     "minterm",
     "minterm_terminal",
     "minterm_config_derive",
+    "minterm_crossfont",
 ]
 
 [profile.release]

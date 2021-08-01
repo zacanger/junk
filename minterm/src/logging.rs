@@ -23,7 +23,7 @@ use crate::message_bar::{Message, MessageType};
 const MINTERM_LOG_ENV: &str = "MINTERM_LOG";
 /// List of targets which will be logged by Minterm.
 const ALLOWED_TARGETS: [&str; 4] =
-    ["minterm_terminal", "minterm_config_derive", "minterm", "crossfont"];
+    ["minterm_terminal", "minterm_config_derive", "minterm", "minterm_crossfont"];
 
 pub fn initialize(
     options: &Options,

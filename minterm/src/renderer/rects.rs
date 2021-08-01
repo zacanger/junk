@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::mem;
 
-use crossfont::Metrics;
+use minterm_crossfont::Metrics;
 
 use minterm_terminal::grid::Dimensions;
 use minterm_terminal::index::{Column, Point};

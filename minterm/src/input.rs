@@ -81,7 +81,6 @@ impl<T: EventListener> Execute<T> for Action {
                 ctx.write_to_pty(s.clone().into_bytes())
             },
             Action::Command(program) => start_daemon(program.program(), program.args()),
-            #[cfg(target_os = "macos")]
             Action::ClearLogNotice => ctx.pop_message(),
             Action::ReceiveChar | Action::None => (),
         }
