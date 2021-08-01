@@ -19,15 +19,9 @@ pub struct WindowConfig {
     /// Initial position.
     pub position: Option<Delta<i32>>,
 
-    /// Startup mode.
-    pub startup_mode: StartupMode,
-
     /// XEmbed parent.
     #[config(skip)]
     pub embed: Option<c_ulong>,
-
-    /// GTK theme variant.
-    pub gtk_theme_variant: Option<String>,
 
     /// Spread out additional padding evenly.
     pub dynamic_padding: bool,
@@ -54,9 +48,7 @@ impl Default for WindowConfig {
             dynamic_title: true,
             title: DEFAULT_NAME.into(),
             position: Default::default(),
-            startup_mode: Default::default(),
             embed: Default::default(),
-            gtk_theme_variant: Default::default(),
             dynamic_padding: Default::default(),
             class: Default::default(),
             padding: Default::default(),
@@ -70,7 +62,6 @@ impl WindowConfig {
     pub fn dimensions(&self) -> Option<Dimensions> {
         if self.dimensions.columns.0 != 0
             && self.dimensions.lines != 0
-            && self.startup_mode != StartupMode::Maximized
         {
             Some(self.dimensions)
         } else {
@@ -83,23 +74,6 @@ impl WindowConfig {
         let padding_x = (f32::from(self.padding.x) * dpr as f32).floor();
         let padding_y = (f32::from(self.padding.y) * dpr as f32).floor();
         (padding_x, padding_y)
-    }
-
-   #[inline]
-    pub fn maximized(&self) -> bool {
-        self.startup_mode == StartupMode::Maximized
-    }
-}
-
-#[derive(ConfigDeserialize, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum StartupMode {
-    Windowed,
-    Maximized,
-}
-
-impl Default for StartupMode {
-    fn default() -> StartupMode {
-        StartupMode::Windowed
     }
 }
 

@@ -15,7 +15,6 @@ use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use minterm_terminal::index::Point;
 use minterm_terminal::term::SizeInfo;
 
-use crate::config::window::{WindowConfig};
 use crate::config::Config;
 use crate::gl;
 
@@ -116,7 +115,7 @@ impl Window {
         size: Option<PhysicalSize<u32>>,
     ) -> Result<Window> {
         let window_config = &config.ui_config.window;
-        let window_builder = Window::get_platform_window(&window_config.title, window_config);
+        let window_builder = Window::get_platform_window(&window_config.title);
 
         let windowed_context =
             create_gl_window(window_builder.clone(), event_loop, false, size)
@@ -177,12 +176,11 @@ impl Window {
         }
     }
 
-    pub fn get_platform_window(title: &str, window_config: &WindowConfig) -> WindowBuilder {
+    pub fn get_platform_window(title: &str) -> WindowBuilder {
         return WindowBuilder::new()
             .with_title(title)
             .with_visible(false)
             .with_transparent(true)
-            .with_maximized(window_config.maximized())
             .with_titlebar_hidden(true);
     }
 

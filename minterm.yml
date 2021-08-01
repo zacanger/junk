@@ -52,14 +52,6 @@
   # Spread additional padding evenly around the terminal content.
   #dynamic_padding: false
 
-  # Startup Mode (changes require restart)
-  #
-  # Values for `startup_mode`:
-  #   - Windowed
-  #   - Maximized
-  #
-  #startup_mode: Windowed
-
   # Window title
   #title: Minterm
 
