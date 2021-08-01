@@ -17,7 +17,9 @@ don't have any interest in supporting Windows. Minterm is meant to fill a very
 specific gap: the lack of a good, simple, fast terminal emulator for macOS.
 
 Minterm is fast, but that's just about its only feature. For other features, use
-screen, tmux, or something similar.
+other software: screen, tmux, or dvtm for splits and tabs, Rectangle or similar
+for controlling window placement and size, `pbcopy`/`pbpaste` for working with
+the clipboard, etc.
 
 ## Installation
 
