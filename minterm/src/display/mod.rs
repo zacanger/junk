@@ -227,8 +227,8 @@ impl Display {
         // Set subpixel anti-aliasing.
         minterm_crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
 
-        // Disable shadows for transparent windows.
-        window.set_has_shadow(config.ui_config.background_opacity() >= 1.0);
+        // Disable shadows
+        window.set_has_shadow(false);
 
         window.set_visible(true);
 

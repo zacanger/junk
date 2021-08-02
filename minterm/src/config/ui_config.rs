@@ -4,7 +4,7 @@ use log::error;
 use serde::{self, Deserialize, Deserializer};
 
 use minterm_config_derive::ConfigDeserialize;
-use minterm_terminal::config::{Percentage, LOG_TARGET_CONFIG};
+use minterm_terminal::config::{LOG_TARGET_CONFIG};
 
 use crate::config::bindings::{
     self, Binding, KeyBinding, MouseBinding,
@@ -49,9 +49,6 @@ pub struct UiConfig {
 
     /// Bindings for the mouse.
     mouse_bindings: MouseBindings,
-
-    /// Background opacity from 0.0 to 1.0.
-    background_opacity: Percentage,
 }
 
 impl Default for UiConfig {
@@ -66,7 +63,6 @@ impl Default for UiConfig {
             config_paths: Default::default(),
             key_bindings: Default::default(),
             mouse_bindings: Default::default(),
-            background_opacity: Default::default(),
             colors: Default::default(),
             draw_bold_text_with_bright_colors: Default::default(),
         }
@@ -74,11 +70,6 @@ impl Default for UiConfig {
 }
 
 impl UiConfig {
-    #[inline]
-    pub fn background_opacity(&self) -> f32 {
-        self.background_opacity.as_f32()
-    }
-
     #[inline]
     pub fn key_bindings(&self) -> &[KeyBinding] {
         self.key_bindings.0.as_slice()

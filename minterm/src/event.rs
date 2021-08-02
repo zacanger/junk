@@ -627,8 +627,8 @@ impl<N: Notify + OnResize> Processor<N> {
         // Set subpixel anti-aliasing.
         minterm_crossfont::set_font_smoothing(config.ui_config.font.use_thin_strokes);
 
-        // Disable shadows for transparent windows.
-        processor.ctx.window().set_has_shadow(config.ui_config.background_opacity() >= 1.0);
+        // Disable shadows
+        processor.ctx.window().set_has_shadow(false);
 
         *processor.ctx.config = config;
 
