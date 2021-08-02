@@ -926,13 +926,6 @@ impl<T: EventListener> Handler for Term<T> {
         }
     }
 
-    /// Set current position as a tabstop.
-    #[inline]
-    fn bell(&mut self) {
-        trace!("Bell");
-        self.event_proxy.send_event(Event::Bell);
-    }
-
     #[inline]
     fn substitute(&mut self) {
         trace!("[unimplemented] Substitute");

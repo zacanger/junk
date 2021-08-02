@@ -9,7 +9,6 @@ use serde_yaml::Value;
 
 use minterm_terminal::config::{Config as TermConfig, LOG_TARGET_CONFIG};
 
-pub mod bell;
 pub mod color;
 pub mod debug;
 pub mod font;

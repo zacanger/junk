@@ -429,14 +429,6 @@ impl<N: Notify + OnResize> Processor<N> {
             if self.dirty {
                 self.dirty = false;
 
-                // Request immediate re-draw if visual bell animation is not finished yet.
-                if !self.display.visual_bell.completed() {
-                    let event: Event = TerminalEvent::Wakeup.into();
-                    self.event_queue.push(event.into());
-
-                    *control_flow = ControlFlow::Poll;
-                }
-
                 // Redraw screen.
                 self.display.draw(terminal, &self.message_buffer, &self.config);
             }
@@ -481,21 +473,6 @@ impl<N: Notify + OnResize> Processor<N> {
                 Event::Scroll(scroll) => processor.ctx.scroll(scroll),
                 Event::Terminal(event) => match event {
                     TerminalEvent::Wakeup => *processor.ctx.dirty = true,
-                    TerminalEvent::Bell => {
-                        // Set window urgency.
-                        if processor.ctx.terminal.mode().contains(TermMode::URGENCY_HINTS) {
-                            let focused = processor.ctx.terminal.is_focused;
-                            processor.ctx.window().set_urgent(!focused);
-                        }
-
-                        // Ring visual bell.
-                        processor.ctx.display.visual_bell.ring();
-
-                        // Execute bell command.
-                        if let Some(bell_command) = &processor.ctx.config.ui_config.bell.command {
-                            start_daemon(bell_command.program(), bell_command.args());
-                        }
-                    },
                     TerminalEvent::ColorRequest(index, format) => {
                         let text = format(processor.ctx.display.colors[index]);
                         processor.ctx.write_to_pty(text.into_bytes());

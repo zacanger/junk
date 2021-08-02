@@ -26,9 +26,6 @@ pub enum Event {
     /// New terminal content available.
     Wakeup,
 
-    /// Terminal bell ring.
-    Bell,
-
     /// Shutdown request.
     Exit,
 }
@@ -40,7 +37,6 @@ impl Debug for Event {
             Event::ColorRequest(index, _) => write!(f, "ColorRequest({})", index),
             Event::PtyWrite(text) => write!(f, "PtyWrite({})", text),
             Event::Wakeup => write!(f, "Wakeup"),
-            Event::Bell => write!(f, "Bell"),
             Event::Exit => write!(f, "Exit"),
         }
     }

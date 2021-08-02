@@ -6,7 +6,6 @@ use serde::{self, Deserialize, Deserializer};
 use minterm_config_derive::ConfigDeserialize;
 use minterm_terminal::config::{Percentage, LOG_TARGET_CONFIG};
 
-use crate::config::bell::BellConfig;
 use crate::config::bindings::{
     self, Binding, KeyBinding, MouseBinding,
 };
@@ -34,9 +33,6 @@ pub struct UiConfig {
 
     /// Live config reload.
     pub live_config_reload: bool,
-
-    /// Bell configuration.
-    pub bell: BellConfig,
 
     /// RGB values for colors.
     pub colors: Colors,
@@ -71,7 +67,6 @@ impl Default for UiConfig {
             key_bindings: Default::default(),
             mouse_bindings: Default::default(),
             background_opacity: Default::default(),
-            bell: Default::default(),
             colors: Default::default(),
             draw_bold_text_with_bright_colors: Default::default(),
         }

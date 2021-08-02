@@ -325,11 +325,6 @@ pub trait Handler {
     /// Linefeed.
     fn linefeed(&mut self) {}
 
-    /// Ring the bell.
-    ///
-    /// Hopefully this is never implemented.
-    fn bell(&mut self) {}
-
     /// Substitute char under cursor.
     fn substitute(&mut self) {}
 
@@ -866,7 +861,6 @@ where
             C0::BS => self.handler.backspace(),
             C0::CR => self.handler.carriage_return(),
             C0::LF | C0::VT | C0::FF => self.handler.linefeed(),
-            C0::BEL => self.handler.bell(),
             C0::SUB => self.handler.substitute(),
             C0::SI => self.handler.set_active_charset(CharsetIndex::G0),
             C0::SO => self.handler.set_active_charset(CharsetIndex::G1),
@@ -1365,8 +1359,6 @@ pub mod C0 {
     pub const ENQ: u8 = 0x05;
     /// Acknowledge, usually sent by terminal in response to ETX.
     pub const ACK: u8 = 0x06;
-    /// Bell, triggers the bell, buzzer, or beeper on the terminal.
-    pub const BEL: u8 = 0x07;
     /// Backspace, can be used to define overstruck characters.
     pub const BS: u8 = 0x08;
     /// Horizontal Tabulation, move to next predetermined position.

@@ -22,7 +22,6 @@ use minterm_terminal::term::{SizeInfo, Term, MIN_COLUMNS, MIN_SCREEN_LINES};
 use crate::config::font::Font;
 use crate::config::window::Dimensions;
 use crate::config::Config;
-use crate::display::bell::VisualBell;
 use crate::display::color::List;
 use crate::display::content::RenderableContent;
 use crate::display::cursor::IntoRects;
@@ -36,7 +35,6 @@ pub mod content;
 pub mod cursor;
 pub mod window;
 
-mod bell;
 mod color;
 mod meter;
 
@@ -147,8 +145,6 @@ pub struct Display {
     /// UI cursor visibility for blinking.
     pub cursor_hidden: bool,
 
-    pub visual_bell: VisualBell,
-
     /// Mapped RGB values for each terminal color.
     pub colors: List,
 
@@ -251,7 +247,6 @@ impl Display {
             meter: Meter::new(),
             size_info,
             cursor_hidden: false,
-            visual_bell: VisualBell::from(&config.ui_config.bell),
             colors: List::from(&config.ui_config.colors),
         })
     }
@@ -427,20 +422,6 @@ impl Display {
             }
         }
 
-        // Push visual bell after url/underline/strikeout rects.
-        let visual_bell_intensity = self.visual_bell.intensity();
-        if visual_bell_intensity != 0. {
-            let visual_bell_rect = RenderRect::new(
-                0.,
-                0.,
-                size_info.width(),
-                size_info.height(),
-                config.ui_config.bell.color,
-                visual_bell_intensity as f32,
-            );
-            rects.push(visual_bell_rect);
-        }
-
         if let Some(message) = message_buffer.message() {
             let text = message.text(&size_info);
 
@@ -488,7 +469,6 @@ impl Display {
 
     /// Update to a new configuration.
     pub fn update_config(&mut self, config: &Config) {
-        self.visual_bell.update_config(&config.ui_config.bell);
         self.colors = List::from(&config.ui_config.colors);
     }
 
