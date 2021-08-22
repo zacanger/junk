@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "minterm",
+    "minterm_terminal",
+    "minterm_config_derive",
+    "minterm_crossfont",
+]
+
+[profile.release]
+lto = true
+debug = 1
+incremental = false
