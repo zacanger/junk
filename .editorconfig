@@ -9,5 +9,5 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 indent_size = 2
 
-[*.{vim,py}]
+[*.{vim,py,go}]
 indent_size = 4
