@@ -1,0 +1,99 @@
+body {
+  background-color: #d8d8d8;
+  font-family: sans-serif;
+  font-size: 1.4rem;
+}
+
+a { color: #fff; text-decoration: none;}
+a:hover { color: #222;text-decoration: none;}
+a:visited { color: bisque; text-decoration: none; }
+
+.content {
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  width: 80%;
+  max-width: 900px;
+  margin: auto;
+  }
+
+.cta {
+  background-color: #fff;
+  padding: 3rem;
+  margin-top: 3rem;
+}
+
+.text {
+  height: 50%;
+  top: 0;
+}
+
+.btns {
+  display: flex;
+  background-color: #fff;
+  padding: 1rem;
+  margin: auto;
+  font-size: 2.4rem;
+  justify-content: flex-start;
+  align-items: center;
+  
+  }
+
+.no {
+  background-color: #d0021b;
+  width: 25%;
+  height: 3.6rem;
+  float: left;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  position: relative;
+  vertical-align: middle;
+  margin: 1rem 2rem 0 0;
+}
+
+.yes {
+  background-color: #4a90e2;
+  width: 25%;
+  height: 3.6rem;
+  float: left;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  position: relative;
+  vertical-align: middle;
+  margin: 1rem 2rem 0 0;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sunken-image { margin-bottom: 3rem; }
+
+.footer {
+  background-color: #333333;
+  position: static;
+  display: flex;
+  bottom: 0;
+  height: 3.8rem;
+}
+
+.footer-links {
+  font-size: 1.6rem;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 15%;
+  margin-left: auto;
+  right: 0;
+  float: right;
+  bottom: 0; 
+}
+
+.flink {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-left: 3rem;
+  }

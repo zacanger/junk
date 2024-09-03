@@ -1,0 +1,28 @@
+<h1>Admin Page</h1>
+
+<form>
+  <input type="text" placeholder="Product Title" ng-model="createTitle">
+  <input type="text" placeholder="Price" ng-model="createPrice">
+  <input type="text" placeholder="Image URL" ng-model="createImg">
+  <button ng-click="createProd(createTitle, createPrice, createImg)">Add New Product</button>
+</form>
+
+<div class="wrapper">
+  <div ng-repeat="product in products">
+    <br/>
+    <div class="imageBox"><img src="{{product.img}}" /></div>
+    <br/>
+    <div class="label">{{product.title}} {{product.price}}</div><br/>
+    <button ng-click="edit = !edit">Edit</button>
+
+    <form ng-if="edit">
+      <input type="text" ng-model="product.title">
+      <input type="text" ng-model="product.price">
+      <input type="text" ng-model="product.img">
+      <button ng-click="updateProd(product)">Update Product</button>
+    </form>
+    <button ng-click="removeProd(product._id)">Delete</button>
+
+  </div>
+</div>
+

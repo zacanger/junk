@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+		<title>WORDS</title>
+		<style>
+			.editor {height: 100%; width:100%}
+	</style>
+	<script src="./bower_components/angular/angular.min.js"></script>
+	<script src="./bower_components/ace-builds/src-min-noconflict/ace.js"></script>
+	<script src="./bower_components/ace-builds/src-min-noconflict/ext-language_tools.js"></script>
+	<script src="./bower_components/angular-ui-ace/ui-ace.min.js"></script>
+	<script src="./app.js"></script>
+</head>
+<body ng-app="app" ng-controller="ctrl">
+	<div class="editor" ui-ace="{mode:'markdown', theme:'merbivore'}" ng-model="code"></div>
+</body>
+</html>

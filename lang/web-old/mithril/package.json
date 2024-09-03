@@ -1,0 +1,27 @@
+{
+  "name": "mithril-test",
+  "version": "0.1.0",
+  "description": "testing out mithril on a little whatchamacallit",
+  "main": "gulpfile.js",
+  "scripts": {
+    "start": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/devmountain.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/devmountain/issues"
+  },
+  "homepage": "https://github.com/zacanger/devmountain#readme",
+  "dependencies": {
+    "mithril": "^0.2.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-connect": "^2.2.0"
+  }
+}

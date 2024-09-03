@@ -1,0 +1,5 @@
+<a ui-sref="add">Add Class</a>
+
+<li ng-repeat="class in classes track by $index">
+    <a ng-click="selectClass($index)">{{class.name}}</a>
+</li>

@@ -1,0 +1,72 @@
+html { font-size: 70%; } /* This is for math. I hate math. */
+
+body {
+  font-size: 1.5em;
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Fantasque Sans Mono", "Fira Code", "Anonymous Pro", "Inconsolata", monospace;
+  color: #303330;
+  background: #E3E3DE;
+  padding: 4rem;
+  margin-left: 10rem;
+  }
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  }
+
+h1 { font-size: 4.0rem; line-height: 1.2;  letter-spacing: -.1rem;}
+h2 { font-size: 3.5rem; line-height: 1.3; letter-spacing: -.1rem; }
+h3 { font-size: 3rem; line-height: 1.4;  letter-spacing: -.1rem; }
+h4 { font-size: 2.5rem; line-height: 1.5; letter-spacing: -.075rem; }
+h5 { font-size: 2rem; line-height: 1.6;  letter-spacing: -.05rem; }
+h6 { font-size: 1.5rem; line-height: 1.7;  letter-spacing: 0; }
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem;
+}
+
+footer { font-size: .75em; }
+
+p {
+   margin-top: 1rem;
+   margin-bottom: 2rem;
+  }
+
+img .stuck { float: left; }
+img .woah {  max-width: 100px;
+  max-height: 100px;
+  float: right; }
+
+a { color: #0087ff; }
+a:hover { color: #ff0087; }
+a:visited { color: #808080; }
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-width: 0;
+  border-top: 1px solid #222;
+  }
+
+.article {
+  max-width: 60 rem;
+  padding: 4rem;
+  margin-left: 10rem;
+  }
+.content {  }
+
+@media (min-width: 740px) {
+  h1 { font-size: 4rem; }
+  h2 { font-size: 3.5rem; }
+  h3 { font-size: 3rem; }
+  h4 { font-size: 2.5rem; }
+  h5 { font-size: 2rem; }
+  h6 { font-size: 1.5rem;}
+}
+

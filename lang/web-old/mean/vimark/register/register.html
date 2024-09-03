@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="jumbotron" style="padding-bottom:0px;">
+    <h3>appyapp</h3>
+  </div>
+  <form class="form-signin" name="regForm">
+    <div class="form-group" ng-class="{ 'has-error' : regForm.email.$invalid }">
+      <label>email</label>
+      <input type="email" name="email" class="form-control" ng-model="user.email">
+      <p class="help-block" ng-show="regForm.email.$invalid">can i get your email, please?</p>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error' : regForm.password.$invalid }">
+      <label>password</label>
+      <input type="password" name="password" class="form-control" ng-model="user.password" ng-minlength="8">
+      <p class="help-block" ng-show="regForm.password.$error.minlength">four characters or more, if that's okay</p>
+      <p style="color:#9a3434;" ng-show="regError">{{regErrorMessage}}</p>
+		</div>
+    <button type="button" ladda-loading="login.loading" data-style="expand-right" ng-click="signUp();" ng-disabled="!user.email || !user.password" class="btn btn-lg segoe-ui-light ladda-button btn-primary btn-block">register</button>
+  </form>
+</div>

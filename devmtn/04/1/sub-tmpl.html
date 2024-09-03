@@ -1,0 +1,6 @@
+<div class="sub"> 
+    <a ui-sref="home.sub.sub1" ng-class="{active: state.name==='home.sub.sub1'}">SUBROUTE ONE</a> 
+    <a ui-sref="home.sub.sub2({id: 'checkOutThisParam'})" ng-class="{active: state.name==='home.sub.sub2'}">SUBROUTE TWO</a>
+    <a href="/#/sub/sub3/anotherSweetParam" ng-class="{active: state.name==='home.sub.sub3'}">SUBROUTE THREE</a> 
+    <ui-view></ui-view> 
+</div>

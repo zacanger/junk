@@ -1,0 +1,38 @@
+html {
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 62.5%
+}
+
+body {
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box
+	background: #111;
+	color: #ccc;
+	font-size 1.6em;
+	font-family: serif;
+}
+
+.error{
+  color: #c89a79;
+}
+
+.subscriptions-remove-button {
+  text-decoration: none;
+  visibility: hidden;
+}
+
+.subscriptions-list-item:hover .subscriptions-remove-button {
+  visibility: visible;
+}
+
+.subscriptions-list {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.subscriptions-list.striked-out {
+  text-decoration: line-through;
+}

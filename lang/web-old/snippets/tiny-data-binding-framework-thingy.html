@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<!-- tiny lil framework thingy for playing around with data binding -->
+<head>
+  <meta charset="utf-8">
+  <title>fmwk</title>
+
+  <script type="text/javascript">
+
+    const fmwk = {
+
+      render () {
+
+        var doc = this.html
+        doc.innerHTML = this.originalHTML
+        let
+        matches = doc.innerHTML.match(/{{([^}]+)}}/gi)
+        , state   = this.state
+        , self    = this
+        matches.map(function(match){
+          let name = match.replace('{{', '').replace('}}','')
+          if (state[name]) {
+            doc.innerHTML = doc.innerHTML.replace(match,state[name])
+          }
+        })
+
+        matches.map(function(match){
+          let name = match.replace('{{', '').replace('}}','')
+          if (state[name]) {
+            let bindings = doc.querySelectorAll("[data-bind='"+name+"']")
+            for (let index in bindings){
+              let field = bindings[index]
+              if (!field.nodeName) {
+                return true
+              }
+              field.value = state[name]
+              field.onkeyup = self.listen.bind(self)
+            }
+          }
+        })
+        this.html = doc
+      }
+
+      , init (object,html) {
+        this.html         = html
+        this.originalHTML = html.innerHTML.toString()
+        this.setState(object.getInitialState())
+      }
+
+      , setState (values) {
+        this.state = values
+        this.render()
+      }
+
+      , listen (e) {
+        let
+        name  = e.target.dataset.bind
+        , value = e.target.value
+        , state = this.state
+        state[name] = value
+        this.setState(state)
+      }
+      , createClass (object) {
+        return object
+      }
+    }
+  </script>
+
+  <script type="text/javascript">
+    let home = fmwk.createClass({
+      getInitialState () {
+        return {
+          foo  : 'foo'
+          , bar  : 'bar'
+          , quux : 'quux'
+          , baz  : 'baz'
+        }
+      }
+
+    })
+    window.onload = function(){
+      fmwk.init(home,document.body)
+    }
+  </script>
+
+</head>
+
+<body>
+
+  <p>
+    {{foo}}
+    <br><input type="text" data-bind="foo">
+  </p>
+
+  <p>
+    {{bar}}
+    <br><input type="text" data-bind="bar">
+  </p>
+
+  <p>
+    {{quux}}
+    <br><input type="text" data-bind="quux">
+  </p>
+
+  <p>
+    {{baz}}
+    <br><input type="text" data-bind="baz">
+  </p>
+</body>
+</html>

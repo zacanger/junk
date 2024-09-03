@@ -1,0 +1,15 @@
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  font-size: 62.5%;
+  background: #131413;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak { display: none !important; }
+
+input, textarea {
+  font-family: "Hasklig", "Fantasque Sans Mono", "Fira Mono", "Hack", "Inconsolata", "Anonymous Pro", monospace;
+}

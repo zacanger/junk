@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>markvi</title>
+		<link rel="stylesheet" href="./photon.css">
+		<link rel="stylesheet" href="./styles/css.css" type="text/css">
+		<script src="./app.js" charset="utf-8"></script>
+	</head>
+	<body>
+<div class="window">
+			<header class="toolbar toolbar-header">
+				<h1 class="title">markvi</h1>
+			</header>
+
+<div class="window-content">
+
+<!-- now we're inside electron! -->
+<div class="app">
+  <header class="navbar" ng-controller="NavCtrl">
+    <nav class="pure-menu-horizontal">
+      <ul class="pure-menu-left">
+	  		<li>
+          <form class="pure-form search-form" role="search">
+            <input type="search" placeholder="search…" ng-model="query" ng-keyup="search()" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="50">
+          </form>
+        </li>
+      </ul>
+  		<ul class="pure-menu-right">
+        <li><button ng-click="create()" class="pure-button">new</button></li>
+      </ul>
+    </nav>
+  </header>
+  <aside class="browser" ng-controller="BrowserCtrl">
+    <div class="file" ng-click="select(file.id)" ng-class="{ selected: file.id == selectedFile }" ng-repeat="file in files">
+      <span class="title">{{file.title | cut:false:30}}</span>
+      <span class="modified" am-time-ago="file.modified"></span>
+      <p>{{file.content | cut:false:72}}</p>
+    </div>
+    <p ng-if="!files.length" class="no-files">i'm afraid i can't find that!</p>
+  </aside>
+  <section class="main">
+    <div class="content" ui-view></div>
+  </section>
+</div>
+	<script src="./bower_components/angular/angular.js" type="text/javascript"></script>
+  <script src="./bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+  <script src="./bower_components/angular-animate/angular-animate.min.js" type="text/javascript"></script>
+  <script src="./bower_components/angular-cookies/angular-cookies.min.js" type="text/javascript"></script>
+  <script src="./bower_components/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
+  <script src="./bower_components/angular-ui-router/release/angular-ui-router.min.js" type="text/javascript"></script>
+  <script src="./bower_components/angular-local-storage/dist/angular-local-storage.min.js" type="text/javascript"></script>
+  <script src="./bower_components/lodash/lodash.min.js" type="text/javascript"></script>
+  <script src="./bower_components/highlightjs/highlight.pack.js" type="text/javascript"></script>
+  <script src="./bower_components/codemirror/lib/codemirror.js" type="text/javascript"></script>
+  <script src="./bower_components/codemirror/keymap/vim.js" type="text/javascript"></script>
+  <script src="./bower_components/codemirror/mode/markdown/markdown.js" type="text/javascript"></script>
+  <script src="./bower_components/codemirror/addon/display/placeholder.js" type="text/javascript"></script>
+
+  <script src="./scripts/markdown.js" type="text/javascript"></script>
+  <script src="./scripts/app.js" type="text/javascript"></script>
+	<script src="./scripts/config.js" type="text/javascript"></script>
+  <script src="./scripts/controllers/main.js" type="text/javascript"></script>
+  <script src="./scripts/controllers/browser.js" type="text/javascript"></script>
+  <script src="./scripts/controllers/nav.js" type="text/javascript"></script>
+  <script src="./scripts/directives/markdown-editor.js" type="text/javascript"></script>
+  <script src="./scripts/services/files.js" type="text/javascript"></script>
+  <script src="./scripts/filters/cut.js" type="text/javascript"></script>
+	<script src="./scripts/filters/filename.js" type="text/javascript"></script>
+
+<!-- and now we're going back into the electron window -->
+</div>
+
+<footer class="toolbar toolbar-footer">
+	<h1 class="title">0.2.x | wtftpl 2015 zac anger</h1>
+</footer>
+		</div>
+	</body>
+</html>
+

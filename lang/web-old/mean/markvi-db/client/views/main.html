@@ -1,0 +1,10 @@
+<div class="page" ng-if="!selectedFile">
+  <div class="page-inner">
+    <h1>markvi</h1>
+	<p>to try markvi locally, go to <a href="https://github.com/zacanger/markvi.git">the repo</a> and grab some files!</p>
+    <p>check out the <code>usage.md</code> file on the left for details and instructions.</p>
+    <p>you could <a href="login">log in</a>, or <a href="register">sign up</a>.</p>
+  </div>
+</div>
+<markdown-editor file="{{selectedFile}}" ng-if="selectedFile"></markdown-editor>
+

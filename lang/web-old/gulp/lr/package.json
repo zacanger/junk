@@ -1,0 +1,30 @@
+{
+  "name": "gulp-lr-example",
+  "version": "0.1.0",
+  "description": "tiny little gulpfile with live reloading",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/gulp-tests.git"
+  },
+  "keywords": [
+    "gulp",
+    "livereload",
+    "tiny-lr"
+  ],
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/gulp-tests/issues"
+  },
+  "homepage": "https://github.com/zacanger/gulp-tests#readme",
+  "devDependencies": {
+    "express": "^4.13.4",
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.7",
+    "tiny-lr": "^0.2.1"
+  }
+}

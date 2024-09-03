@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ayuba</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/common/dark.css">
+  <style>
+    .btn .btn-primary { width: 100px; }
+  </style>
+  </head>
+  <body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4 text-center">
+        <h1>sign up</h1>
+        <form method="post" action="/register">
+          <input
+            type="text"
+            placeholder="email"
+            name="email"
+            ng-model="user.email"
+            class="form-control">
+          <input
+            type="password"
+            placeholder="password"
+            name="password"
+            ng-model="user.password"
+            class="form-control">
+          <input
+            type="submit"
+            class="btn btn-primary"
+            value="go!">
+        </form>
+        <a href="/admin">login</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

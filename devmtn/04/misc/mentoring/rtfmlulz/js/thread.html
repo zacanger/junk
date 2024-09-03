@@ -1,0 +1,23 @@
+<div class="threadsTop">
+  <h2>so many words</h2>
+</div>
+
+<div class="box">
+  <input
+    ng-hide="hideUserBox"
+    class="threadText"
+    ng-model="comment.user"
+    placeholder="username">
+  <br>
+  <button ng-click="createNewComment(comment)">speak</button>
+  <br>
+</div>
+
+<div class="box">
+  <div class="commentsBox">
+    <div class="threadComments" ng-repeat="comment in comments">
+      <strong>{{comment.text}}</strong> &mdash; <em>{{comment.user}}</em>
+    </div>
+  </div>
+</div>
+

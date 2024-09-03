@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Zac Anger">
+    <title>rx search</title>
+  </head>
+  <body>
+    <input
+      type="text"
+      name="typeahead"
+      class="typeaheadInput"
+    />
+    <div class="suggestions"></div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.3/Rx.min.js"></script>
+    <script type="text/javascript">
+      // https://dev.to/sammyisa/rxjs-in-practice-how-to-make-a-typeahead-with-streams
+      const suggestions = document.querySelector('.suggestions')
+      const input = document.querySelector('.typeaheadInput')
+      const inputStream$ = Rx.Observable
+        .fromEvent(input, 'input')
+        .map((e) => e.target.value)
+        .debounceTime(2000)
+
+      const suggestionsStream$ = inputStream$
+        .mergeMap((text) => fetch(`https://api.datamuse.com/sug?s=${text}`))
+        .mergeMap((res) => res.json())
+        .map((body) => body.map(item => item.word))
+
+      suggestionsStream$.subscribe((words) => {
+        suggestions.innerText = words.join('\n')
+      })
+    </script>
+  </body>
+</html>

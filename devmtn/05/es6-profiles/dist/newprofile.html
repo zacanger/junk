@@ -1,0 +1,13 @@
+<form>
+  <input ng-model="name" type="text" placeholder="name">
+  <input ng-model="age" type="number" placeholder="age">
+  <input ng-model="img" type="text" placeholder="image.url.com">
+  <input
+    ng-model="skills[$index]"
+    ng-repeat="skill in skills track by $index"
+    type="text"
+    placeholder="coding and things"
+  >
+  <button ng-click="skills.push('')">Add skill</button>
+  <button ng-click="postProfile()" type="submit">Submit</button>
+</form>

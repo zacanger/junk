@@ -1,0 +1,23 @@
+html
+  head
+    title=title
+    link(href='//netdna.bootstrapcdn.com/bootstap/3.3.6/css/bootstrap.min.css', rel='stylesheet')
+  body
+    div.container
+      div.jumbotron
+        h1 home
+
+        if user
+          p welcome, #{user.fullName}
+          p
+            a.small(href="profile") edit profile
+          form(action='/logout', method='POST')
+            button.btn.btn-default(type="submit") log out
+        else
+          p welcome
+          p
+            a.btn.btn-primary(href="/login") log in
+          p
+            span.small no account?
+            span &nbsp;
+            a.small(href="/register") register now.

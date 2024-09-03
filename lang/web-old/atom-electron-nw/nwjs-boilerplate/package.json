@@ -1,0 +1,46 @@
+{
+  "name": "appyapp",
+  "version": "0.0.1",
+  "description": "example",
+  "main": "http://127.0.0.1:6789",
+  "preferGlobal": true,
+  "bin": "./index.js",
+  "scripts": {
+    "start": "./index.js",
+    "release": "./node_modules/.bin/nwbuild -p win64,osx64,linux64 -f ."
+  },
+  "chromium-args": "--remote-debugging-port=9876",
+  "window": {
+    "title": "app",
+    "icon": "icon.png",
+    "toolbar": false,
+    "frame": true,
+    "single-instance": false,
+    "width": 1600,
+    "height": 900,
+    "min_width": 400,
+    "min_height": 300,
+    "position": "center",
+    "dom_storage_quota": 64
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/extras.git"
+  },
+  "keywords": [
+    "hair",
+    "stuff"
+  ],
+  "author": "zacanger <zac@zacanger.com>",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/extras/issues"
+  },
+  "homepage": "https://github.com/zacanger",
+  "dependencies": {
+    "nw-builder": "^2.2.0"
+  },
+  "devDependencies": {
+  }
+}
+

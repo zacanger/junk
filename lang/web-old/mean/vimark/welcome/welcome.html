@@ -1,0 +1,70 @@
+<div class="blog-masthead">
+  <div class="container">
+    <nav class="blog-nav">
+      <a class="blog-nav-item active" href="#/welcome">home</a>
+      <a class="blog-nav-item " href="#/addPost">new…</a>
+      <a class="blog-nav-item " style="cursor:pointer;" ng-click="logout();">logout</a>
+    </nav>
+  </div>
+</div>
+<div class="container">
+  <div class="page-header">
+    <h3>appyapp</h3>
+  </div>
+  <p class="lead">howdy, <em>{{username}}</em></p>
+  <p>{{pp}}</p>
+  <div class="list-group" ng-repeat="article in articles">
+    <a href="#" onclick="return false;" class="list-group-item active">
+      <h4 class="list-group-item-heading">{{article.title}}</h4>
+      <p class="list-group-item-text">{{article.post}}</p>
+      <span class="pull-right">
+        <button class="btn btn-xs btn-info" ng-click="editPost(article.$id)" data-target="#editModal">edit</button>
+        <button class="btn btn-xs btn-warning" ng-click="confirmDelete(article.$id)" data-target="#deleteModal">delete</button>
+      </span>
+    </a>
+  </div>
+	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+		      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">close</span></button>
+		      <h4 class="modal-title" id="editModalLabel">update</h4>
+    		</div>
+		    <div class="modal-body">
+    		  <form role="form">
+        	  <div class="form-group">
+		          <label for="recipient-name" class="control-label">title:</label>
+    		      <input type="text" class="form-control" ng-model="postToUpdate.title" id="recipient-name">
+        		</div>
+		        <div class="form-group">
+		          <label for="message-text" class="control-label">post:</label>
+    		      <textarea class="form-control" id="message-text" ng-model="postToUpdate.post"></textarea>
+        		  </div>
+		      </form>
+    		</div>
+		    <div class="modal-footer">
+    		  <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+		      <button type="button" class="btn btn-primary" ng-click="update()">post</button>
+    		</div>
+		  </div>
+		</div>
+  </div>
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header" style="text-align:center;">
+	        <h4 class="modal-title" style="color:#9a3434;" id="deleteModalLabel">are you absolutely sure?</h4>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+	        <button type="button" class="btn btn-primary" ng-click="deletePost()">do it!</button>
+	      </div>
+	    </div>
+		</div>
+	</div>
+</div>
+<footer class="footer">
+    <div class="container">
+      <p class="text-muted"></p>
+    </div>
+</footer>

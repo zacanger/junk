@@ -1,0 +1,26 @@
+{
+  "name": "quick-full-stack-thing",
+  "version": "0.1.0",
+  "description": "very quick straightforward scaffolding out of a full MEAN app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/devmountain.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/devmountain/issues"
+  },
+  "homepage": "https://github.com/zacanger/devmountain#readme",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "mongoose": "^4.2.6"
+  }
+}

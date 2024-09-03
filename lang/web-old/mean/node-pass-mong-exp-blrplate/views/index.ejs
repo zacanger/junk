@@ -1,0 +1,6 @@
+<% layout('layout') -%>
+      <div class="jumbotron">
+        <h1><%=title%></h1>
+        <p class="lead"><%if(!user){%>Welcome to <%=title%>!<%}else{%>Welcome to <%=title%>, <%=user.username%>!<%}%></p>
+      </div>
+

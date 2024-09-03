@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  {% if title %}
+  <title>{{ title }}</title>
+  {% else %}
+  <title>Home</title>
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="/css.css">
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('index') }}">Home</a>
+    {% if current_user.is_anonymous %}
+    <a href="{{ url_for('login') }}">Log In</a>
+    {% else %}
+    <a href="{{ url_for('user', username=current_user.username) }}">Me</a>
+    <a href="{{ url_for('explore') }}">Explore</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
+    {% endif %}
+  </nav>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+  <div>{% block content %}{% endblock %}</div>
+</body>
+</html>

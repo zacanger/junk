@@ -1,0 +1,85 @@
+/* First, a wee reset... */
+html, body, ul, ol, li, form, fieldset, legend
+{ margin: 0; padding: 0; height: 100%; width: 100%;
+ font-family: "Hack", "Hasklig", "Fantasque Sans Mono", "Fira Mono", "Inconsolata", "Anonymous Pro", monospace;
+  color: #303330;
+background: #E3E3DE; }
+h1, h2, h3, h4, h5, h6, p { margin-top: 0; }
+fieldset,img { border: 0; }
+legend { color: #000; }
+li { list-style: none; }
+sup { vertical-align: text-top; }
+sub { vertical-align: text-bottom; }
+table { border-collapse: collapse; border-spacing: 0; }
+caption, th, td {
+	text-align: left;
+	vertical-align: top;
+	font-weight: normal;
+}
+input, textarea, select { font-size: 110%; line-height: 1.1; }
+abbr, acronym
+{ border-bottom: .1em dotted; cursor: help; }
+
+
+/* Now, some actual styling... */
+
+/* For hiding things, but not from screen readers */
+.a11y-hidden {
+   position: absolute;
+   left: -10000px;
+   top: auto;
+   width: 1px;
+   height: 1px;
+   overflow: hidden;
+}
+
+ }
+
+/* Links */
+a {
+  color: #71A397; }
+a:hover {
+  color: #89D470; }
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-width: 0;
+  border-top: 1px solid #579370; }
+
+/* Here down: project-specific styles */
+
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 100%;
+    height: 1200px;
+    min-height: 100%;
+}
+
+.ngTopPanel {
+  line-height: 25px;
+}
+
+.ngCell  {
+  display : table-cell;
+  height: auto !important;
+  overflow:visible;
+  position: static;
+}
+
+.ngRow {
+  display : table-row;
+  height: auto !important;
+  position: static;
+}
+
+.ngCellText{
+  height: auto !important;
+  white-space: normal;
+  overflow:visible;
+}
+
+.ngGrid.unselectable {
+  margin-top: 10px;
+}
+

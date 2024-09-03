@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dumbass Sucks</title>
+  <style type="text/css">
+    body {
+      overflow-x: hidden;
+    }
+    .s1 {
+      position: absolute;
+      font-size: 10pt;
+      color: blue;
+      visibility: hidden;
+    }
+
+    .s2 {
+      position: absolute;
+      font-size: 18pt;
+      color: red;
+      visibility: hidden;
+    }
+
+    .s3 {
+      position: absolute;
+      font-size: 14pt;
+      color: gold;
+      visibility: hidden;
+    }
+
+    .s4 {
+      position: absolute;
+      font-size: 12pt;
+      color: lime;
+      visibility: hidden;
+    }
+
+    .s5 {
+      position: absolute;
+      font-size: 16pt;
+      color: purple;
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body bgcolor="grey" background="assets/background.jpg">
+  <div style="visibility: hidden">
+    <audio autoplay loop hidden>
+      <source src="assets/song2.mp3">
+    </audio>
+  </div>
+  <center>
+    <img src="assets/welcome.gif">
+    <br>
+    <br>
+    <img src="assets/under-construction.gif">
+    <br>
+    <br>
+    <img src="assets/dancing-baby.gif">
+    <br>
+    <br>
+    <img src="assets/divider.gif">
+  </center>
+  <footer>
+    <center>
+      <img src="assets/hits.jpg">
+      <br>
+      <br>
+      <img src="assets/ie.jpg">
+      <br>
+      <br>
+      <small>
+        <a href="https://zacanger.com">by Zac Anger</a>
+      </small>
+    </center>
+  </footer>
+  <div id="div1" class="s1">*</div>
+  <div id="div2" class="s2">*</div>
+  <div id="div3" class="s3">*</div>
+  <div id="div4" class="s4">*</div>
+  <div id="div5" class="s5">*</div>
+
+  <script type="text/javascript">
+    var standardbody = document.compatMode === 'CSS1Compat' ? document.documentElement : document.body;
+    var nav = (!document.all || window.opera);
+    var tmr = null;
+    var spd = 50;
+    var x = 0;
+    var xOffset = 5;
+    var y = 0;
+    var yOffset = 15;
+
+    document.onmousemove = getMouse;
+
+    function getMouse (e) {
+      x = (nav) ? e.pageX : event.clientX + standardbody.scrollLeft;
+      y = (nav) ? e.pageY : event.clientY + standardbody.scrollTop;
+      x += xOffset;
+      y += yOffset;
+      beam(1);
+    }
+
+    function beam (n) {
+      if (n < 6) {
+        document.getElementById('div' + n).style.top = y + 'px'
+        document.getElementById('div' + n).style.left = x + 'px'
+        document.getElementById('div' + n).style.visibility = 'visible'
+        n++;
+        tmr = setTimeout('beam(' + n + ')', spd);
+      } else {
+        clearTimeout(tmr);
+        fade(5);
+      }
+    }
+
+    function fade (n) {
+      if (n > 0) {
+        document.getElementById('div' + n).style.visibility = 'hidden';
+        n--;
+        tmr = setTimeout('fade(' + n + ')', spd);
+      } else {
+        clearTimeout(tmr);
+      }
+    }
+  </script>
+</body>
+</html>

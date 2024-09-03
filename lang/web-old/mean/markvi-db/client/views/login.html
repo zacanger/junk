@@ -1,0 +1,22 @@
+<div class="page" ng-if="!selectedFile">
+  <div class="page-inner">
+<h2>
+  log in
+    </h2>
+        <p>
+        <div>
+    <div class='row'>
+      <div class='col'>
+        <form method='post' action='/register'>
+          <input type='text' placeholder='email' name='email' ng-model='user.email'>
+          <input type='password' placeholder='Password' name='password' ng-model='user.password'>
+          <input type='submit' value='Register'>
+        </form>
+				<a href='/admin'>login</a>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<markdown-editor file="{{selectedFile}}" ng-if="selectedFile"></markdown-editor>
+

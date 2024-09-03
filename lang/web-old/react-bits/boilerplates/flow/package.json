@@ -1,0 +1,60 @@
+{
+  "name": "react-flow-boilerplate",
+  "description": "Basic React boilerplate with Flow.",
+  "version": "0.0.1",
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "main": "./public/bundle.js",
+  "scripts": {
+    "build": "NODE_ENV=production npm run clean && webpack -p",
+    "clean": "if [ -f public/bundle.js ] ; then rm public/bundle.js ; fi",
+    "test:lint": "eslint -c .eslintrc.json src/",
+    "test:flow": "flow && flow stop",
+    "test": "npm run test:lint && npm run test:flow",
+    "start": "webpack-dev-server --hot --inline"
+  },
+  "homepage": "https://github.com/zacanger/react-bits",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zacanger/react-bits.git"
+  },
+  "bugs": "https://github.com/zacanger/react-bits/issues",
+  "keywords": [
+    "boilerplate",
+    "flow",
+    "react"
+  ],
+  "dependencies": {
+    "react": "15.4.2",
+    "react-dom": "15.4.2"
+  },
+  "devDependencies": {
+    "babel-core": "6.23.1",
+    "babel-eslint": "7.1.1",
+    "babel-loader": "6.3.2",
+    "babel-plugin-transform-class-properties": "6.23.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.23.0",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-env": "^1.2.0",
+    "babel-preset-react": "6.23.0",
+    "css-loader": "0.26.2",
+    "eslint": "3.17.0",
+    "eslint-config-standard": "7.0.0",
+    "eslint-config-standard-jsx": "3.3.0",
+    "eslint-config-standard-react": "4.2.0",
+    "eslint-plugin-babel": "4.1.0",
+    "eslint-plugin-flowtype": "^2.30.0",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-react": "6.10.0",
+    "eslint-plugin-standard": "2.1.1",
+    "flow-bin": "^0.40.0",
+    "style-loader": "0.13.2",
+    "webpack": "2.2.1",
+    "webpack-dev-server": "2.4.1"
+  }
+}

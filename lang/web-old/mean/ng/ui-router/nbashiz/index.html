@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>nbashiz</title>
+  <link rel="stylesheet" type="text/css" href="./css.css">
+</head>
+
+<body ng-app="nbaRoutes">
+  <div class="main-container" ng-controller="mainCtrl">
+    <div class="menu">
+      <ul>
+        <li><a ui-sref="home">Home</a></li>
+        <li><a ui-sref="teams({team: 'utahjazz'})">Utah Jazz</a></li>
+        <li><a ui-sref="teams({team: 'losangeleslakers'})">Los Angeles Lakers</a></li>
+        <li><a ui-sref="teams({team: 'miamiheat'})">Miami Heat</a></li>
+      </ul>
+    </div>
+
+    <div ui-view></div>
+
+  </div>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+  <script type="text/javascript" src="./js/app.js"></script>
+  <script type="text/javascript" src="./js/mainCtrl.js"></script>
+  <script type="text/javascript" src="./js/defaultHeaders.js"></script>
+  <script type="text/javascript" src="./js/teams/teamCtrl.js"></script>
+  <script type="text/javascript" src="./js/teams/teamService.js"></script>
+  <script type="text/javascript" src="./js/home/homeCtrl.js"></script>
+  <script type="text/javascript" src="./js/home/homeService.js"></script>
+</body>
+
+</html>

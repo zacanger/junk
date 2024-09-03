@@ -1,0 +1,56 @@
+<html>
+<head>
+  <title>Form Submission</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          New Users
+        </div>
+        <div class="panel-body">
+          <!-- This is our form -->
+          <form name="userForm" class="js-add-user form">
+            <div class="form-group">
+              <label>User Name</label>
+              <input type="text" class="js-name form-control" placeholder="name">
+              <label>User Job</label>
+              <input type="text" class="js-job form-control" placeholder="job">
+              <hr>
+              <button type="submit" class="btn btn-success btn-block">Submit</button>
+              <button type="reset" class="btn btn-default btn-block">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- This is the recently added users section -->
+      <div>
+        <div>
+          Recently Added User
+          <div class="js-recent-user">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- This is the GET current users section -->
+    <div class="">
+      <div>
+        <div>
+          <button class="js-get-users btn btn-default btn-block">GET current users</button>
+          <hr>
+          <div class="js-user-info-1">
+          </div>
+          <div class="js-user-info-2">
+          </div>
+          <div class="js-user-info-3">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="jquery.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

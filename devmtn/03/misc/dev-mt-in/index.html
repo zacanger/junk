@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html ng-app="devMtIn" lang="en">
+
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Raleway:400,500,700,600' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/styles3.css">
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>DevMtin</title>
+</head>
+
+<body ng-controller="homeCtrl">
+
+	<div class="l-header">
+		<h1>{{ myProfile.name || 'Your Name' }}</h1>
+	</div>
+
+  <div class="wrapper">
+    <div>
+      <h2>Profile</h2>
+      <button ng-click="editing = !editing" class="l-btn l-btn-main">Editing : {{ editing }}</button>
+    </div>
+
+    <div>
+      <input ng-disabled="!editing" id="name" type="text" placeholder="Your Name" ng-model="myProfile.name">
+      <br>
+      <input ng-disabled="!editing" id="likes" type="text" placeholder="Likes" ng-model="myProfile.likes">
+      <br>
+      <input ng-disabled="!editing" id="favColor" type="text" placeholder="Favorite Color" ng-model="myProfile.favColor">
+      <br>
+      <button ng-click="saveProfile(myProfile)" ng-disabled="!editing" class="l-btn l-btn-success">Save</button>
+      <button ng-click="deleteProfile()" class="l-btn l-btn-danger">Delete</button>
+    </div>
+  </div>
+
+  <div class="l-container">
+    <h2>Friends</h2>
+
+    <button ng-click="findFriends(findFriend.name)" class="l-btn l-btn-main">Go</button>
+    <input type="text" placeholder="Find Friends" ng-model="findFriend.name">
+    <select ng-model="sortReverse" ng-options="option.value as option.display for option in sortOptions"></select>
+    <div class="friendList" ng-repeat="friend in myProfile.friends | filter : findFriend.name | orderBy : name : sortReverse">
+      <span class="closeBtn" ng-click="removeFriend(friend._id)"></span>
+        {{ friend.name }}
+      <br />
+      <div ng-repeat="secondFriend in friend.friends track by $index" class="secondConnection friendList">
+        Friends: {{ secondFriend.name }}
+      </div>
+    </div>
+  </div>
+
+	<div id="myModalMask">
+		<div id="myModal">
+			<div>
+				<div class="modalTitle">
+				<span class="closeBtn"></span>
+					Add Friends
+				</div>
+					<br />
+				<div class="friendList">
+					<span class="" ng-repeat="friend in potentialFriends track by $index"><button ng-click="addFriend(friend._id)">Add: </button>{{ friend.name }}<br /></span> Potential Friends
+				</div>
+			</div>
+		</div>
+	</div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+  <script src="./app.js"></script>
+  <script src="./homeCtrl.js"></script>
+  <script src="./profileService.js"></script>
+	<script src="./friendService.js"></script>
+
+</body>
+</html>
+

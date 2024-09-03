@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>md editor in vue</title>
+    <style type="text/css">
+      html, body, editor {
+        margin: 0;
+        height: 100%;
+        font-family: "Cardo", "Merriweather", serif;
+        background: #efefef;
+        color: #212121;
+      }
+      textarea, #editor div {
+        display: inline-block;
+        width: 49%;
+        height: 100%;
+        vertical-align: top;
+        box-sizing: border-box;
+        padding: 0 1.2em;
+      }
+      textarea {
+        border: none;
+        border-right: 1px solid #aba;
+        font-size: 0.8em;
+        height: 100%;
+        font-family: "Hack", monospace;
+        padding: 1.2em;
+      }
+      code {
+        color: #3c6d58;
+      }
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/vue/latest/vue.js"></script>
+  </head>
+  <body>
+    <div id="editor">
+      <textarea v-model="input" debounce="200"></textarea>
+      <div v-html="input | marked"></div>
+    </div>
+    <script type="text/javascript">
+      new Vue({
+        el   : '#editor'
+      , data : {
+          input : '# howdy'
+        },
+        filters : {
+          marked : marked
+        }
+      })
+    </script>
+ </body>
+</html>
+

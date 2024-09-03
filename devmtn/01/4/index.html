@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>blah</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+<link rel="stylesheet" href="css.css">
+</head>
+<body>
+<header>
+<a class="float-right" href="http://www.scientology.org/" title="Steve Jobs Is Amazing">Home</a>
+<a class="float-right" href="http://psychcentral.com/ask-the-therapist/2013/04/04/should-i-check-into-a-hospital/">Log In</a>
+
+</header>
+<div class="container">
+<a href="http://zacanger.com/gifland/" title="Get yer gifs here!"><img src="http://zacanger.com/gifland/dance.gif" title="danceydance"></a>
+
+<!-- here be dragons... or at least, hacky php (is there any other kind?) -->
+<p>
+<?php
+$action=$_REQUEST['action'];
+if ($action=="")    /* display the contact form */
+    {
+    ?>
+    <form action="" method="POST" enctype="multipart/form-data" role="form">
+      <div class="row">
+        <input type="hidden" name="action" value="submit">
+          <div"> <label>Name</label>
+          <input name="name" type="text" value=""/></div>
+        <div> <label>Email</label>
+        <input name="email" type="text" value=""/></div>
+           <div> <label>Message</label>
+    <textarea name="message" rows="6"></textarea><br>
+   <div> <input value="Submit" name="save" type="hidden"><button type="submit">Submit</button>
+    </form>
+    <?php
+    }
+else
+    {
+    $name=$_REQUEST['name'];
+    $email=$_REQUEST['email'];
+    $message=$_REQUEST['message'];
+    {
+        $from="From: $name  Return-path: $email";
+        $subject="Message from Contact Form";
+        mail("e@mail.to", $subject, $message, $from);
+        echo "Email sent!";
+        }
+    }
+?>
+</p>
+</div>
+</body>
+</html>
+

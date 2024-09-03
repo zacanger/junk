@@ -1,0 +1,28 @@
+{
+  "name": "lsp",
+  "description": "a little lisp",
+  "version": "0.1.0",
+  "author": "Zac Anger <http://zacanger.com>",
+  "main": "index.js",
+  "scripts": {
+    "start": "./index.js",
+    "test": "npm run test:lint && npm run test:tap",
+    "test:lint": "eslint -c .eslintrc.json index.js test.js",
+    "test:tap": "tap test.js | tap-spec"
+  },
+  "devDependencies": {
+    "babel-eslint": "7.2.3",
+    "eslint": "4.5.0",
+    "eslint-config-jane": "0.5.2",
+    "eslint-plugin-babel": "4.1.2",
+    "eslint-plugin-node": "5.1.1",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-unicorn": "2.1.2",
+    "tap": "10.7.2",
+    "tap-spec": "4.1.1"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "private": true
+}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ui-router-demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.min.js" type="text/javascript"></script>
+  <script src="http://angular-ui.github.io/ui-router/release/angular-ui-router.js" type="text/javascript"></script>
+  <script src="app.js" type="text/javascript"></script>
+  <script src="svc.js" type="text/javascript"></script>
+ <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body ng-app="uiRouteDemo">
+	<div class="header nav navbar">
+	<a href="/#/">INDEX HTML</a>
+	<a ui-sref="settings">SETTINGS BROSEF</a>
+	<a ui-sref="gone">NOT HOME NO MOREZZZ</a>
+	<a ui-sref="list">CHECK DIS LIZST. MAKE SURE U AIN'T ON IT.</a>
+	</div>
+  <ui-view></ui-view>
+  </body>
+</html>

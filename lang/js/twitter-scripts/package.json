@@ -1,0 +1,17 @@
+{
+  "name": "twitter-scripts",
+  "private": true,
+  "description": "Misc scripts for Twitter things",
+  "version": "0.0.1",
+  "author": "Zac Anger",
+  "license": "LGPL-3.0",
+  "scripts": {
+    "test": "echo nope"
+  },
+  "dependencies": {
+    "twitter": "1.7.1"
+  },
+  "devDependencies": {
+    "sortpack": "2.1.6"
+  }
+}

@@ -1,0 +1,82 @@
+data:text/html;charset=utf-8, <html contenteditable>
+
+
+base64 because safari
+
+data:text/html;base64,PGh0bWwgY29udGVudGVkaXRhYmxlPg==
+
+
+chrome security_err:dom? .html version, autosaves on enter
+
+<!DOCTYPE html><head><meta charset="utf-8"><title>TextEditorLocal</title><script>window.onload=function(){f1()}; 
+function f1(){a=window.localStorage['e'];if(a) document.body.innerHTML=a};function f2(t,e){if(e.keyCode==13){window.localStorage['e']=t.innerHTML}}</script>
+<body contenteditable style="font-size:2rem;line-height:1.4;max-width:60rem;margin:0 auto;padding:4rem;word-wrap:break-word;background:black;color:green;" spellcheck="false" onkeypress="f2(this,event);"></body></html>
+
+
+autofocus
+
+data:text/html, <html contenteditable> <script>document.documentElement.focus();</script>
+
+
+data:text/html; charset=utf-8, <style>html,body{margin:0; padding:0;}</style><textarea style="font-size:2em; font-family: source code pro; line-height:1.5em; background:18191A; color:azure; width:100%; height:100%; border:none; outline:none;margin:0;padding:150px;" autofocus placeholder="wake up mo..." spellcheck="false" />
+
+
+<script>(function(b,l,k){b.innerHTML=l.getItem(k);b.addEventListener("keypress",function(e){l.setItem(k,b.innerHTML)},false)})(document.body,localStorage,"bkmlt.ntpd")</script>
+
+
+ data:text/html;base64,PHRpdGxlPkZsYXRwYWQ8L3RpdGxlPjxodG1sIHN0eWxlPSJmb250LWZhbWlseTogJ1JvYm90bycsIHNhbnMtc2VyaWY7YmFja2dyb3VuZDogIzFBQkM5QztwYWRkaW5nLXRvcDo1MHB4OyI+PGhlYWQ+PGxpbmsgaHJlZj0naHR0cDovL2ZvbnRzLmdvb2dsZWFwaXMuY29tL2Nzcz9mYW1pbHk9Um9ib3RvJyByZWw9J3N0eWxlc2hlZXQnIHR5cGU9J3RleHQvY3NzJz48L2hlYWQ+PGJvZHkgY29udGVudGVkaXRhYmxlIHN0eWxlPSJtYXgtd2lkdGg6NjByZW07bWFyZ2luOjAgYXV0bztwYWRkaW5nOjRyZW07YmFja2dyb3VuZDojZmZmO2JvcmRlcjojNjY2IHNvbGlkIDFweDtib3gtc2hhZG93OiAxcHggNHB4IDhweCAtNHB4O21pbi1oZWlnaHQ6IDUwMHB4OyI+PC9ib2R5PjwvaHRtbD4gIA==
+
+
+lulz
+
+data:text/html, <style>html,body{margin: 0; padding: 0;}</style><textarea style="font-size: 1.5em; line-height: 1.5em; background: %23000; color: %233a3; width: 100%; height: 100%; border: none; outline: none; margin: 0; padding: 90px;" autofocus placeholder="wake up Neo..." />
+
+
+bg changes on type
+
+data:text/html, <textarea style="font-size: 1.5em; width: 100%; height: 100%; border: none; outline: none" autofocus />data:text/html, <html><head><link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'><style type="text/css"> html { font-family: "Open Sans" } * { -webkit-transition: all linear 1s; }</style><script>window.onload=function(){var e=false;var t=0;setInterval(function(){if(!e){t=Math.round(Math.max(0,t-Math.max(t/3,1)))}var n=(255-t*2).toString(16);document.body.style.backgroundColor="#ff"+n+""+n},1e3);var n=null;document.onkeydown=function(){t=Math.min(128,t+2);e=true;clearTimeout(n);n=setTimeout(function(){e=false},1500)}}</script></head><body contenteditable style="font-size:2rem;line-height:1.4;max-width:60rem;margin:0 auto;padding:4rem;">
+
+
+<!doctype html>
+<meta charset="utf-8">
+<title>html5 notepad</title>
+<textarea></textarea>
+<script>
+var n = document.getElementsByTagName('textarea')[0];
+n.onchange = function(){localStorage.setItem("n",n.value);}
+n.value = localStorage.getItem("n");
+</script>
+
+
+data:text/html;charset=utf-8, <title>TextEditor</title><body contenteditable style="font-size:2rem;line-height:1.4;max-width:60rem;margin:0 auto;padding:4rem;" spellcheck="false">
+
+
+edit current page
+
+javascript:document.body.contentEditable%20=%20'true';%20document.designMode='on';%20void%200
+
+
+data:text/html;charset=utf-8,%20<title>Writability</title><body%20OnLoad='document.body.focus();'%20%20contenteditable%20style="font-size:21px;line-height:1.6;font-family:'Chaparral%20Pro',Georgia;max-width:21em;margin:0%20auto;padding:3rem;background-color:rgb(233,233,225);color:rgb(68,68,68);"%20spellcheck="false">
+
+
+javascript:(function(){s=document.selection?document.selection.createRange().text:window.getSelection?window.getSelection().toString():document.getSelection?document.getSelection():'';pwin=window.open('','_blank','menubar=yes,scrollbars=yes,location=no,height=550,width=700');with(pwin.document){if(s){write(s);close();}body.contentEditable='true';designMode='on';}if(window.focus){pwin.focus();setTimeout('pwin.focus()',125)};})()
+
+
+ace
+
+data:text/html;base64,PHRpdGxlPkRvSlM8L3RpdGxlPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+I2V7Zm9udC1zaXplOiAxNnB4OyBwb3NpdGlvbjphYnNvbHV0ZTt0b3A6MDtyaWdodDowO2JvdHRvbTowO2xlZnQ6MDt9PC9zdHlsZT48ZGl2IGlkPSJlIj48L2Rpdj48c2NyaXB0IHNyYz0iaHR0cHM6Ly9yYXdnaXRodWIuY29tL2FqYXhvcmcvYWNlLWJ1aWxkcy9tYXN0ZXIvc3JjLW1pbi1ub2NvbmZsaWN0L2FjZS5qcyIgdHlwZT0idGV4dC9qYXZhc2NyaXB0IiBjaGFyc2V0PSJ1dGYtOCI+PC9zY3JpcHQ+PHNjcmlwdCBzcmM9Imh0dHBzOi8vcmF3Z2l0aHViLmNvbS9hamF4b3JnL2FjZS1idWlsZHMvbWFzdGVyL3NyYy1taW4tbm9jb25mbGljdC9rZXliaW5kaW5nLXZpbS5qcyIgdHlwZT0idGV4dC9qYXZhc2NyaXB0IiBjaGFyc2V0PSJ1dGYtOCI+PC9zY3JpcHQ+PHNjcmlwdD52YXIgZT1hY2UuZWRpdCgiZSIpO2Uuc2V0VGhlbWUoImFjZS90aGVtZS9tb25va2FpIik7ZS5zZXRLZXlib2FyZEhhbmRsZXIoYWNlLnJlcXVpcmUoImFjZS9rZXlib2FyZC92aW0iKS5oYW5kbGVyKTtlLmdldFNlc3Npb24oKS5zZXRNb2RlKCJhY2UvbW9kZS9qYXZhc2NyaXB0Iik7PC9zY3JpcHQ+
+
+
+data:text/html,%20<textarea%20placeholder="just%20start%20typing..."%20style="font-family:%20monospace;%20font-size:%201.5em;%20width:%20100%;%20height:%20100%;%20border:%20none;%20outline:%20none"%20autofocus%20/>
+
+
+It's like typing on paper...
+data:text/html, body{font-family:helvetica;font-size:15px;line-height:22px;color:#666;width:600px;margin:40px auto;background:#FFF;border:1px solid #DADADA;padding:50px; }
+
+
+<body oninput='f.srcdoc=t0[v="value"]+"<script>"+t2[v]+"</script><style>"+t1[v]'onload='for(i=3;i--;)f.outerHTML+="<textarea id=t"+i+" rows=9>"'><iframe id=f>
+cssminifier
+<textarea oninput='for(i=9;i--;)value=value.replace(/([^#\d\w\(._\x27"-])((0)[a-z%]+|0(\.))|^\s|\s$|\/\*[^]*?\*\/|\s*;*([^\:\w.#)\x27"\s*-])\s*|\s(\))|(:) |[^}]*{}/gi,"$1$3$4$5$6$7").replace(/rgb\((\d+),(\d+),(\d+)\)|#[a-f0-9]{6}/gi,function(a,c,d,b){if(b)for(i in a="#",p=[c,d,b])a+=("0"+parseInt(p[i]).toString(16)).slice(-2);return(p=a[2]+a[4]+a[6])==a[1]+a[3]+a[5]?"#"+p:a})'>
+
+
+data:text/html;charset=utf-8, TextEditor html{height: 100%;} body{background: -webkit-linear-gradient(#f0f0f0, #fff); padding: 3%; height: 94%;} .paper { font: normal 12px/1.5 "Lucida Grande", arial, sans-serif; width: 50%; height: 80%; margin: 0 auto; padding: 6px 5px 4px 42px; position: relative; color: #444; line-height: 20px; border: 1px solid #d2d2d2; background: #fff; background: -webkit-gradient(linear, 0 0, 0 100%, from(#d9eaf3), color-stop(4%, #fff)) 0 4px; background: -webkit-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px; background: -moz-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px; background: -ms-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px; background: -o-linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px; background: linear-gradient(top, #d9eaf3 0%, #fff 8%) 0 4px; -webkit-background-size: 100% 20px; -moz-background-size: 100% 20px; -ms-background-size: 100% 20px; -o-background-size: 100% 20px; background-size: 100% 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.07); -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.07); box-shadow: 0 1px 2px rgba(0,0,0,0.07); } .paper::before { content: ''; position: absolute; width: 4px; top: 0; left: 30px; bottom: 0; border: 1px solid; border-color: transparent #efe4e4; } textarea{display: block; width:94%;margin:0 auto;padding:3.8% 3%; border: none; outline: none; height: 94%; background: transparent; line-height: 20px;}

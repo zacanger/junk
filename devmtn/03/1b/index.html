@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="folks">
+<head>
+  <title>folks</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body ng-controller="friendCtrl">
+  <h3>do things with people and stuff</h3>
+  <div class="friends">
+    <form class="form-inline searchForm" role="form">
+      <div class="form-group">
+        <input class="form-control" ng-model="nameGrep" placeholder="who d'you want to stalk?">
+        <input class="form-control" ng-model="placeGrep" placeholder="do you know where they live?">
+        <select class="input-medium" ng-model="sorting" ng-options="option.value as option.name for option in sorting">
+          <option>Name</option>
+          <option>Friends</option>
+          <option>Location</option>
+        </select>
+        <select class="input-medium" ng-model="reversed" ng-option="option.value as option.name for option in reversed">
+          <option value="+">Descending</option>
+          <option value="-">Ascending</option>
+        </select>
+      </div>
+    </form>
+    <ul>
+      <li ng-repeat="friend in friends | filter:names | filter: place | orderBy:sorting"></li>
+      <li class='friend'>
+        <img class="profile-pic" src="{{%20friend.pic_square%20}}">
+        <h3>{{ friend.name }}</h3>
+        <div class="location">Location: {{ friend.current_location.city + ', ' + friend.current_location.state + ', ' + friend.current_location.country }}
+        </div>
+        <div class="status">{{ friend.status.message }}</div>
+        <div class="num-friends">Friends: {{ friend.friend_count }}</div>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

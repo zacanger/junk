@@ -1,0 +1,27 @@
+<% include ../shared/header.html %>
+<h1><%= post.title %></h1>
+<p><%= post.content %></p>
+
+<h3>comments</h3>
+<p>(<span class="toggle-comments">hide comments</span>)</p>
+<div class="post-comments">
+
+	<ul>
+	<% if (post.comments.length === 0) { %>
+		<li>be the first to comment</li>
+	<%	} else { %>
+		<% post.comments.forEach(function(c){ %>
+			<li><%= c.comment %></li>
+			<hr />
+		<%});%>
+	<% } %>
+	  
+	</ul>
+</div>
+<p class="toggle-form">add comment</p>
+<form id="comment" method="POST" action="/p/<%= post.title %>">
+	<textarea cols="40" rows="10" name="comment"></textarea>
+	<br />
+	<button type="submit">comment</button>
+</form>
+<% include ../shared/footer.html %>

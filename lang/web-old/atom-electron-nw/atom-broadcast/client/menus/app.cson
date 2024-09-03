@@ -1,0 +1,12 @@
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Pharaoh'
+      'submenu': [
+        { 'label': 'On', 'command': 'pharaoh:turnOn' },
+        { 'label': 'Off', 'command': 'pharaoh:turnOff' }
+      ]
+    ]
+  }
+]

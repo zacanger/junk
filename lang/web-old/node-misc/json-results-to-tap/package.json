@@ -1,0 +1,18 @@
+{
+  "name": "jane-core-tap",
+  "version": "0.0.1",
+  "author": "Zac Anger <zac@zacanger.com> (http://zacanger.com)",
+  "license": "MIT",
+  "main": "tap-output.js",
+  "scripts": {
+    "tc": "node index.js | tap-tc",
+    "test": "node index.js | tap-spec"
+  },
+  "keywords": [],
+  "dependencies": {},
+  "devDependencies": {
+    "tap-spec": "5.0.0",
+    "tap-tc": "4.2.0"
+  },
+  "private": true
+}

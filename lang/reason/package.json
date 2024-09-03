@@ -1,0 +1,28 @@
+{
+  "name": "reason-example",
+  "description": "reason-example",
+  "version": "0.0.1",
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "main": "index.js",
+  "scripts": {
+    "b": "bsb -make-world",
+    "build": "npm run b && npm run w",
+    "start": "lv -r public",
+    "w": "webpack"
+  },
+  "dependencies": {
+    "luvi": "1.4.3"
+  },
+  "devDependencies": {
+    "bs-platform": "1.7.4",
+    "webpack": "2.6.1"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

@@ -1,0 +1,67 @@
+.TH MINTERM "1" "August 2018" "minterm 0.10.0-dev" "User Commands"
+.SH NAME
+Minterm \- A fast, cross-platform, OpenGL terminal emulator
+.SH "SYNOPSIS"
+minterm [FLAGS] [OPTIONS]
+.SH DESCRIPTION
+Minterm is a modern terminal emulator that comes with sensible defaults, but
+allows for extensive configuration. By integrating with other applications,
+rather than reimplementing their functionality, it manages to provide a flexible
+set of features with high performance.
+.SH "FLAGS"
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Prints help information
+.TP
+\fB\-\-hold\fR
+Remain open after child process exits
+.TP
+\fB\-\-print\-events\fR
+Print all events to stdout
+.TP
+\fB\-q\fR
+Reduces the level of verbosity (the min level is \fB\-qq\fR)
+.TP
+\fB\-\-ref\-test\fR
+Generates ref test
+.TP
+\fB\-v\fR
+Increases the level of verbosity (the max level is \fB\-vvv\fR)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Prints version information
+.SH "OPTIONS"
+.TP
+\fB\-e\fR, \fB\-\-command\fR <command>...
+Command and args to execute (must be last argument)
+.TP
+\fB\-\-config\-file\fR <config\-file>
+Specify alternative configuration file
+
+Minterm looks for the configuration file at the path $HOME/minterm.yml
+.TP
+\fB\-o\fR, \fB\-\-option\fR <option>...
+Override configuration file options [example: cursor.style=Beam]
+.TP
+\fB\-\-working\-directory\fR <working\-directory>
+Start the shell in the specified working directory
+.SH "SEE ALSO"
+See the minterm github repository at https://github.com/minterm/minterm for the full documentation.
+.SH "BUGS"
+Found a bug? Please report it at https://github.com/minterm/minterm/issues.
+.SH "MAINTAINERS"
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Christian Duerr <contact@christianduerr.com>
+.sp
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+Joe Wilm <joe@jwilm.com>

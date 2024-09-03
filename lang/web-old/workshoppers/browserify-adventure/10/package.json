@@ -1,0 +1,37 @@
+{
+  "name": "asdf",
+  "description": "asdf",
+  "version": "0.0.1",
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": ""
+  },
+  "homepage": "https://github.com/zacanger/#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/.git"
+  },
+  "bugs": "https://github.com/zacanger//issues",
+  "keywords": [
+    "",
+    ""
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "browser": {
+    "foo": "./foo.js"
+  },
+  "browserify": {
+    "transform": "browserify-shim"
+  },
+  "browserify-shim": {
+    "foo": "bar"
+  }
+}

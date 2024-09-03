@@ -1,0 +1,28 @@
+html, body {
+  font-family: Comic Sans MS;
+  box-sizing: border-box;
+}
+
+h1, h4{
+  text-align: center;
+}
+
+.navbar{
+  display: flex;
+  justify-content: center;
+}
+
+.navbar a {
+  margin: 0 10px;
+}
+
+img {
+  width: 100px;
+}
+
+profile{
+  display: inline-block;
+  border: 1px solid black;
+  margin: 20px;
+  padding: 20px;
+}

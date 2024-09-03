@@ -1,0 +1,41 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  box-sizing: border-box;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #101010;
+  color: #e4e4e4;
+  font-family: "Cardo", "Merriweather", serif;
+  font-stretch: normal;
+  font-weight: 400;
+  outline: 0;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+input, select, button {
+  diplay: block;
+  padding: 1.2em;
+}
+
+#container {
+  margin: 2em;
+  padding: 2em;
+}
+
+h1 {
+  font-size: 2.8em;
+  font-weight: 700;
+  margin-bottom: .8em;
+  color: #dedede;
+}
+
+h3 {
+  font-size: 1.8em;
+  color: #cfcfcf;
+}
+

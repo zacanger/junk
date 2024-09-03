@@ -1,0 +1,20 @@
+{
+  "name": "es6-with-webpack",
+  "description": "demo of front-end code using webpack",
+  "version": "0.1.0",
+  "author": "Zac Anger (http://zacanger.com)",
+  "license": "WTFPL",
+  "scripts": {
+    "build": " npm run clean && webpack",
+    "clean": "if [ -f bundle.js ] ; then rm bundle.js ; fi",
+    "start": "webpack-dev-server --hot --inline --port 9090 --quiet"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2017": "^1.2.0",
+    "node-libs-browser": "^1.0.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

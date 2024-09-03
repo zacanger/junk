@@ -1,0 +1,29 @@
+## global
+
+npm-debug.log*
+*.so.*
+*.so
+*.elf
+*.ko
+*.o
+*.out
+*.gz
+*.tar
+*.bz2
+*.7z
+TAGS
+tags
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+/.build/
+_build/
+*.zedstate
+/bin/x
+/bin/x/**
+
+## project
+/bower_components/
+/node_modules/
+

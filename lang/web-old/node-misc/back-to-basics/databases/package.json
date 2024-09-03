@@ -1,0 +1,30 @@
+{
+  "name": "library",
+  "version": "0.1.0",
+  "description": "example project; i'm learning to use couchdb, yay!",
+  "main": "",
+  "scripts": {
+    "start": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/node-misc.git"
+  },
+  "keywords": [
+    "",
+    ""
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "dependencies": {
+    "async": "^1.5.2",
+    "cheerio": "^0.20.0",
+    "file": "^0.2.2",
+    "request": "^2.69.0"
+  },
+  "devDependencies": {}
+}

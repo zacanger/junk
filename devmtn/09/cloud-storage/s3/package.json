@@ -1,0 +1,23 @@
+{
+  "name": "s3",
+  "version": "0.1.0",
+  "description": " S3",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo 'NOPE NOPE NOPE GOOD TRY NOPE'",
+    "start": "node server.js"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/zacanger/devmtn.git"
+	},
+	"dependencies": {
+    "aws-sdk": "^2.2.22",
+    "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "mongoose": "^4.3.0"
+  }
+}

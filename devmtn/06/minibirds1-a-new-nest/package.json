@@ -1,0 +1,17 @@
+{
+  "name": "birdies",
+  "version": "0.1.0",
+  "description": "mini project, devmtn",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "mongojs": "^1.4.1"
+  }
+}

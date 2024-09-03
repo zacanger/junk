@@ -1,0 +1,24 @@
+{
+  "name": "foo",
+  "version": "0.0.1",
+  "description": "z",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.0"
+  },
+  "dependencies": {
+    "babel": "^6.0.15",
+    "babel-cli": "^6.1.4",
+    "babel-core": "^6.1.4",
+    "babel-preset-es2015": "^6.1.4",
+    "gulp-filter": "^3.0.1",
+    "gulp-main-bower-files": "^1.2.5",
+    "merge2": "^0.3.6"
+  }
+}
+

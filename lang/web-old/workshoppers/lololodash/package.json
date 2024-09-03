@@ -1,0 +1,27 @@
+{
+  "name": "foo",
+  "description": "bar quux baz",
+  "version": "0.1.0",
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "scripts": {
+    "start": "",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/foo.git"
+  },
+  "keywords": [
+    "",
+    ""
+  ],
+  "dependencies": {
+    "lodash": "^4.6.1"
+  },
+  "devDependencies": {}
+}

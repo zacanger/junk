@@ -1,0 +1,11 @@
+body {
+	color: #2a2e34;
+	background: #e7e5e2;
+}
+hr { color: #9b968d; }
+a {	color: #59917e; }
+a:hover { color: #899159; }
+a:visited { color: #917e59; }
+blockquote { color: #cecac4; }
+table, tr, th, td { border: #91496d; }
+

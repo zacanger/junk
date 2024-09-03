@@ -1,0 +1,12 @@
+*.lock
+*.log
+*.o
+*.out
+*.pid
+*.so
+*.swp
+*~
+dist
+node_modules
+x/
+

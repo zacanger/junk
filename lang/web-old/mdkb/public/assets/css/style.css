@@ -1,0 +1,104 @@
+html, body { height: 100%; }
+
+body { padding-top: 50px; }
+
+.nav-sidebar a:visited, a:hover { color: #d65da7; }
+
+.h100 { height: 100% !important; }
+
+html, body, .markdown-body { background: #101010!important; color: #ededed!important; }
+
+/*  header */
+.navbar-default { background: #202020; border-color: #4a4f58; }
+
+.navbar-default .navbar-brand { color: #ccc; }
+
+.navbar-default .navbar-brand:hover { color: #bbb; }
+
+.navbar-default .search-input { min-width: 270px; }
+
+/* sidebar */
+.nav-sidebar {
+  background: #202020;
+  color: #d2d2d2;
+  overflow: auto;
+  width: 15%!important;
+}
+
+.nav-sidebar .nav-sidebar-header { font-weight: bold; padding: 5px 0; }
+
+.nav-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-sidebar a { position: relative; padding-left: 16px; }
+
+.nav-sidebar a:before {
+  content: "";
+  background: #202020;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  margin-top: -2px;
+  left: 6px;
+}
+
+.nav-sidebar a:focus, .nav-sidebar a:active { text-decoration: none; }
+
+.nav-sidebar a:hover { text-decoration: underline; }
+
+.nav-sidebar a.active:before { background: #101010; }
+
+.nav-sidebar  a.active { font-weight: bold; color: #cdcdcd; }
+
+.nav-sidebar .nav-list .nav-list { padding-left: 20px; }
+
+.nav-sidebar .nav-folder:before { display: none; }
+
+.nav-folder {
+  background-repeat: no-repeat;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAMUlEQVQoz2NgGGag4ExBB5TVUXAGm4KOgv8FM4H0TAiNTUkaUOouEKfhtiYNr/SQBQAsPRRMJnnlygAAAABJRU5ErkJggg==);
+}
+
+.nav-folder.is-closed {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAALElEQVQoz2NgGGSg4EzBTPwKOgr+F6ThVzKTsJK7Bf/JN4GgG4C+6GAYigAASNYUTGaVYwsAAAAASUVORK5CYII=);
+}
+
+/* content */
+.main-content {
+  padding-top: 20px;
+  padding-bottom: 50vh;
+  overflow: auto;
+  width: 85%!important;
+  height: 100%;
+}
+
+.markdown-body blockquote { font-size: inherit; }
+
+.markdown-body label {
+  font-weight: normal;
+  display: inline;
+  margin: 0;
+}
+
+.markdown-body input[type="checkbox"] { margin-right: 5px; }
+
+.list-item-info {
+  font-size: 12px;
+  margin-top: 10px;
+  color: #ccc;
+}
+
+.label {
+  display: inline-block;
+  padding: 0.4em .6em;
+  text-transform: uppercase;
+}
+
+[autofocus] { outline: none; }
+

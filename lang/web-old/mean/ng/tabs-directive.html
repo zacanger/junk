@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>tabs</title>
+
+  <style type="text/css">
+    .nav { display: block; margin-bottom: 0; padding-left: 0; list-style: none; }
+    .nav > li > a { position: relative; display: block; padding: 10px 15px; }
+    .nav > li > a:hover,
+    .nav > li > a:focus { text-decoration: none; background-color: #bcbcbc; }
+    .nav-tabs { border-bottom: 1px solid #bababa; }
+    .nav-tabs > li { float: left; margin-bottom: -1px; }
+    .nav-tabs > li > a { margin-right: 2px; line-height: 1.42857143; border: 1px solid transparent; border-radius: 4px 4px 0 0; }
+    .nav-tabs > li > a:hover { border-color: #cccccc #eeeeee #aaaaaa; }
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:hover,
+    .nav-tabs > li.active > a:focus { color: #202020; background-color: #ededed; border: 1px solid #dbdbdb; border-bottom-color: transparent; cursor: default; }
+    .tab-content > .tab-pane { display: none; }
+    .tab-content > .active { display: block; }
+    .nav:before,
+    .nav:after { content: " "; display: table; }
+    .nav:after { clear: both; }
+    a, a:link, a:visited, a:active, a:hover { text-decoration: none; color: #513434; }
+  </style>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
+  <script type="text/javascript">
+    var app = angular.module('tabs', [])
+
+    app.directive('tabs', function() {
+      return {
+        restrict   : 'E'
+      , transclude : true
+      , scope      : {}
+      , controller : function($scope, $element) {
+          var panes = $scope.panes = []
+
+          $scope.select = function(pane) {
+            angular.forEach(panes, function(pane) {
+              pane.selected = false
+            })
+            pane.selected = true;
+            console.log("selected pane: ", pane.title)
+          }
+
+          this.addPane = function(pane) {
+            if (!panes.length) $scope.select(pane)
+            panes.push(pane)
+          }
+        }
+      , template:
+          '<div class="tabbable">' +
+            '<ul class="nav nav-tabs">' +
+              '<li ng-repeat="pane in panes" ng-class="{active:pane.selected}">'+
+                '<a href="" ng-click="select(pane)">{{pane.title}}</a>' +
+              '</li>' +
+            '</ul>' +
+            '<div class="tab-content" ng-transclude></div>' +
+          '</div>'
+      , replace: true
+      }
+    })
+
+    app.directive('pane', function() {
+      return {
+        require    : '^tabs'
+      , restrict   : 'E'
+      , transclude : true
+      , scope      : {
+          title : "@"
+        }
+      , link: function(scope, element, attrs, tabsCtrl) {
+          tabsCtrl.addPane(scope)
+        }
+      , template : '<div class="tab-pane" ng-class="{active: selected}" ng-transclude></div>'
+      , replace  : true
+      }
+    })
+  </script>
+
+</head>
+
+<body ng-app="tabs">
+  <tabs>
+    <pane title="First Tab">First Pane</pane>
+    <pane title="Second Tab">Second Pane</pane>
+    <pane title="Third Tab">Third Pane</pane>
+    <pane title="Fourth Tab">Fourth Pane</pane>
+  </tabs>
+</body>
+</html>
+

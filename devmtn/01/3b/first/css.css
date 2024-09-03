@@ -1,0 +1,56 @@
+.swallow {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+}
+.elderberries {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+}
+.red {
+    background: #d0021b;
+}
+.blue {
+    background-color: #4a90e2;
+}
+.grey {
+    background-color: #4a4a4a;
+}
+.newt {
+    width: 30%;
+    height: 100%;
+}
+.knightsOfNI {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 3rem;
+    display: flex;
+}
+.BringOutYourDead {
+    height: 100%;
+    width: 30%;
+}
+.beingRepressed {
+    height: 100%;
+    width: 70%;
+}
+footer {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+}
+.woah {
+    height: 100%;
+    width: 80%;
+}
+.aww {
+    height: 100%;
+    width: 5%;
+}
+.ah {
+    height: 100%;
+    width: 10%;
+}

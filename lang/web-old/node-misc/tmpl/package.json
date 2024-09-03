@@ -1,0 +1,24 @@
+{
+  "name": "tmpl",
+  "version": "0.6.0",
+  "description": "itty bitty lil templating thingy for node and also for not-node",
+  "main": "index.js",
+  "scripts": {
+    "test": "node example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/node-misc.git"
+  },
+  "keywords": [
+    "template",
+    "templating"
+  ],
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/examples/issues"
+  },
+  "homepage": "https://github.com/zacanger/examples#readme"
+}
+

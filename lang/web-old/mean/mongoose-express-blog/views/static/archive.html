@@ -1,0 +1,10 @@
+<% include ../shared/header.html %>
+<h1>archive</h1>
+<ol>
+	<% posts.forEach(function (post){ %>
+		<li><a href="/p/<%= post.title %>">
+			<%= post.title %>
+		</a></li>
+	<%	}); %>
+</ol>
+<% include ../shared/footer.html %>

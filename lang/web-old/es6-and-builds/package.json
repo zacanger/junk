@@ -1,0 +1,44 @@
+{
+  "name": "es6-brownbag",
+  "description": "material for es6 stuff for dm9",
+  "version": "0.1.0",
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "main": "index.js",
+  "scripts": {
+    "start": "",
+    "test": ""
+  },
+  "homepage": "https://github.com/zacanger/es6-brownbag#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/es6-brownbag.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zacanger/es6-brownbag/issues"
+  },
+  "keywords": [
+    "babel",
+    "devmountain",
+    "es2015",
+    "es6"
+  ],
+  "dependencies": {
+    "babel-core": "^6.7.4",
+    "babel-preset-es2017": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babelify": "^7.2.0"
+  },
+  "browserify": {
+    "transform": [
+      "browserify"
+    ]
+  },
+  "private": true
+}

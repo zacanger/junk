@@ -1,0 +1,20 @@
+{
+  "name": "react-chatroom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.jsx",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/devmtn.git"
+  },
+  "author": "zacanger",
+  "dependencies": {
+    "jquery": "^2.1.3",
+    "react": "^0.12.2"
+  },
+	"license": "WTFPL",
+  "devDependencies": {
+    "jsx-loader": "^0.12.2",
+    "webpack": "^1.5.3"
+  }
+}

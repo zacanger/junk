@@ -1,0 +1,38 @@
+{
+  "name": "gulp-lr-styl-ng-boiler",
+  "version": "0.1.0",
+  "description": "gulp boilerplate for angular & stylus, with livereload (connect).",
+  "main": "gulpfile.js",
+  "scripts": {
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/examples.git"
+  },
+  "keywords": [
+    "gulp",
+    "livereload",
+    "boilerplate",
+    "stylus",
+    "tasklist",
+    "angular"
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-stylus": "^2.3.1",
+    "gulp-task-listing": "^1.0.1",
+    "gulp-uglify": "^1.5.3",
+    "gulp-uglifycss": "^1.0.6",
+    "gulp-webserver": "^0.9.1"
+  }
+}

@@ -1,0 +1,65 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+
+      <div
+      ng-click="showNewProduct = !showNewProduct"
+      ng-hide="editMode"
+      class="btn top-buffer btn-primary">New Product
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- New Product Form -->
+  <form ng-if="showNewProduct" role="form">
+    <div class="form-group">
+      <h4>New Product</h4>
+      <label for="productName">Name</label>
+      <input
+      type="text"
+      class="form-control"
+      ng-model="product.name"
+      >
+    </div>
+    <div class="form-group">
+      <label for="productPrice">Price</label>
+      <input
+      type="text"
+      class="form-control"
+      ng-model="product.price"
+      >
+    </div>
+    <div class="form-group">
+      <label for="productDescription">Product Description:</label>
+
+      <textarea
+      class="form-control"
+      ng-model="product.description"
+      rows="5" id="description"
+      ></textarea>
+
+    </div>
+    <button ng-click="newProduct(product)" type="submit" class="btn btn-default">Submit</button>
+  </form>
+
+
+  <!-- Edit Products -->
+
+  <div class="row">
+    <div class="col-md-4">
+
+      <div
+      ng-click="editProducts()"
+      ng-hide="editMode"
+      class="btn top-buffer btn-primary">Edit Products
+      </div>
+
+
+      <ui-view></ui-view>
+
+    </div>
+  </div>
+
+</div>

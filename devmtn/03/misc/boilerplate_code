@@ -1,0 +1,31 @@
+service
+
+angular.module('foo').service('myService', function() {
+};
+
+
+controller
+angular.module('foo').controller('mainCtrl', function ($scope, myService) {
+};
+
+
+app
+angular.module('foo', []);
+
+
+index
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+      <title>Hello</title>
+      <link rel="stylesheet" type="text/css" href="../css.css">
+  </head>
+  <body ng-app="foo">
+    <div ng-controller="mainCtrl">
+    </div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.js"></script>
+		<script src="app.js"></script>
+		<script src="controller.js"></script>
+		<script src="service.js"></script>
+	</body>
+</html>

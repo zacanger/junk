@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>chatty</title>
+  <link rel="stylesheet" href="./css.css">
+</head>
+<body ng-app="chatroom" ng-controller="chatroomCtrl">
+  <div ng-switch="step">
+    <div class="container" ng-switch-when="1">
+      <div class="text-center">
+        <h1>Chatroom</h1>
+      </div>
+			<div>
+        <input type="text" ng-model="name" placeholder="name">
+        <button ng-disabled="!name" ng-click="nextStep(name)" style="margin-top:16px">chat!</button>
+      </div>
+    </div>
+    <div class="container" ng-switch-when="2">
+      <div class="row">
+        <div class="col">
+          <h3>chatty</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <ul id="chat">
+            <li ng-repeat="m in message.all">{{m.user}}: {{m.message}}</li>
+          </ul>
+        </div>
+        <div class="message-input">
+          <input type="text" placeholder="Message" ng-model="message.new" autofocus>
+          <span>
+            <button ng-click="sendMessage(message.new)">send</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular.min.js"></script>
+  <script src="./js.js"></script>
+</html>

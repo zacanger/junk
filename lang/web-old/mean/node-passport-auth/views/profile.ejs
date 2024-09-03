@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>profile</title>
+		<link rel="stylesheet" href="./css.css" type="text/css">
+	</head>
+	<body>
+		<div>
+			<div>
+				<h4>welcome</h4>
+				<a href="/logout">log out</a>
+			</div>
+			<div>
+				<h4><span>local</span></h4>
+				<p>
+					<strong>id</strong>: <em><%= user._id %></em><br>
+					<strong>email</strong>: <em><%= user.local.email %></em><br>
+					<strong>password</strong>: <em><%= user.local.password %></em>
+				</p>
+			</div>
+		</div>
+	</body>
+</html>
+

@@ -1,0 +1,27 @@
+{
+  "name": "vimark",
+  "private": false,
+  "version": "0.1.0",
+  "author": {"name": "Zac Anger", "email": "zac@zacanger.com", "url": "http://zacanger.com"},
+  "description": "A beautiful, minimal writing platform",
+  "keywords": [ "markdown", "blogging", "writing", "blog", "publishing", "angular" ],
+  "repository": { "type": "git", "url": "https://github.com/zacanger/vimark",
+  "license": "WTFPL",
+  "dependencies": {},
+  "devDependencies": {
+    "bower": "^1.6.5",
+    "live-server": "^0.8.2",
+    "shelljs": "^0.5.3",
+    "xo": "^0.10.1"
+  },
+  "scripts": {
+    "postinstall": "bower install",
+    "start": "live-server --port=4444",
+    "test": "xo"
+  },
+  "xo": {
+    "semicolon": false,
+    "space": true
+  }
+}
+}

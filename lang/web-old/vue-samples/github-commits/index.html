@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>foo</title>
+  <style type="text/css">
+    html { height: 100%; width: 100%; margin: 0; padding: 0; background: #111; color: #eee;}
+    body { margin: 2em; padding: 2em; font-family: "Cardo", serif; }
+    a { text-decoration: none; color: #ec6; }
+    li { line-height: 1.2; margin-bottom: 1em; }
+    .author, .date { font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div id="gh">
+    <h2>latest commits</h2>
+    <template v-for="branch in branches">
+      <input
+        type="radio"
+        name="branch"
+        :id="branch"
+        :value="branch"
+        v-model="currentBranch"
+      >
+      <label :for="branch">{{branch}}</label>
+    </template>
+    <p>pharaoh-js/pharaoh-desktop@{{currentBranch}}</p>
+    <ul>
+      <li v-for="record in commits">
+        <a
+          :href="record.html_url"
+          target="_blank"
+          class="commit">
+          {{record.sha.slice(0, 7)}}
+        </a>
+        &mdash;
+        <span class="message">{{record.commit.message | truncate}}</span>
+        <br>
+        by <span class="author">{{record.commit.author.name}}</span>
+        at <span class="date">{{record.commit.author.date | formatDate}}</span>
+      </li>
+    </ul>
+  </div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/vue/latest/vue.js"></script>
+  <script type="text/javascript" src="./index.js"></script>
+</body>
+</html>
+

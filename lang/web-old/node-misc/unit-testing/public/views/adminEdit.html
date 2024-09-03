@@ -1,0 +1,63 @@
+<div ng-repeat="product in products" class="row marketing">
+  <div class="col-lg-6">
+    <h4>{{product.name}} - {{product.price}}</h4>
+
+
+    <p>
+      {{product.description}}
+    </p>
+
+
+
+  </div>
+  <div class="col-lg-6">
+    <button
+    type="button"
+    ng-hide="editProductForm"
+    class="btn btn-default btn-sm"
+    ng-click="editProductForm = !editProductForm"
+    >
+      <span class="glyphicon glyphicon-pencil"></span>
+    </button>
+    <button
+    ng-hide="editProductForm"
+    type="button"
+    class="btn btn-default btn-sm"
+    ng-click="deleteProduct(product._id)"
+    >
+      <span class="glyphicon glyphicon-minus"></span>
+    </button>
+
+    <form ng-show="editProductForm" role="form">
+      <div class="form-group">
+        <h4>Edit Product</h4>
+        <label for="productName">Name</label>
+        <input
+        type="text"
+        class="form-control"
+        ng-model="product.name"
+        >
+      </div>
+      <div class="form-group">
+        <label for="productPrice">Price</label>
+        <input
+        type="text"
+        class="form-control"
+        ng-model="product.price"
+        >
+      </div>
+      <div class="form-group">
+        <label for="productDescription">Product Description:</label>
+
+        <textarea
+        class="form-control"
+        ng-model="product.description"
+        rows="5" id="description"
+        ></textarea>
+
+      </div>
+      <button ng-click="updateProduct(product)" type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" ng-click="cancelForm()" class="btn btn-default">Cancel</button>
+    </form>
+  </div>
+</div>

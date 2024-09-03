@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="userProfiles">
+<head>
+    <meta charset="utf-8">
+    <title>WORDS</title>
+    <link href="css.css" media="all" rel="stylesheet">
+</head>
+<body ng-controller="mainCtrl">
+
+    <section aria-labelledby="section-heading">
+
+            <h2 id="section-heading">PEOPLES</h2>
+
+            <article role="article">
+<ul ng-repeat="user in users">
+    <li>{{ user.last_name }} , {{ user.first_name } , <img title="FACE" src="{{ user.avatar }}"></li>
+</ul>
+            </article>
+
+        </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.js" type="text/javascript"></script>
+        <script src="js/app.js" type="text/javascript"></script>
+        <script src="js/ctrl.js" type="text/javascript"></script>
+        <script src="js/service.js" type="text/javascript"></script>
+    </body>
+</body>
+</html>

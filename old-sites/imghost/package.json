@@ -1,0 +1,66 @@
+{
+  "name": "imghost",
+  "description": "imghost",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "email": "zac@zacanger.com",
+    "name": "Zac Anger",
+    "url": "http://zacanger.com"
+  },
+  "license": "LGPL-3.0",
+  "main": "index.js",
+  "scripts": {
+    "build-docker": "./scripts/build.sh",
+    "dev": "nodemon index.js",
+    "start": "forever start -a -l f.log -e e.log -o o.log index.js",
+    "test": "npm run test:lint",
+    "test:lint": "eslint -c .eslintrc.json src"
+  },
+  "homepage": "https://github.com/zacanger/imghost",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/imghost"
+  },
+  "bugs": "https://github.com/zacanger/imghost",
+  "keywords": [
+    "imghost"
+  ],
+  "dependencies": {
+    "boring-cluster": "6.0.3",
+    "coderain": "1.1.0",
+    "compression": "1.7.4",
+    "dateformat": "3.0.3",
+    "express": "4.17.1",
+    "express-busboy": "7.0.1",
+    "filesize": "6.0.1",
+    "forever": "2.0.0",
+    "glob": "7.1.6",
+    "lodash": "4.17.15",
+    "nodemon": "2.0.2",
+    "paginator": "1.0.0",
+    "sanitize-filename": "1.6.3",
+    "unique-slug": "2.0.2"
+  },
+  "devDependencies": {
+    "eslint": "6.8.0",
+    "eslint-plugin-zacanger": "1.0.2",
+    "husky": "4.2.1",
+    "lint-staged": "10.0.2",
+    "prettier": "1.19.1",
+    "sortpack": "2.1.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ],
+    "package.json": [
+      "sortpack"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}

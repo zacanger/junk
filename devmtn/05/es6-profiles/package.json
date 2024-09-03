@@ -1,0 +1,48 @@
+{
+  "name": "es6-profile-thing",
+  "version": "0.1.0",
+  "description": "my solved branch",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/devmtn.git"
+  },
+  "keywords": [
+    "es6",
+    "node"
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "babel": {
+    "presets": [
+      "babel-preset-es2017"
+    ]
+  },
+  "license": "WTFPL",
+  "dependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.6.0",
+    "babel-preset-es2017": "^1.0.1",
+    "babel-register": "^6.6.0",
+    "body-parser": "^1.15.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-stylus": "^2.3.0",
+    "gulp-task-listing": "^1.0.1",
+    "gulp-uglify": "^1.5.3"
+  }
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="zac anger">
+  <title>russian roulette on firebase</title>
+  <link rel="stylesheet" type="text/css" href="./css.css">
+</head>
+<body ng-app="app">
+
+  <div ng-controller="ctrl">
+    <button ng-click="createNewGame()">new game</button>
+    <button ng-click="pullTrigger()">click</button>
+  </div>
+
+  <div ng-controller="chat">
+
+    <form ng-submit="sendChat()">
+      <input type="text" ng-model="newChat">
+      <input type="submit" value-"send">
+    </form>
+
+    <ul ng-repeat="chat in chat">
+      <li>
+        {{chat.text}} &mdash; {{chat.timestamp}}
+      </li>
+    </ul>
+
+  </div>
+
+  <script type="text/javascript" src="https://code.angularjs.org/1.5.0/angular.min.js"></script>
+  <script type-"text/javascript" src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+  <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.1.4/angularfire.min.js"></script>
+  <script type="text/javascript" src="./app.js"></script>
+
+</body>
+</html>
+

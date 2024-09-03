@@ -1,0 +1,50 @@
+[package]
+name = "minterm"
+version = "0.0.1"
+authors = ["Zac Anger"]
+license = "LGPL-3.0"
+description = "A fast, cross-platform, OpenGL terminal emulator"
+readme = "README.md"
+homepage = "https://github.com/zacanger/minterm"
+edition = "2018"
+
+[dependencies.minterm_terminal]
+path = "../minterm_terminal"
+version = "0.15.1-dev"
+default-features = false
+
+[dependencies.minterm_config_derive]
+path = "../minterm_config_derive"
+version = "0.1.0"
+
+[dependencies.minterm_crossfont]
+path = "../minterm_crossfont"
+version = "0.1.0"
+
+[dependencies]
+clap = "2"
+log = { version = "0.4", features = ["std", "serde"] }
+time = "0.1.40"
+fnv = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.8"
+serde_json = "1"
+glutin = { version = "0.26.0", default-features = false, features = ["serde"] }
+notify = "4"
+parking_lot = "0.11.0"
+libc = "0.2"
+unicode-width = "0.1"
+bitflags = "1"
+dirs = "3.0.1"
+
+[build-dependencies]
+gl_generator = "0.14.0"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+raw-window-handle = "0.3.3"
+cocoa = "0.24.0"
+objc = "0.2.2"
+
+[features]
+default = []
+nightly = []

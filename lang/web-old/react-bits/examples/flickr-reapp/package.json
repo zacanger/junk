@@ -1,0 +1,18 @@
+{
+  "author": "Your Name Here",
+  "name": "flickr-thing",
+  "repository": "",
+  "description": "",
+  "version": "1.0.0",
+  "main": "./app/app.js",
+  "reapp": "0.8",
+  "scripts": {
+    "test": "",
+    "start": "reapp run"
+  },
+  "dependencies": {
+    "react": "0.13.2",
+    "reapp-kit": "^1.2.0",
+    "superagent": "^1.8.0-beta.2"
+  }
+}

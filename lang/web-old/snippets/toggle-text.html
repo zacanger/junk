@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>foo</title>
+  <script>
+  function expandText(){
+var expandedParagraph = "This is an example paragraph."
+document.getElementById("expandme").innerHTML = expandedParagraph
+  }
+  </script>
+  <script>
+    function expand(elementid){
+      if(document.getElementById(elementid).style.display == 'none'){
+        document.getElementById(elementid).style.display = ''
+      } else {
+        document.getElementById(elementid).style.display = 'none'
+      }
+    }
+</script>
+</head>
+<body>
+  <figure>
+      <img src="example">
+      <figcaption id="expandme"><a href="javascript:void(0);" onClick="expandText();">some text</a></figcaption>
+  </figure>
+  <figure>
+    <img src="example">
+    <figcaption id="expandme"><a href="javascript:expand('expanded')">Read More</a>
+      <p id="expanded" style="display:none">
+        This is another example.
+      </p>
+    </figcaption>
+  </figure>
+</body>
+</html>

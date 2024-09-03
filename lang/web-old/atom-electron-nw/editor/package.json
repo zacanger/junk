@@ -1,0 +1,37 @@
+{
+  "name": "zedit",
+  "description": "editor built on nw.js using codemirror",
+  "version": "0.1.5",
+  "author": "Zac Anger (http://zacanger.com)",
+  "license": "WTFPL",
+  "main": "./index.html",
+  "preferGlobal": true,
+  "bin": "./zedit.sh",
+  "scripts": {
+    "start": "nw ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/nwjs-cm-editor"
+  },
+  "keywords": [
+    "codemirror",
+    "editor",
+    "node-webkit",
+    "nw.js"
+  ],
+  "dependencies": {
+    "nw": "^0.14.2"
+  },
+  "window": {
+    "width": 700,
+    "height": 900,
+    "icon": "./icon.png",
+    "single-instance": false,
+    "position": "mouse",
+    "show": false,
+    "title": "editor",
+    "toolbar": false
+  }
+}
+

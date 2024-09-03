@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" ng-app='mean-blog.admin'>
+  <head>
+    <meta charset="utf-8">
+    <title>ayuba</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div ng-include='"/admin/templates/nav.html"'></div>
+
+    <div ui-view class='full-height' id='main-content'></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-sanitize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.3.0/showdown.min.js"></script>
+    <!-- should probably check out https://github.com/showdownjs/ng-showdown at some point -->
+
+    <script src='/admin/js/lib/markdown.js'></script>
+    <script src='/admin/js/app.js'></script>
+    <script src='/admin/js/controllers.js'></script>
+    <script src='/common/modules/posts.js'></script>
+    <script type='text/javascript'>
+      var currentUser = <%- JSON.stringify(user); %>;
+      adminApp.run(function($rootScope){
+        $rootScope.currentUser = currentUser;
+      });
+    </script>
+  </body>
+</html>
+

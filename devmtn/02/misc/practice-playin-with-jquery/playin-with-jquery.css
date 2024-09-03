@@ -1,0 +1,44 @@
+html { font-size: 62.5%; }  /* because math */
+body {                      /* sidenote, this is kinda dumb, but...  */
+	font-family: 'Hack', 'Hasklig', 'Fira Code', 'Inconsolata', 'Monaco', monospace;
+	line-height: 1.6;		/* to make a long story short, photoshop kind of really blows */
+	font-weight: 400;		/* so we use the 62.5% antipattern so that 1em is around 10px */
+	color: #0F0D0D;			/* so, things are easier to translate from photoshop to the web */
+}							/* and also, i'm really bad at math. so. yeah. */
+							/* anyway, now 1.6em = 16px, so this practice is accessible. hurrah! */
+.header {
+    width: 80%;
+    font-family: sans-serif;
+    text-align: center;
+    margin: 0 auto;
+}
+
+#title {
+    font-size: 2.4em;
+    line-height: 1.2;;
+}
+
+p {
+    text-align: left;
+    font-size: 1.6em;
+}
+
+.box {
+    width: 10%;
+    height: 18vh;
+    background-color: dodgerblue;
+    float: left;
+}
+
+.style1 {
+    background-color: orange;
+}
+
+.style2 {
+	background: repeating-linear-gradient(
+	-30deg,
+	rebeccapurple 2px,
+	rbga(0,0,0,0.1) 10px
+	);
+	color: olivedrab;
+}

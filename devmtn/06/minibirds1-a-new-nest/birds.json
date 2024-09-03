@@ -1,0 +1,32 @@
+{
+  "birds": [{
+    "name": "red breasted merganser",
+    "order": "Anseriformes",
+    "status": "least concern"
+  },
+  {
+    "name": "cedar waxwing",
+    "order": "Passeriformes",
+    "status": "least concern"
+  },
+  {
+    "name": "osprey",
+    "order": "Accipitriformes",
+    "status": "least concern"
+  },
+  {
+    "name": "snowy plover",
+    "order": "Charadriformes",
+    "status": "least concern"
+  },
+  {
+    "name": "passenger pigeon",
+    "order": "Columbiformes",
+    "status": "extinct"
+  },
+  {
+    "name": "greater sage grouse",
+    "order": "GALLIFORMES",
+    "status": "near threatened"
+  }]
+}

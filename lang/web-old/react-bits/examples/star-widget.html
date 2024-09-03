@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>foo</title>
+    <style>
+      .star { float: left; color: #C6C6C6; cursor: pointer; }
+      .star--active, #rating:hover .star { color: #FD9 }
+      #rating .star:hover ~ .star { color: #C6C6C6; }
+    </style>
+  </head>
+  <body>
+    <div id="rating"></div>
+    <script src="https://fb.me/react-15.0.1.js"></script>
+    <script src="https://fb.me/react-dom-15.0.1.js"></script>
+    <script type="text/javascript">
+      var rating = React.createClass({
+        render: function() {
+          var
+            out          = []
+          , defaultClass = 'star'
+          , activeClass  = 'star--active'
+
+          for (var i = 0; i < 5; i++) {
+            var className = i < Math.round(this.props.rating) ?
+              defaultClass + ' ' + activeClass                :
+              defaultClass
+            out.push(React.createElement('div', {
+              className : className
+            , key       : i
+            , rating    : i + 1
+            , onClick   : changeRating.bind(null, i+1) }, '★'
+            ))
+          }
+          return React.createElement('div', {}, out)
+        }
+      })
+
+      var renderRating = function() {
+        ReactDOM.render(
+          React.createElement(rating, {rating : rate})
+        , document.getElementById('rating')
+        )
+      }
+
+      function changeRating(rating) {
+        rate = rate !== rating ? rating : 0
+        renderRating()
+      }
+
+      var rate = 0
+      renderRating()
+    </script>
+  </body>
+</html>

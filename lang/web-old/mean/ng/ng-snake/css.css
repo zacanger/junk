@@ -1,0 +1,210 @@
+
+h1,h2,h3,h4,h5,h6 {
+  color: #000;
+  margin-bottom: 18px;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 500;
+  margin-top: 36px;
+}
+
+h2 {
+  font-size: 25.2px;
+  font-weight: 400;
+  margin-top: 27px;
+}
+
+h3 {
+  font-size: 21.6px;
+  margin-top: 21.6px;
+}
+
+h4 {
+  font-size: 18px;
+  margin-top: 18px;
+}
+
+h5 {
+  font-size: 14.4px;
+  font-weight: 700;
+  margin-top: 18px;
+  text-transform: uppercase;
+}
+
+h6 {
+  color: #ccc;
+  font-size: 14.4px;
+  font-weight: 700;
+  margin-top: 18px;
+  text-transform: uppercase;
+}
+
+a {
+  color: #367ac3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+hr {
+  border-bottom: 1px solid #ccc;
+}
+
+small {
+  font-size: 15.3px;
+}
+
+em,i {
+  font-style: italic;
+}
+
+strong,b {
+  font-weight: 600;
+}
+
+* {
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-sizing: border-box;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 18px;
+  font-stretch: normal;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 29.7px;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+html,body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: #f5f5f5;
+  color: #1a1a1a;
+  padding: 36px;
+}
+
+p,ul,ol,dl,blockquote,hr,pre,table,form,fieldset,figure,address {
+  margin-bottom: 29.7px;
+}
+
+section {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  width: 900px;
+}
+
+article {
+  background: #fff;
+  border: 1.8px solid #d9d9d9;
+  border-radius: 7.2px;
+  padding: 43.2px;
+}
+
+header {
+  margin-bottom: 36px;
+}
+
+footer {
+  margin-top: 36px;
+}
+
+nav {
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  margin-left: 0;
+  text-align: center;
+}
+
+nav ul li {
+  display: inline;
+  margin-left: 9px;
+  margin-right: 9px;
+}
+
+nav ul li:first-child {
+  margin-left: 0;
+}
+
+nav ul li:last-child {
+  margin-right: 0;
+}
+
+ol,ul {
+  margin-left: 29.7px;
+}
+
+li ol,li ul {
+  margin-bottom: 0;
+}
+
+@media (max-width: 767px) {
+body {
+  padding: 18px;
+}
+
+article {
+  border-radius: 0;
+  margin: -18px;
+  padding: 18px;
+}
+
+textarea,input,select {
+  max-width: 100%;
+}
+
+fieldset {
+  min-width: 0;
+}
+
+section {
+  width: auto;
+}
+
+fieldset,x:-moz-any-link {
+  display: table-cell;
+}
+}
+
+
+#gameContainer, #pastScores {
+  width: 600px;
+  float: left;
+}
+
+.row { height: 26px; }
+.column {
+  border: 1px solid #ddd;
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+}
+
+#startGame {
+  width: 300px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+  background-color: #101010;
+  color: #ddd;
+}
+
+#startGame:hover {
+  color: #23a430;
+  cursor: pointer;
+}

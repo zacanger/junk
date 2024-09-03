@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>zedit</title>
+  <script type="text/javascript" src="zepto.min.js"></script>
+  <script type="text/javascript" src="zedit.js"></script>
+  <script type="text/javascript" src="cm/lib/codemirror.js"></script>
+  <script type="text/javascript" src="cm/mode/css.js"></script>
+  <script type="text/javascript" src="cm/mode/xml.js"></script>
+  <script type="text/javascript" src="cm/mode/javascript.js"></script>
+  <script type="text/javascript" src="cm/mode/htmlmixed.js"></script>
+  <script type="text/javascript" src="cm/vim.js"></script>
+  <link type="text/css" rel="stylesheet" href="css.css">
+  <link type="text/css" rel="stylesheet" href="cm/lib/codemirror.css">
+  <link type="text/css" rel="stylesheet" href="cm/zemir.css">
+</head>
+<body>
+  <div class="buttons">
+    <button id="new">new</button>
+    <button id="open">open</button>
+    <button id="save">save</button>
+  </div>
+  <div id="editor"></div>
+  <div class="info">
+    <label>editing: </label><span id="title"></span>
+    <label>syntax: </label><span id="mode"></span>
+  </div>
+  <input style="display:none;" id="openFile" type="file">
+  <input style="display:none;" id="saveFile" type="file" nwsaveas>
+</body>
+</html>
+

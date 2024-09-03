@@ -1,0 +1,18 @@
+{
+  "name": "atom-wordcount-test-package",
+  "main": "./lib/my-package",
+  "version": "0.1.0",
+  "description": "following the tutorial from the docs",
+  "keywords": [
+  ],
+  "activationCommands": {
+    "atom-workspace": "wordcount:toggle"
+  },
+  "repository": "https://github.com/zacanger/devmtn.git",
+  "license": "ISC",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}

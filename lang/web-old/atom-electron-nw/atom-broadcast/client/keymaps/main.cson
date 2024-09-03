@@ -1,0 +1,3 @@
+'.workspace':
+  'ctrl-alt-shift-p': 'pharoah:turnOn'
+  'ctrl-alt-shift-o': 'pharoah:turnOff'

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>asdf</title>
+    <style>
+      textarea {height: 900px;width: 800px;}
+    </style>
+  </head>
+  <body>
+    <textarea name="my-markdown-editor" data-editor="javascript"></textarea>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+    <script>
+        $(function(){
+          $('textarea[data-editor]').each(function(){
+            var textarea = $(this)
+              , mode = textarea.data('editor')
+              , editDiv = $('<div>', {
+              position : 'absolute'
+            , width    : textarea.width()
+            , height   : textarea.height()
+            , 'class'  : textarea.attr('class')
+            }).insertBefore(textarea)
+            textarea.css('display', 'none')
+            var editor = ace.edit(editDiv[0])
+            editor.renderer.setShowGutter(true)
+            editor.setKeyboardHandler("ace/keyboard/vim")
+            editor.getSession().setValue(textarea.val())
+            editor.getSession().setMode("ace/mode/" + mode)
+            editor.setTheme("ace/theme/merbivore")
+            textarea.closest('form').submit(function(){
+              textarea.val(editor.getSession().getValue())
+            })
+         })
+      })
+    </script>
+  </body>
+</html>

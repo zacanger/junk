@@ -1,0 +1,78 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "region": "{{ env `AWS_REGION` }}",
+    "iam_profile": "{{env `AWS_IAM_PROFILE`}}"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "us-east-1",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 100,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*",
+          "root-device-type": "ebs"
+        },
+        "owners": "099720109477",
+        "most_recent": true
+      },
+      "instance_type": "t3.xlarge",
+      "ssh_username": "ubuntu",
+      "ami_name": "example-ami-{{timestamp}}",
+      "ami_users": [
+        "AAAAAAAAAAAA"
+      ],
+      "tags": {
+        "foo": "bar",
+        "Name": "baz"
+      },
+      "iam_instance_profile": "{{user `iam_profile`}}",
+      "vpc_filter": {
+        "filters": {
+          "tag:type": "foo"
+        }
+      },
+      "security_group_filter": {
+        "filters": {
+          "tag:type": "foo"
+        }
+      },
+      "subnet_filter": {
+        "filters": {
+          "tag:type": "foo"
+        },
+        "random": true
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "file-example",
+      "destination": "~/file-example.sh"
+    },
+    {
+      "type": "shell",
+      "script": "./shell-example.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "example.json",
+      "strip_path": true
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+<nav ng-controller='NavCtrl'>
+  <div>
+    <span>ayuba</span>
+    <span ng-class="{ active: isActive('allPosts') }"><a ui-sref="allPosts">reminisce</a></span>
+    <span ng-class="{ active: isActive('addPost') }"><a ui-sref="addPost">write</a></span>
+    <span><a href>{{currentUser.email}}</a></span>
+    <!-- if we go anon, we need to change that email out -->
+  </div>
+</nav>
+

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<head>
+  <title>snake</title>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-rc.0/angular.min.js"></script>
+  <script type="text/javascript" src="./snake.js"></script>
+  <link rel="stylesheet" type="text/css" src="./css.css">
+</head>
+<body ng-app="snake" ng-controller="snakeCtrl">
+  <h2>snake</h2>
+  <div id="gameContainer">
+  <h4>score: {{score}}</h4>
+  <div class="row" ng-repeat="column in board">
+    <div class="column"
+      ng-style="{'background-color': setStyling($parent.$index, $index)}"
+      ng-repeat="row in column track by $index">
+    </div>
+  </div>
+  <div id="startGame" ng-click="startGame()">start</div>
+</div>
+</body>
+</html>

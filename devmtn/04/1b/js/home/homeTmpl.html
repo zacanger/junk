@@ -1,0 +1,32 @@
+<div class="inner-container">
+    <div class="team-container">
+        <img src="images/heat-logo.png">
+        <br><strong>MIMI<strong>
+        <br>didn't suck: {{mi.wins}} | sucked: {{mi.losses}}
+        <div class="together-game" ng-repeat="game in mi" ng-class="{'even' : $index % 2 === 0}">
+            <br>Date: {{game.createdAt | date:'fullDate'}}
+            <br>HOT HOT HOT&mdash;{{game.homeTeamScore}}
+            <br>{{game.opponent}}&mdash;{{game.opponentScore}}
+        </div>
+    </div>
+    <div class="team-container">
+        <img src="images/jazz-logo.png">
+        <br><strong>SNAZZ<strong>
+        <br>didn't suck: {{snazz.wins}} | really sucked: {{snazz.losses}
+        <div class="together-game" ng-repeat="game in snazz" ng-class="{'even' : $index % 2 === 0}">
+            <br>Date: {{game.createdAt | date:'fullDate'}}
+            <br>SNAZZ HANDS&mdash;{{game.homeTeamScore}}
+            <br>{{game.opponent}}&mdash;{{game.opponentScore}}
+        </div>
+    </div>
+    <div class="team-container">
+        <img src="images/lakers-logo.png">
+        <br><strong>LALALALALALA<strong>
+        <br>only sucked a little bit: {{la.wins}} | mostly sucked big-time: {{la.losses}}
+        <div class="together-game" ng-repeat="game in la" ng-class="{'even' : $index % 2 === 0}">
+            <br>Date: {{game.createdAt | date:'fullDate'}}
+            <br>DO RE MI FA SO LULZ&mdash;{{game.homeTeamScore}}
+            <br>{{game.opponent}}&mdash;{{game.opponentScore}}
+        </div>
+    </div>
+</div>

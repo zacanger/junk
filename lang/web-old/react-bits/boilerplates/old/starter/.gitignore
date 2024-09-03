@@ -1,0 +1,13 @@
+*.lock
+*.log
+*.o
+*.out
+*.pid
+*.so
+*.swp
+*.tar
+*~
+bundle.js
+node_modules
+x/
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="ecommerce">
+  <head>
+    <meta charset="utf-8">
+    <title>DevMountain eCommerce</title>
+    <link rel="stylesheet" href="style/bootstrap.css">
+    <link rel="stylesheet" href="style/main.css">
+  </head>
+  <body>
+
+    <div class="container" ng-controller="nav">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills">
+
+            <li role="presentation"
+            ng-class="{active: isActive('home')}"
+            ><a href="#">Home</li></a>
+
+            <li role="presentation"
+            ng-class="{active: isActive('products')}"
+            ><a ui-sref="products">Products</li></a>
+
+            <li
+            role="presentation"
+            ng-class="{active: isActive('admin')}"
+            ><a
+            ui-sref="admin"
+            ui-sref-opts="{reload: true}"
+            >Admin</li></a>
+
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+
+
+
+      <ui-view></ui-view>
+
+
+
+
+    <script src="./bower_components/angular/angular.js" charset="utf-8"></script>
+    <script src="./bower_components/angular-ui-router/release/angular-ui-router.js" charset="utf-8"></script>
+    <script src="./bower_components/jquery/dist/jquery.js" charset="utf-8"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.js" charset="utf-8"></script>
+
+    <!-- App -->
+    <script src="./app.js" charset="utf-8"></script>
+
+    <!-- Controllers -->
+    <script src="./controllers/mainCtrl.js" charset="utf-8"></script>
+    <script src="./controllers/productsCtrl.js" charset="utf-8"></script>
+    <script src="./controllers/nav.js" charset="utf-8"></script>
+
+    <!-- Services -->
+    <script src="./services/productsService.js" charset="utf-8"></script>
+    <script src="./controllers/adminCtrl.js" charset="utf-8"></script>
+
+  </body>
+</html>

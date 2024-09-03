@@ -1,0 +1,31 @@
+{
+  "name": "chatty",
+  "version": "0.1.0",
+  "description": "devmountain week 5",
+  "main": "server.js",
+  "scripts": {
+    "test": "xo",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/52.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/52/issues"
+  },
+  "homepage": "https://github.com/zacanger/52#readme",
+  "xo": {
+    "semicolon": false,
+    "space": true
+  },
+  "devDependencies": {
+    "xo": "^0.10.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3"
+  }
+}

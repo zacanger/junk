@@ -1,0 +1,40 @@
+{
+  "name": "cookies",
+  "version": "0.1.0",
+  "description": "cookies api",
+  "main": "index.js",
+  "scripts": {
+    "test": "xo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/devmountain.git"
+  },
+  "keywords": [
+    "api",
+    "test"
+  ],
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/devmountain/issues"
+  },
+  "homepage": "https://github.com/zacanger/devmountain#readme",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "express-session": "^1.12.1"
+  },
+  "xo": {
+    "envs": [
+    "node",
+    "browser"
+    ],
+    "exnext": true,
+    "space": true,
+    "semicolon": false
+  },
+  "devDependencies": {
+    "xo": "^0.11.1"
+  }
+}

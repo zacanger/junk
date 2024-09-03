@@ -1,0 +1,11 @@
+html, body {
+  background: #202020;
+  color: #eee
+}
+
+.carsDiv {
+  background: #101010;
+  height: 60px;
+  width: 60px;
+}
+

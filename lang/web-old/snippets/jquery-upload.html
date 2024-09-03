@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><title>foo</title>
+<style>
+  input[type=file] {height:0;width:0;border:0;opacity:0;}
+</style>
+</head><body>
+<form action="./receiver" method="post" enctype="multipart/form-data">
+  <input type="file" name="somefile">
+  <a herf="javascript:void(0)">pick a file</a>
+  <input type="submit">
+</form>
+
+<script>
+  $('a').on('click' function(){
+    $('input[type=file]').click()
+  })
+  if(window.FormData){
+    $('form').on('submit', function(e){
+      e.preventDefault()
+      var formData = new FormData
+      formData.append('somefile', $('input[type=file]')[0].files[0])
+      var xhr = new XMLHttpRequest(this.method, this.action, true)
+      xhr.addEventListener('load', function(){
+        // done!
+      }, false)
+      xhr.addEventListener('progress', function(e){
+        if (e.lengthComputable){
+          // percentComplete = e.loaded / e.total
+
+        }
+      }, false)
+    })
+  }
+</script>
+</body></html>
+

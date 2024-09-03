@@ -1,0 +1,16 @@
+<% include ../shared/header.html %>
+<h1>here's a blog</h1>
+<h2>posts</h2>
+<ul class="post-list">
+<% posts.forEach(function (post){ %>
+	<li>
+		<h3><a href="/p/<%= post.title %>">
+			<%= post.title %>
+		</a></h3>
+		<p><%= post.content %></p>
+	</li>
+	<% }) %>
+</ul>
+
+<p><a href="/newpost">new +</a></p>
+<% include ../shared/footer.html %>

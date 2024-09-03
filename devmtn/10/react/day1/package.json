@@ -1,0 +1,25 @@
+{
+  "name": "react-stuff",
+  "version": "0.1.0",
+  "description": "asdf",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zacanger",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/devmtn.git"
+  },
+  "license": "WTFPL",
+  "devDependencies": {
+    "babel-core": "^6.3.17",
+    "babel-loader": "^6.2.0",
+    "babel-preset-react": "^6.3.13",
+    "webpack": "^1.12.9"
+  },
+  "dependencies": {
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3"
+  }
+}

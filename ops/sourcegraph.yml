@@ -1,0 +1,104 @@
+# Sourcegraph requires a license to use their manifests and DB setup,
+# but this works just fine. The ingress assumes cert-manager with Letsencrypt.
+# The claims assume you're on AWS and have a storageClass called aws-ebs-gp2.
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    something.app: sourcegraph
+  name: sourcegraph
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        something.app: sourcegraph
+    spec:
+      containers:
+      - image: sourcegraph/server:3.22.0
+        name: sourcegraph
+        ports:
+        - containerPort: 7080
+        - containerPort: 3370
+        volumeMounts:
+        - mountPath: /etc/sourcegraph
+          name: sourcegraph-claim-etc
+        - mountPath: /var/opt/sourcegraph
+          name: sourcegraph-claim-var
+      restartPolicy: Always
+      volumes:
+      - name: sourcegraph-claim-etc
+        persistentVolumeClaim:
+          claimName: sourcegraph-claim-etc
+      - name: sourcegraph-claim-var
+        persistentVolumeClaim:
+          claimName: sourcegraph-claim-var
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    something.app: sourcegraph-claim-var
+  name: sourcegraph-claim-var
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: aws-ebs-gp2
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    something.app: sourcegraph-claim-etc
+  name: sourcegraph-claim-etc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: aws-ebs-gp2
+  volumeMode: Filesystem
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  name: sourcegraph
+spec:
+  rules:
+  - host: sourcegraph.foo.com
+    http:
+      paths:
+      - backend:
+          serviceName: sourcegraph
+          servicePort: 7080
+  tls:
+  - hosts:
+    - sourcegraph.foo.com
+    secretName: sourcegraph-foo-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sourcegraph
+spec:
+  ports:
+  - port: 7080
+    targetPort: 7080
+    protocol: TCP
+    name: main
+  - port: 3370
+    targetPort: 3370
+    protocol: TCP
+    name: admin
+  selector:
+    something.app: sourcegraph

@@ -1,0 +1,24 @@
+{
+  "name": "filerepl",
+  "version": "0.2.0",
+  "description": "tiny repl that acts on the file passed to it",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/excerpts-and-exercises.git"
+  },
+  "keywords": [
+    "repl"
+  ],
+  "author": "zacanger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zacanger/excerpts-and-exercises.git/issues"
+  },
+  "dependencies": {
+    "temp": "^0.8.3"
+  }
+}

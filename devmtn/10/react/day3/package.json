@@ -1,0 +1,18 @@
+{
+  "name": "router",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.js",
+  "devDependencies": {
+    "babel-core": "^6.3.17",
+    "babel-loader": "^6.2.0",
+    "babel-preset-react": "^6.3.13",
+    "webpack": "^1.12.9"
+  },
+  "dependencies": {
+    "history": "^1.13.1",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-router": "^1.0.2"
+  }
+}

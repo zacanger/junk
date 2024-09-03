@@ -1,0 +1,16 @@
+{
+  "name": "another-blog-test",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "jade": "^1.11.0",
+    "mongodb": "^2.1.0",
+    "mongoose": "^4.2.9"
+  },
+  "devDependencies": {
+    "express": "^3.0.6"
+  }
+}

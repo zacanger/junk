@@ -1,0 +1,23 @@
+<h1>{{car.year}} {{car.make}} {{car.model}}</h1>
+
+<button ui-sref="Cars">back</button>
+
+<p>
+  Make: <strong>{{car.make}}</strong> <br>
+  Model: <strong>{{car.model}}</strong><br>
+  Year: <strong>{{car.year}}</strong><br>
+  Mileage: <strong>{{car.mileage}}</strong><br>
+  Price: <strong>{{car.price}}</strong><br>
+</p>
+
+<br>
+
+<input type="text" ng-model="comment" placeholder="comment here">
+<button ng-click="createNewComment(comment)">submit</button>
+
+<h3>Comments About: {{car.year}} {{car.make}} {{car.model}}</h3>
+<br>
+<div ng-repeat="comment in comments">
+  {{comment.$value}}
+</div>
+

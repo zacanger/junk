@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>socket.io chat</title>
+  <style type="text/css">
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Cardo", "Merriweather", serif; }
+  .bla { background: #0a0a0a; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+  .bla input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+  .bla button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+  #messages { list-style-type: none; margin: 0; padding: 0; }
+  #messages li { padding: 5px 10px; }
+  #messages li:nth-child(odd) { background: #eee; }
+  </style>
+</head>
+<body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <ul id="messages"></ul>
+  <div class="bla">
+    <input id="m" autocomplete="off">
+    <button id="send">send</button>
+  </div>
+  <script type="text/javascript">
+    var room   = window.location.pathname
+      , socket = io()
+
+    socket.emit('join room', room)
+    socket.on('new message', function(msg) {
+      $('#messages').append($('<li>').text(msg))
+    })
+    $('#m').keyup(function(event) {
+      if (event.keyCode == 13) {
+        $('#send').click()
+      }
+    })
+    $('#send').click(function() {
+      socket.emit('new message', $('#m').val())
+      $('#m').val('')
+      return false
+    })
+  </script>
+</body>
+</html>

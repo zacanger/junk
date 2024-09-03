@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>electron and node-fs</title>
+</head>
+<body>
+  <div id="holder">drag file</div>
+
+  <script type="text/javascript">
+    var holder = document.getElementById('holder')
+    holder.ondragover = function(){
+      return false
+    }
+    holder.ondragleave = holder.ondragend = function(){
+      return false
+    }
+    holder.ondrop = function(e){
+      e.preventDefault()
+      var file = e.dataTransfer.files[0]
+      console.log('file is ' + file.path)
+      return false
+    }
+  </script>
+
+  <script type="text/javascript">document.write(process.versions['electron'])</script>
+  <script type="text/javascript">document.write(process.platform)</script>
+  <script type="text/javascript">
+    var fs   = require('fs')
+      , file = fs.readFileSync('foo.json')
+    document.write(file)
+  </script>
+</body>
+</html>
+

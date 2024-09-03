@@ -1,0 +1,28 @@
+{
+  "name": "browserify-react-server-example",
+  "version": "0.1.0",
+  "description": "example of server/browser rendering",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/react-bits.git"
+  },
+  "scripts": {
+    "start": "node ."
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "server",
+    "server-side"
+  ],
+  "author": "zacanger",
+  "license": "WTFPL",
+  "dependencies": {
+    "browserify": "^13.0.0",
+    "literalify": "^0.4.0",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1"
+  }
+}
+

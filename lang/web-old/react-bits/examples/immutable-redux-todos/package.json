@@ -1,0 +1,43 @@
+{
+  "name": "immutable-redux",
+  "version": "0.1.0",
+  "description": "todo app, to learn redux and immutable",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --quiet --port 9090",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/extras.git"
+  },
+  "keywords": [
+    "redux",
+    "react",
+    "immutable",
+    "todos",
+    "todo"
+  ],
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/extras/issues"
+  },
+  "homepage": "https://github.com/zacanger/extras#readme",
+  "dependencies": {
+    "immutable": "^3.7.6",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-redux": "^4.0.6",
+    "redux": "^3.0.5",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.3.26",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13"
+  }
+}

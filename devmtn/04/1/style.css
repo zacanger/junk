@@ -1,0 +1,41 @@
+html {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  background: #fff;
+}
+
+body {
+  height: 100%;
+  width: 80%;
+  margin: 0 auto;
+  padding: 40px;
+  background: #eee;
+  font-family: sans-serif;
+}
+
+.main {
+  margin-top: 30px;
+  padding: 30px;
+  background: #ddf
+}
+
+.sub {
+  margin-top: 40px
+}
+
+.sub > a {
+  padding: 20px;
+  margin-right: 40px
+}
+
+.subsub {
+  height: 500px;
+  padding-left: 20px;
+  padding-top: 40px;
+  background: #aaf
+}
+
+.active {
+  background: #aaf
+}

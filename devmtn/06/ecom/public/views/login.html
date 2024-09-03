@@ -1,0 +1,18 @@
+<h1>Welcome!</h1>
+
+<p>Sign In or Register</p>
+
+<div class="wrapper">
+  <form>
+    <input type="email" placeholder="Email" ng-model="addEmail">
+    <input type="password" placeholder="Password" ng-model="addPassword">
+    <button ng-click="loginUser({email:addEmail, password:addPassword})">Login</button>
+  </form>
+
+  <form>
+    <input type="email" placeholder="Email" ng-model="newEmail">
+    <input type="password" placeholder="Password" ng-model="newPassword">
+    <button ng-click="createNewUser({email:newEmail, password:newPassword})">Register</button>
+  </form>
+</div>
+

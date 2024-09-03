@@ -1,0 +1,21 @@
+{
+  "name": "mini-birds-mongoose",
+  "version": "0.1.0",
+  "description": "same as the mongojs version. now with less mongojs.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/devmountain"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "mongoose": "^4.2.6"
+  }
+}

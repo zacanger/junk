@@ -1,0 +1,23 @@
+{
+  "name": "api-thing",
+  "version": "0.0.1",
+  "description": "api whatever",
+  "main": "server.js",
+  "scripts": {
+    "test": "xo"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3"
+  },
+  "devDependencies": {
+    "xo": "^0.11.0"
+  },
+  "xo": {
+    "spaces": true,
+    "semicolon": false
+  }
+}
+

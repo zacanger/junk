@@ -1,0 +1,14 @@
+{
+  "name": "foo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "async": "^2.0.1",
+    "cheerio": "^0.20.0",
+    "request": "^2.74.0"
+  }
+}

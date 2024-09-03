@@ -1,0 +1,14 @@
+[Unit]
+Description=Test Two
+
+[Service]
+ExecStart=/usr/local/bin/node /root/test/two.js
+Restart=always
+RestartSec=2
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=test-two
+
+[Install]
+WantedBy=multi-user.target
+

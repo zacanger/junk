@@ -1,0 +1,17 @@
+<template>
+	<section>
+		<h3>${heading}</h3>
+		<form submit.trigger="submit()">
+			<div>
+				<label>first name</label>
+				<input type="text" value.bind="firstName">
+			</div>
+			<div>
+				<label>last name</label>
+				<input type="text" value.bind="lastName">
+			</div>
+			<button type="submit">submit</button>
+		</form>
+	</section>
+</template>
+

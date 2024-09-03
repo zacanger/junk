@@ -1,0 +1,164 @@
+slack channel: #web-dm7  
+slack: AOL chatrooms, but 15 years later.
+
+```
+object that contains a function = {
+  function() {
+    return: stuffs; 
+  }
+}
+call.the(object(function());
+```
+arrayName.pop()  
+removes the last item from the array  
+arrayName.push("item", "maybeAnotherItem")  
+adds to the end of the array  
+
+arrayName[integer] = "item"  
+adds item at this place in array; could leave empty items thusly
+
+arrayName.shift()  
+removes FIRST item from array  
+arrayName.unshift("item", "more if you want", "hey why not")  
+adds to the BEGINNING of array
+
+arrayName.splice(startingInteger, integerofItemsToRemove, "string", "item", "etc")  
+example:  
+var bits = ["bots", "boots", "bats", "beets", "boats", "bets"]  
+bits.splice(2, 2, "wat", "wuuuuuuuh")  
+would result in:  
+bots boots way wuuuh boats bets  
+use same method to just remove from an array eg bits.splice(3, 3) would return from the above, bots boots boats bets  
+
+to move items from one array to another, also splice, like so: 
+var stib = bits.splice(2, 5)  
+this would leave bits unchanged. 2 is the starting index of item to be copied; 5 is the element AFTER the last one to be copied. can use same method simply to reduce current array (overwrite)
+
+true, false: booleans (so no quotes)  
+if blahblah  
+    break;  
+don't know why i'm making a note of 'break.'
+
+whateVaR.toLowerCase(); //does that thing that it says it does. WOOWWOWOWOWW  
+wutTHEfack.toUpperCase(); //does the exact opposite of the thing above this line. MIND. BLOWN.  
+
+.slice(indexinginteger, firstCharAFTERtheslice) // so, second number minus first number equals total characters in the slice  
+example: var threeLetterPrefix = thatDudesName.slice(0, 3)  
+.slice(singleNumber) would return until the end of the string.
+
+var blah = whatever.length  
+//returns the length of 'whatever'
+
+in the case of true || whatever, whatever will never be checked; in the casae of false && whatever, whatever will never be checked. they are evaluated _only when necessary_.
+
+expression is kinda like a clause in natural language; can have nested subclauses, whatnots. statemets, more like full, complete sentences. 
+
+builtin function Number() converts given value to integer. for example:  
+var ancient = Number(prompt('how many milliseconds have you been alive?'), ''))  
+alert('you're one old sonofabitch, " + ancient + " is a long freaking time.')  
+
+do loop is similar to while, but do will always execute at least once; it doesn't test until after the first execution. example:  
+do {  
+  var stuffFace = prompt("what do they call you?")  
+  } while (!stuffFace)  
+console.log(stuffFace)  
+// this will keep prompting until the prompt recieves a string
+
+standard loop boilerplate pattern: counter variable to count (duh); while loop (check counter against limit?) then update counter.
+
+OH WAIT WE CALL THIS A FOR LOOP DUH.
+
+for (var number = 0; number <= 26; number = number + 1)  
+  console.log(number)  
+//0  
+//1  
+//etc, until we are less than or equal to 26.  
+for loop syntax:  
+for (bit that initializes the loop, like setting an integer at 0 to count up; expression check if the loop should still go, like defining a counting limit; what to do, if we've made it through those first bits)  
+//always needs three sections/two semicolons
+
++= is not the only thing that works for updating; looks like all math operations, when done i *= i; obvs i += i and i -= i can be shortened to i-- and i++
+
+switch: it's case, i guess, but minus esac (because, note, we also don't use done, or fi... wtf). so:  
+```
+switch (thingy(whatthewhat)) {
+  case "oioioi!":
+    alert("OI! OI! OI!")
+  case "blaahh":
+    whatever
+  break
+  default:
+    console.log("u r a bag of dix")
+  break
+}
+```
+
+functions always have curly braces around body, even if just one command
+
+braces are allowed everywhere but only define a new local environment within functions, and only really useful for grouping conditionals and loops
+
+like any other variable, functions can totally get new names. their values are just as mutable as any other vars'
+
+use brackets when accessing vague proprop (eg looping over) from object; otherwise dot notation if know specific key
+
+NOT for i in arr.length whatever  
+....  
+rather,  
+return arr[arr.length -1]
+
+
+	```javascript
+	//GLOBAL SCOPE
+	var x = 1;
+	
+	function outerFunction() { //LOCAL SCOPE FOR OUTERFUNCTION
+		return function innerFunction() { //LOCAL SCOPE INNERFUNCTION
+			return 'hello';
+		}
+	}
+	function returnOne() {
+		return 1;
+	}
+	var myNewFunction = outerFunction();
+	myNewFunction();
+	myNewFunction();
+	var numOne = returnOne();
+	
+	function makeCounter() {
+		var counter = 0; //local scoped makeCounter and children
+		return function myCounter() {
+			counter++;
+		}
+	}
+	
+	var count = makeCounter();
+	 count(); //return 1
+	count(); //return 2
+	var count = makeCounter();
+	
+	var secondCount = makeCounter();
+	secondCount() //return 1
+	```
+
+a closure references variables OUTSIDE OF ITSELF  
+and remembers those even when its parent scope (parent function) has returned
+
+remember, don't need to do  
+if whatever == true/if whatever != true (or == false)  
+just need to do  
+if (whatever)  
+return true  
+else  
+return false  
+... and that's all.  
+
+```javascript
+// reversing an array without using array.reverse() ...
+function flipIt(arr){
+    var flipped = new Array
+    for(var i = arr.length-1; i >= 0; i--){
+        flipped.push(arr[i])
+    }
+    return flipped
+}
+```

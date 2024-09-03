@@ -1,0 +1,37 @@
+<div class="blog-masthead">
+  <div class="container">
+    <nav class="blog-nav">
+      <a class="blog-nav-item " href="#/welcome">home</a>
+      <a class="blog-nav-item active" href="#/addPost">new post…</a>
+      <a class="blog-nav-item " style="cursor:pointer;" ng-click="logout();">logout</a>
+    </nav>
+  </div>
+</div>
+<div class="container" >
+  <form class="form-horizontal" ng-submit="AddPost()">
+		<fieldset>
+	  	<legend>new post…</legend>
+			<div class="form-group">
+		    <label class="col-md-4 control-label" for="txtTitle">title</label>
+		    <div class="col-md-4">
+		      <input id="txtTitle" name="txtTitle" ng-model="article.title" type="text" placeholder="placeholder" class="form-control input-md">
+	    	</div>
+	    </div>
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="txtPost">post</label>
+        <div class="col-md-4">
+          <textarea class="form-control" id="txtPost" ng-model="article.post" name="txtPost" ></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="singlebutton"></label>
+        <div class="col-md-4">
+          <button ladda-loading="login.loading" data-style="expand-right" ng-disabled="!article.title || !article.post" name="singlebutton" class="btn btn-primary segoe-ui-light ladda-button" type="submit"><span class="ladda-label">post</span></button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="blog-footer">
+  <p>appyapp</p>
+</div>

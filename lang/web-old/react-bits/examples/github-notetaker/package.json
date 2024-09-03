@@ -1,0 +1,36 @@
+{
+  "name": "github-notetaker",
+  "version": "0.1.0",
+  "description": "bar quux baz",
+  "main": "",
+  "scripts": {
+    "test": "",
+    "start": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/foo.git"
+  },
+  "keywords": [
+    "",
+    ""
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "dependencies": {
+    "history": "^2.1.1",
+    "react": "^15.0.2",
+    "react-dom": "^15.0.2",
+    "react-router": "^2.4.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.7",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2017": "^1.3.1",
+    "webpack": "^1.13.0"
+  }
+}

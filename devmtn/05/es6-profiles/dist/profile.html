@@ -1,0 +1,7 @@
+<h2>{{profile.name}}</h2>
+<h3>{{profile.age}}</h3>
+<img ng-src="{{profile.img}}" alt="this is me">
+<ul>
+  <li ng-repeat="skill in profile.skills">{{skill}}</li>
+</ul>
+<p>I <span ng-if="!profile.lovejs">DON'T</span> love JS.</p>

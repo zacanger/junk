@@ -1,0 +1,56 @@
+{
+  "name": "ava-testing-react",
+  "description": "ava testing react boilerplate thingy",
+  "version": "0.1.0",
+  "author": "zacanger",
+  "license": "WTFPL",
+  "main": "index.js",
+  "scripts": {
+    "check-coverage": "nyc check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
+    "cover": "nyc npm run test",
+    "cover-watch": "nodemon --quiet --watch app --exec npm run cover -s",
+    "lint": "eslint -c .eslintrc src/**",
+    "test": "ava \"app/**/*.test.js\" --verbose",
+    "test-watch": "npm run test -- --watch"
+  },
+  "homepage": "https://github.com/zacanger/react-bits#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/react-bits"
+  },
+  "bugs": {
+    "url": "https://github.com/zacanger/react-bits/issues"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "babel-core": "^6.8.0",
+    "babel-eslint": "^6.0.4",
+    "babel-polyfill": "^6.8.0",
+    "babel-preset-es2017": "^1.4.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.8.0",
+    "eslint": "^2.10.1",
+    "eslint-plugin-react": "^5.1.1",
+    "jsdom": "^9.1.0",
+    "nodemon": "^1.9.2",
+    "nyc": "^6.4.4",
+    "react": "^15.0.2",
+    "react-addons-test-utils": "^15.0.2",
+    "react-dom": "^15.0.2"
+  },
+  "ava": {
+    "babel": "inherit",
+    "require": [
+      "./test/helpers/setup-test-env.js"
+    ]
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text",
+      "html"
+    ]
+  }
+}

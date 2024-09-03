@@ -1,0 +1,29 @@
+{
+  "name": "angular-tests",
+  "version": "0.1.0",
+  "description": "karma/chai/whatever testy thing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/devmtn.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/devmtn/issues"
+  },
+  "homepage": "https://github.com/zacanger/devmtn#readme",
+  "dependencies": {
+    "chai": "^3.4.1",
+    "karma": "^0.13.19",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.2.1",
+    "mocha": "^2.3.4"
+  },
+  "devDependencies": {
+    "karma-chrome-launcher": "^0.2.2"
+  }
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" ng-app='ayuba.admin'>
+<head>
+  <meta charset="utf-8">
+  <title>ayuba</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<!-- 	<link rel="alternate stylesheet" type="text/css" href="/common/light.css" title="dark" id="dark"> -->
+  <link rel="stylesheet" type="text/css" href="/common/dark.css" title="light" id="light">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.css">
+<!--  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/theme/elegant.min.css"> -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/theme/icecoder.min.css">
+  <style type="text/css">
+    .CodeMirror, .CodeMirror-wrap {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div ng-include="'/admin/templates/nav.html'"></div>
+  <div ui-view class="full-height" id="main-content"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-sanitize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/keymap/vim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/display/placeholder.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/mode/markdown/markdown.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/mode/javascript/javascript.min.js">o</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/addon/edit/closebrackets.min.js"></script>
+  <script src="/admin/js/lib/showdown.js"></script>
+  <script src='/admin/js/lib/markdown.js'></script>
+  <script src='/admin/js/app.js'></script>
+  <script src='/admin/js/controllers.js'></script>
+  <script src='/common/modules/posts.js'></script>
+
+  <script type="text/javascript">
+    const currentUser = <%- JSON.stringify(user) %>
+    adminApp.run(function($rootScope){
+      $rootScope.currentUser = currentUser
+    })
+  </script>
+
+</body>
+</html>
+

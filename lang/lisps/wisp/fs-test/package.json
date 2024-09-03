@@ -1,0 +1,15 @@
+{
+  "name": "wisp-test",
+  "version": "0.0.1",
+  "author": "Zac Anger <zac@zacanger.com> (http://zacanger.com)",
+  "license": "WTFPL",
+  "main": "index.js",
+  "scripts": {
+    "test": "cat test.wisp | wisp | node"
+  },
+  "keywords": [],
+  "dependencies": {
+    "wisp": "0.10.0"
+  },
+  "private": true
+}

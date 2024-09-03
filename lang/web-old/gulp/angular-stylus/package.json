@@ -1,0 +1,21 @@
+{
+  "name": "gulp-sample",
+  "version": "0.1.0",
+  "description": "yet another little gulp tutorial",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^2.2.0",
+    "gulp-ng-annotate": "^1.1.0",
+    "gulp-stylus": "^2.1.0",
+    "gulp-uglify": "^1.5.1",
+    "gulp-uglifycss": "^1.0.4",
+    "gulp-watch": "^4.3.5"
+  }
+}

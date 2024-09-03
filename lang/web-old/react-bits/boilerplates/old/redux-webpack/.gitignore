@@ -1,0 +1,6 @@
+*.so
+*.o
+*.out
+node_modules
+bundle.js
+

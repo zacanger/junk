@@ -1,0 +1,31 @@
+{
+  "name": "boilerplate",
+  "description": "boilerplate",
+  "main": "gulpfile.js",
+  "authors": [
+    "Zac Anger <http://zacanger.com>",
+  ],
+  "license": "WTFPL",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "AngularJS": "angular-latest#^1.5.0",
+    "angular-ui-router": "^0.2.18",
+    "normalize-css": "normalize.css#^3.0.3",
+    "bluebird": "^3.3.4"
+  },
+  "overrides": {
+    "bluebird": {
+      "main": {}
+    }
+
+  }
+}

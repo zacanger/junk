@@ -1,0 +1,17 @@
+{
+	"db": {
+		"use_url": false,
+		"url": "",
+		"host": "localhost",
+		"db": "test",
+		"auth": false,
+		"username": "",
+		"pass": "",
+		"port": null
+	},
+	"site": {
+		"title": "site",
+		"copyright": "you",
+		"copyright_from": 2015
+	}
+}

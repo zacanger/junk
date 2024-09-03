@@ -1,0 +1,22 @@
+{
+  "name": "old-node-server",
+  "version": "1.0.0",
+  "description": "first thing i ever tried to hack on in node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node index.js"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "connect": "~2.0.0",
+    "fs": "0.0.2",
+    "jade": "^1.11.0",
+    "less-middleware": "^2.0.1",
+    "path": "^0.12.7",
+    "stylus": "^0.52.4",
+    "url": "^0.11.0"
+  }
+}

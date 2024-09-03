@@ -1,0 +1,37 @@
+{
+  "name": "ng-express-boilerplate",
+  "version": "0.1.0",
+  "description": "boilerplate using angular, express, stylus, gulp, postcss, chai, mongoose, passport, and some other fun stuff",
+  "main": "gulpfile.js",
+  "scripts": {
+    "postinstall": "bower install",
+    "lint": "eslint -c .eslintrc src server",
+    "test": "mocha server/tests",
+  },
+  "author": "Zac Anger <http://zacanger.com>",
+  "license": "WTFPL",
+  "dependencies": {
+    "autoprefixer": "^6.3.3",
+    "body-parser": "^1.15.0",
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.3",
+    "gulp-concat": "^2.6.0",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-postcss": "^6.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-stylus": "^2.3.1",
+    "gulp-uglify": "^1.5.3",
+    "gulp-webserver": "^0.9.1",
+    "main-bower-files": "^2.11.1",
+    "mongoose": "^4.4.7",
+    "passport": "^0.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^2.4.0"
+  }
+}

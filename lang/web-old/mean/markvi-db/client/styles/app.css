@@ -1,0 +1,12 @@
+.app {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding-top: 4em;
+  font-family: "Hasklig", "Fantasque Sans Mono", "Fira Mono", "Hack", "Inconsolata", "Anonymous Pro", monospace;
+  font-size: 1.2em;
+  color: #131413;
+  word-wrap: break-word;
+  overflow: hidden;
+  box-sizing: border-box;
+}

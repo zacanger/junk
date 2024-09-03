@@ -1,0 +1,14 @@
+{
+  "name": "simplest-blog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "ejs": "^2.3.4",
+    "express": "^3.0.5",
+    "jade": "^1.11.0",
+    "mongoose": "^4.3.3"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "foo",
+  "version": "0.0.1",
+  "description": "foo",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "foo"
+  ],
+  "author": "you",
+  "license": "WTFPL",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:you/your-repo.git"
+  },
+  "dependencies": {
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2017": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
+    "express": "^4.14.0",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "react-hot-loader": "^3.0.0-beta.3",
+    "webpack": "^1.13.2",
+    "webpack-dev-middleware": "^1.7.0",
+    "webpack-hot-middleware": "^2.12.2"
+  }
+}

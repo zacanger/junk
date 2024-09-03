@@ -1,0 +1,53 @@
+{
+  "name": "webpack-react-kanban",
+  "version": "0.1.0",
+  "description": "thingymajiggy",
+  "main": "app/index.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/devmtn.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/devmtn/issues"
+  },
+  "homepage": "https://github.com/zacanger/devmtn#readme",
+  "devDependencies": {
+    "array-flatten": "^2.0.0",
+    "async": "^1.5.0",
+    "babel-core": "^6.3.21",
+    "babel-eslint": "^5.0.0-beta6",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-react-transform": "^1.1.1",
+    "clean-webpack-plugin": "^0.1.5",
+    "css-loader": "^0.23.0",
+    "eslint": "^1.10.3",
+    "eslint-plugin-react": "^3.12.0",
+    "extract-text-webpack-plugin": "^0.9.1",
+    "glob": "^6.0.1",
+    "html-webpack-plugin": "^1.7.0",
+    "isomorphic-fetch": "^2.2.0",
+    "marked": "^0.3.5",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-transform-hmr": "^1.0.1",
+    "request": "^2.67.0",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0",
+    "webpack-merge": "^0.3.2"
+  },
+  "dependencies": {
+    "alt": "^0.18.1",
+    "alt-container": "^1.0.0",
+    "alt-utils": "^1.0.0",
+    "node-uuid": "^1.4.7",
+    "react-dnd": "^2.0.2",
+    "react-dnd-html5-backend": "^2.0.0"
+  }
+}

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>websocket demo</title>
+  <script type="text/javascript">
+    var ws = new WebSocket('ws://localhost:3000')
+    function sendMsg(){
+      ws.send(document.getElementById('msg').value)
+    }
+    ws.onmessage = function(event){
+      console.log('message: ' + event.data)
+    }
+    ws.onerror = function(event){
+      console.log('error: ' + event.data)
+    }
+  </script>
+</head>
+<body>
+  <input id="msg" type="text">
+  <button type="submit" onclick="sendMsg()">submit</button>
+</body>
+</html>

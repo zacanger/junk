@@ -1,0 +1,12 @@
+<div>
+  <div ng-click='addPost(post)'>publish</div>
+  <input type='text' placeholder='title' ng-model='post.title' name='title'>
+</div>
+
+<div>
+  <textarea id="pad" ng-model='post.body' placeholder='write here'></textarea>
+  <div id="markdown">
+    <div btf-markdown='post.body'></div>
+  </div>
+</div>
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+    <title>test</title>
+<style>
+.ace_editor  {
+  height : 600px;
+  width: 600px;
+}
+</style>
+  </head>
+  <body ng-app="app">
+  <!-- the problem here is that there's no way i can get this shit to work
+  inside something else. angular is just such a fucking bitch all the time,
+  i swear. and there's not even any way i can find to get the vim mode to work
+  using this fucking shit. goddamn, angular-ui is even worse than regular old
+  angular bullshit. fuck it.
+  -->
+<section>
+    <div ui-ace="{
+    require: ['ace/ext/language_tools'],
+  advanced: {
+      enableSnippets: true,
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true
+      },
+      useWrapMode : true,
+      showGutter: false,
+      theme:'merbivore_soft',
+      mode: 'markdown'
+    }" ># HELLO
+
+*Lorem ipsum* dolor sit amet, __consectetur adipisicing elit__, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+<script src="https://rawgithub.com/ajaxorg/ace-builds/v1.1.1/src-min-noconflict/ace.js"></script>
+<script src="https://rawgithub.com/angular-ui/ui-ace/bower/ui-ace.min.js"></script>
+<script>var app = angular.module('app', ['ui.ace']);
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+body {
+  font-family: 'Fantasque Sans Mono', 'Hasklig', 'Average Mono', monospace;
+  font-size: 62.5%;
+}
+.container {
+  margin: 100px auto;
+  padding: 0;
+  eidth: 360px;
+  text-align: center;
+}
+
+.container h1 {
+  font-size: 3.2em;
+}
+
+ul.grid {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  width: 360px;
+}
+
+.square {
+  margin: 10px;
+  float: left;
+}
+
+.square button {
+  width: 100px;
+  height: 100px;
+  border: none;
+  border-bottom: 4px solid #ccc;
+  outline-color: transparent;
+  outline-style: none;
+}
+
+.square button:hover {
+  background: #2b1b28;
+}
+
+.square button:active {
+  border-bottom: 4px solid #333;
+}
+
+.square button.active {
+  background: #4c6b65;
+}
+
+.square button.active:hover {
+  background: #4e7966;
+}
+
+table {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

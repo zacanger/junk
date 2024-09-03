@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>deployment test</title>
+</head>
+
+<body ng-app="app">
+  <div ng-controller="mainCtrl">
+    <h1>{{ greeting }}</h1>
+    <p>See the awesomeness?</p>
+    <h3>Some of my friends:</h3>
+    <ul>
+      <li ng-repeat="friend in friends">{{ friend.name }}</li>
+    </ul>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.js"></script>
+  <script>
+    angular.module('app', [])
+      .controller('mainCtrl', function ($scope, $http){
+        $scope.greeting = 'Hello, this is my awesome app!'
+          (function getFriends(){
+            return $http.get('api/friends')
+             .then(function (data){
+              $scope.friends = data.data;
+            })
+          }())
+        })
+  </script>
+</body>
+
+</html>

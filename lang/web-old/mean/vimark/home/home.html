@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="jumbotron" style="padding-bottom:0px;">
+    <h4>appyapp!</h4>
+  </div>
+  <form class="form-signin" name="signinForm" role="form">
+    <div class="form-group" ng-class="{ 'has-error' : signinForm.email.$invalid }">
+      <label>email</label>
+      <input type="email" name="email" class="form-control" ng-model="user.email">
+      <p class="help-block" ng-show="signinForm.email.$invalid">can i get your email, please?</p>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error' : signinForm.password.$invalid }">
+      <label>password</label>
+      <input type="password" name="password" class="form-control" ng-model="user.password" ng-minlength="4">
+      <p class="help-block" ng-show="signinForm.password.$error.minlength">four characters or more, if that's okay'</p>
+    </div>
+      <label class="checkbox">
+          <a href="#/register">register</a>
+      </label>
+      <button ladda-loading="login.loading" data-style="expand-right" ng-disabled="!user.email || !user.password" type="button" ng-click="SignIn($event)" class="btn btn-lg segoe-ui-light ladda-button btn-primary btn-block"><span class="ladda-label">login</span></button>
+  </form>
+</div>

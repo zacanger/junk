@@ -1,0 +1,60 @@
+.editor { height: 100%; }
+
+.title-pane {
+  width: 100%;
+  height: 3em;
+  padding: 1em 1.5em 2em 1.5em;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+  background: #131413;
+}
+
+.editor .title-form input {
+  font-size: 1.5em;
+  font-weight: bold;
+  width: calc(100% - 10em);
+  box-shadow: none;
+  border-radius: 0;
+  border: 1px solid #f0bcc2;
+  background: none;
+	color: #f6f4d5;
+}
+
+.editor .title-form input:hover { border: 1px solid #aed0b1; }
+
+.editor .title-form input:focus { border: 1px solid #923636; }
+
+.title-pane .delete-button {
+  color: #131413;
+  background: #f0bcc2;
+  font-size: 1.4em;
+  font-weight: 700;
+  float: right;
+  padding-right: 4em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.2);
+    text-shadow: 1px 1px 0 rgba(0,0,0,.4);
+  border: 1px solid #000;
+}
+
+.title-pane .delete-button:hover {
+  color: #000;
+  background: #923636;
+}
+
+.editor-pane, .preview-pane {
+  float: left;
+  width: 50%;
+}
+
+.editor-pane { height: calc(100% - 120px); }
+
+.preview-pane { height: calc(100% - 80px); }
+
+.editor .CodeMirror {
+ font-family: "Hasklig", "Fantasque Sans Mono", "Fira Mono", "Hack", "Inconsolata", "Anonymous Pro", monospace;
+  font-size: 1.2em;
+  line-height: 1.6em;
+  padding: 2em;
+  height: 100%;
+}
+
+.editor .preview-pane { overflow: auto; }

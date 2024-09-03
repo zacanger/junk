@@ -1,0 +1,20 @@
+{
+  "name": "heroku-broken-version",
+  "version": "0.2.0",
+  "description": "a little practice for gabe's heroku-oriented brownbag lecture",
+  "main": "index.js",
+  "scripts": {
+    "test": "xo",
+    "start": "node index.js"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "repository": "https://github.com/zacanger/devmtn.git",
+	"dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "express-session": "^1.12.1",
+    "mongoose": "^4.3.0",
+    "morgan": "^1.6.1"
+  }
+}

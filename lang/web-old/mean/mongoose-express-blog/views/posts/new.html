@@ -1,0 +1,16 @@
+<% include ../shared/header.html %>
+<h1>new</h1>
+<form method="POST" actions="/">
+	<p>
+		title: <br />
+		<input id="title" type="text" name="title">
+	</p>
+	<p>
+		content: <br />
+		<textarea cols="40" rows="10" name="content"></textarea>
+	</p>
+	<p>
+		<button type="submit">create post</button>
+	</p>
+</form>
+<% include ../shared/footer.html %>

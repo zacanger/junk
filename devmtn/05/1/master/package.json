@@ -1,0 +1,25 @@
+{
+  "name": "siri-backend",
+  "version": "0.0.1",
+  "description": "siri backend devmtn week 5",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/51.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/51/issues"
+  },
+  "homepage": "https://github.com/zacanger/51#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.8.1"
+  }
+}

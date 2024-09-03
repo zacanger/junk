@@ -1,0 +1,5 @@
+client/public/browser-bundle.js
+node_modules
+*~
+*.swp
+db

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>clock</title>
+  <script type="text/javascript">
+    function startTime(){
+      var
+        today = new Date()
+      , h     = today.getHours()
+      , m     = today.getMinutes()
+      , s     = today.getSeconds()
+
+      m = checkTime(m)
+      s = checkTime(s)
+      if(h < 12){
+        document.getElementById('clock').innerHTML = h + '.' + m + '.' + s + '.am'
+      } else {
+        document.getElementById('clock').innerHTML = h + '.' + m + '.' + s + '.pm'
+      }
+      t = setTimeout('startTime()', 500)
+    }
+
+    function checkTime(i){ // padding with '0'
+      if(i < 10){
+        i = '0' + i
+      }
+      return i
+    }
+  </script>
+</head>
+<body>
+  <div id="clock"></div>
+  <script type="text/javascript">startTime()</script>
+</body>
+</html>

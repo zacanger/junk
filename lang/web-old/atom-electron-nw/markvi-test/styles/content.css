@@ -1,0 +1,71 @@
+.main {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  margin-left: 10em;
+}
+
+.content {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.page {
+  height: 100%;
+  padding: 0 1em;
+  overflow: auto;
+}
+
+.page-inner {
+  max-width: 840px;
+  margin: 0 auto;
+  background: #131413;
+}
+
+.page h1 {
+  color: #f6f4d5;
+  padding: 0 0 .4em;
+  border-bottom: 1px solid #f0bcc2;
+}
+
+.page h3 {
+  color: #131413;
+  font-weight: normal;
+}
+
+.page a {
+  color: #71A397;
+}
+
+.page p {
+  font-size: 1.4em;
+  color: #f6f4d5;
+}
+
+.page pre {
+  font-size: 1.2em;
+  background: #131413;
+  padding: .4em .2em;
+  border-radius: 2px;
+}
+
+.page code {
+  color: #abcdef;
+  background: #0f0f0f;
+  padding: 2px .2em;
+  border-radius: 2px;
+}
+
+.page pre code {
+  color: #abcdef;
+  background: none;
+}
+
+.page .copyright {
+  display: block;
+  font-size: .8em;
+  color: #555;
+  text-align: center;
+  margin: 3em 0;
+}

@@ -1,0 +1,24 @@
+{
+  "name": "serving-with-gulp",
+  "version": "0.1.0",
+  "description": "a little demo on serving with live reload, using gulp",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": " zacanger",
+  "license": "WTFPL",
+  "devDependencies": {
+    "chalk": "^1.1.1",
+    "compression": "^1.6.1",
+    "connect-livereload": "^0.5.4",
+    "express": "^4.13.4",
+    "express-err": "^1.0.1",
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.7",
+    "minimist": "^1.2.0",
+    "tiny-lr": "^0.2.1"
+  }
+}
+

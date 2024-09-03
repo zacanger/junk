@@ -1,0 +1,32 @@
+{
+  "name": "react-typescript-boilerplate",
+  "description": "Small React boilerplate with TypeScript",
+  "version": "0.0.1",
+  "author": "Zac Anger",
+  "license": "WTFPL",
+  "main": "dev.server.js",
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "start": "node dev.server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zacanger/react-bits.git"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "@types/react": "^15.0.14",
+    "@types/react-dom": "^0.14.23",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.26.2",
+    "react-transform-hmr": "^1.0.4",
+    "style-loader": "^0.13.2",
+    "ts-loader": "^2.0.1",
+    "typescript": "^2.2.1",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
+  }
+}

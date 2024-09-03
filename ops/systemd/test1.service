@@ -1,0 +1,14 @@
+[Unit]
+Description=Test One
+
+[Service]
+ExecStart=/usr/local/bin/node /root/test/one.js
+Restart=always
+RestartSec=2
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=test-one
+
+[Install]
+WantedBy=multi-user.target
+

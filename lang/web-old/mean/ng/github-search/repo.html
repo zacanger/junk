@@ -1,0 +1,19 @@
+<div class="repo">
+  <h2>{{repo.name}}</h2>
+  {{error}}
+  <p>{{repo.description}}</p>
+  <p>Open Issues: {{repo.open_issues_count}}</p>
+</div>
+
+<ul class="contributors">
+  <li ng-repeat="contributor in contributors">
+    <img ng-src="{{contributor.avatar_url}}">
+    <a href="{{contributor.html_url}}" target="_blank">{{contributor.login}}</a>
+    {{contributor.contributions}} contributions.
+  </li>
+</ul>
+
+<p class="meta">
+  <a href="#/user/{{username}}">Back to {{username}}</a>
+  {{error}}
+</p>

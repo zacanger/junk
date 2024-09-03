@@ -1,0 +1,15 @@
+*.lock
+*.log
+*.o
+*.out
+*.pid
+*.so
+*.swp
+*.tar
+*~
+.completer.hist
+bower_components
+db
+node_modules
+x/
+

@@ -1,0 +1,102 @@
+# sourcegraph doesn't provide a k8s deployment unless you pay
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    com.example.service: sourcegraph
+  name: sourcegraph
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        com.example.service: sourcegraph
+    spec:
+      containers:
+      - image: sourcegraph/server:3.16.1
+        name: sourcegraph
+        ports:
+        - containerPort: 7080
+        - containerPort: 3370
+        volumeMounts:
+        - mountPath: /etc/sourcegraph
+          name: sourcegraph-claim-etc
+        - mountPath: /var/opt/sourcegraph
+          name: sourcegraph-claim-var
+      restartPolicy: Always
+      volumes:
+      - name: sourcegraph-claim-etc
+        persistentVolumeClaim:
+          claimName: sourcegraph-claim-etc
+      - name: sourcegraph-claim-var
+        persistentVolumeClaim:
+          claimName: sourcegraph-claim-var
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: sourcegraph
+spec:
+  rules:
+  - host: sourcegraph.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: sourcegraph
+          servicePort: 7080
+  tls:
+  - hosts:
+    - sourcegraph.example.com
+    secretName: sourcegraph-example-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sourcegraph
+spec:
+  ports:
+  - port: 7080
+    targetPort: 7080
+    protocol: TCP
+    name: main
+  - port: 3370
+    targetPort: 3370
+    protocol: TCP
+    name: admin
+  selector:
+    com.example.service: sourcegraph
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    com.example.service: sourcegraph-claim-var
+  name: sourcegraph-claim-var
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: aws-ebs-gp2
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    com.example.service: sourcegraph-claim-etc
+  name: sourcegraph-claim-etc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: aws-ebs-gp2
+  volumeMode: Filesystem

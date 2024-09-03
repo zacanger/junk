@@ -1,0 +1,33 @@
+{
+  "name": "user-profiles",
+  "version": "0.1.0",
+  "description": "user profiles, devmtn",
+  "main": "index.js",
+  "scripts": {
+		"start": "node index.js",
+		"test": "xo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zacanger/devmountain.git"
+  },
+  "author": "zacanger",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/zacanger/devmountain/issues"
+  },
+  "homepage": "https://github.com/zacanger/devmountain#readme",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "express-session": "^1.12.1"
+  },
+  "devDependencies": {
+    "xo": "^0.11.0"
+  },
+  "xo": {
+    "space": true,
+    "semicolon": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "express-to-do-list",
+  "version": "0.1.0",
+  "description": "dm9 demo",
+  "main": "",
+  "scripts": {
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/node-drills.git"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cookie-session": "^2.0.0-alpha.1",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,21 @@
+{
+  "name": "mqtt-test-thing",
+  "version": "0.1.0",
+  "description": "some little tutorial to try to learn mqtt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://zacanger.com/node-misc.git"
+  },
+  "keywords": [
+    "mqtt"
+  ],
+  "author": "Zac Anger <http://zacanger.com>",
+  "license": "WTFPL",
+  "dependencies": {
+    "mqtt": "^1.7.3"
+  }
+}

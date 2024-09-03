@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>d3-super-simple-test</title>
+		<script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+	</head>
+	<body>
+		<div id="viz"></div>
+		<script type="text/javascript">
+			var waySimple = d3.select('#viz')
+				.append('svg')
+				.attr('width', 400)
+				.attr('height', 400)
+
+			waySimple.append('circle')
+				.style('stroke', 'blue')
+				.style('fill', 'grey')
+				.attr('r', 50)
+				.attr('cx', 200)
+				.attr('cy', 200)
+				.on('mouseover', function(){d3.select(this).style('fill', 'dodgerblue')})
+				.on('mouseout', function(){d3.select(this).style('stroke', 'goldenrod')})
+		</script>
+	</body>
+</html>

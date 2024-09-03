@@ -1,0 +1,38 @@
+{
+  "name": "rxjs-cycle-example-todo-app",
+  "version": "0.1.0",
+  "description": "example todo-list app using rxjs and cycle.js",
+  "main": "",
+  "scripts": {
+    "start": "browserify src/index.js -t babelify --outfile bundle.js",
+    "dev": "watchify src/index.js -t babelify --outfile bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/extras.git"
+  },
+  "keywords": [
+    "",
+    ""
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "dependencies": {
+    "@cycle/core": "~2.0.1",
+    "@cycle/dom": "~4.0.1",
+    "jquery": "^2.2.1",
+    "lodash": "^3.10.1",
+    "rx": "^2.5.3",
+    "virtual-dom": "^2.1.1"
+  },
+  "devDependencies": {
+    "babel": "^5.8.3",
+    "babelify": "^6.1.3",
+    "browserify": "^11.0.0",
+    "watchify": "^3.3.0"
+  }
+}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>vue todo list super simple style oh yeah
+<style>html { background: #222; color: #eee; font-family: monospace; }</style>
+</head>
+<body>
+<script src="vue.js"></script>
+<!-- now for the actual appy bit! -->
+
+
+	<div id="app">
+		<input v-model="newTodo" v-on:keyup.enter="addTodo">
+		<ul>
+			<li v-for="todo in todos">
+				<span>{{ todo.text }}</span>
+				<button v-on:click="removeTodo($index)">x</button>
+			</li>
+		</ul>
+	</div>
+
+  <script>
+  new Vue({
+    el: '#app'
+  , data: {
+      newTodo: ''
+      , todos: [
+        { text: 'add' }
+      ]
+    }
+  ,	methods: {
+      addTodo: function(){
+        var text = this.newTodo.trim()
+		if (text){
+		  this.todos.push({ text: text })
+          this.newTodo = ''
+        }
+      }
+    , removeTodo: function(index){
+        this.todos.splice(index, 1)
+      }
+    }
+})
+</script>
+
+  
+</body>
+</html>

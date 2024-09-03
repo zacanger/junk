@@ -1,0 +1,27 @@
+{
+  "name": "server-side-es2015",
+  "version": "0.1.0",
+  "description": "example using gulp to handle es2015 in node",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/examples.git"
+  },
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-es2017": "^1.2.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "source-map-support": "^0.4.0"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "",
+  "description": "",
+  "version": "0.0.1",
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "license": "WTFPL",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": ""
+  },
+  "homepage": "https://github.com/zacanger/#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/.git"
+  },
+  "bugs": "https://github.com/zacanger//issues",
+  "keywords": [
+    "",
+    ""
+  ],
+  "dependencies": {
+    "babel-polyfill": "^6.13.0",
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2",
+    "redux-logger": "^2.6.1",
+    "redux-thunk": "^2.1.0"
+  },
+  "devDependencies": {}
+}

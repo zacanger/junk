@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "title": "Duff Beer",
+    "dist": "Ubuntu"
+  },
+  {
+    "id": "2",
+    "title": "PanGalactic Gargle Blaster",
+    "dist": "Ubuntu"
+  },
+  {
+    "id": "3",
+    "title": "Ambrosa",
+    "dist": "Vayatta"
+  },
+  {
+    "id": "4",
+    "title": "Shotz",
+    "dist": "Ubuntu"
+  },
+  {
+    "id": "5",
+    "title": "Synthehol",
+    "dist": "Vayatta"
+  },
+  {
+    "id": "6",
+    "title": "Bootysweat",
+    "dist": "Ubuntu"
+  },
+  {
+    "id": "7",
+    "title": "Butterbeer",
+    "dist": "Xanadu"
+  },
+  {
+    "id": "8",
+    "title": "Tantrum",
+    "dist": "Xanadu"
+  },
+  {
+    "id": "9",
+    "title": "Moloko",
+    "dist": "Ubuntu"
+  }
+]

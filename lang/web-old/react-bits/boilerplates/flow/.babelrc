@@ -1,0 +1,9 @@
+{
+  "presets": ["react", ["env", {"modules": false}]],
+  "plugins": [
+    "transform-es2015-modules-commonjs",
+    "transform-flow-strip-types",
+    "transform-export-extensions",
+    "transform-class-properties"
+  ]
+}

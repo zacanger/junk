@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+	<script src="term.js"></script>
+	<script src="client.js"></script>
+	<style type="text/css">
+	.terminal {
+		font-family: "Hasklig", "Hack", "Fira Code", monospace;
+		font-size: 12px;
+		color: rgb(240, 240, 240);
+		background: #383734 !important;
+		padding: 3px;
+		border: none !important;
+	}
+	</style>
+</head>
+<body>
+	<div id="terminal"></div>
+	<script>
+		var e = document.getElementById("terminal")
+		client.run({
+			parent: e,
+			remote: "http://localhost:9090/"
+		})
+	</script>
+</body>
+</html>
+

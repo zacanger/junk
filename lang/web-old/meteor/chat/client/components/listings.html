@@ -1,0 +1,14 @@
+<template name="listings">
+  <div class="listings">
+    <div class="listings_channels">
+      <h2 class="listings_header">channels</h2>
+      <ul class="channel_list">
+        {{#each channels}}
+          {{>channel name=name}}
+        {{/each}}
+      </ul>
+    </div>
+    <div class="listings_direct_messages"></div>
+    <p class="disclaimer">stuff stuff stuff stuff stuff</p>
+  </div>
+</template>

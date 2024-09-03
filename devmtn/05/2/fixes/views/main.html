@@ -1,0 +1,17 @@
+<div class="header">
+  <h3 class="text-muted">chatty</h3>
+</div>
+
+<h4>Latest Chats:</h4>
+<div class="jumbotron">
+
+	<form ng-submit="addMessage(newMessage)">
+		<input ng-model="newMessage" type="text" placeholder="Hello!">
+	</form>
+
+	<div ng-repeat="message in messages track by $index">{{message.message}}<br> <small>{{message.time}}</small>
+		<br><em>{{message.username}}</em>
+	</div>
+
+
+</div>

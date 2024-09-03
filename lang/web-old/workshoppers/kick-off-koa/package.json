@@ -1,0 +1,34 @@
+{
+  "name": "foo",
+  "version": "0.1.0",
+  "description": "bar quux baz",
+  "main": "index.js",
+  "scripts": {
+    "test": "",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacanger/foo.git"
+  },
+  "keywords": [
+    "",
+    ""
+  ],
+  "author": {
+    "name": "Zac Anger",
+    "email": "zac@zacanger.com",
+    "url": "http://zacanger.com"
+  },
+  "homepage": "https://github.com/zacanger/foo#readme",
+  "bugs": "https://github.com/zacanger/foo/issues",
+  "license": "WTFPL",
+  "dependencies": {
+    "co-body": "^4.2.0",
+    "co-views": "^2.1.0",
+    "ejs": "^2.4.2",
+    "koa": "^1.2.0",
+    "koa-session": "^3.3.1"
+  },
+  "devDependencies": {}
+}

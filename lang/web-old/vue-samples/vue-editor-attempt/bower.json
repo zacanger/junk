@@ -1,0 +1,6 @@
+{
+  "name": "vue-codemirror",
+  "dependencies": {
+    "codemirror": "~5.9.0"
+  }
+}

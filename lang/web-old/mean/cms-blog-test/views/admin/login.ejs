@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.4/angular-material.min.css">
+</head>
+<body>
+  <div>
+    <div class="row">
+      <div class="col">
+        <h1>Admin Login</h1>
+        <form method="post" action="/login">
+          <input type="text" placeholder="Email" name="email" ng-model="user.email">
+          <!-- if we go anon, we need to change that -->
+          <input type="password" placeholder="Password" name="password" ng-model="user.password">
+          <input type="submit" value="Login">
+        </form>
+        <a href="/admin/register">register</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

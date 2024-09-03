@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="./css.css">
+  <title>music app thing</title>
+</head>
+<body>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <script type="text/javascript" src="https://www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+  <script type="text/javascript" src="http://cdn.pubnub.com/pubnub-3.7.10.min.js"></script>
+  <script type="text/javascript" src="./main.js"></script>
+  <script type="text/javascript">Parse.initialize("WwAmAneqss0755anE0ChS41c2qMr2cg8IryA0CeE", "1liFvU4dZLAPPMkdliSJ3CHN4aNI8BwSvRGv3PZu")</script>
+
+<div class="container">
+  <ul class="grid">
+    <li><button id="record">record</button></li>
+    <li><button id="stop">stop</button></li>
+    <li id="button" class="square b1"><button onClick="soundClick('b1')">1</button></li>
+    <li id="button" class="square b2"><button onClick="soundClick('b2')">2</button></li>
+    <li id="button" class="square b3"><button onClick="soundClick('b3')">3</button></li>
+  </ul>
+  <table id="beats">
+  </table>
+</div>
+
+</body>
+</html>

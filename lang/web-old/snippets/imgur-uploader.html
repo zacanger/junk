@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf8">
+  <title>imgr</title>
+  <script type="text/javascript">
+    window.ondragover = function(e){e.preventDefault()}
+    window.ondrop = function(e){e.preventDefault();upload(e.dataTransfer.files[0])}
+    function upload(file){
+      if(!file || !file.type.match(/image.*/)){return}
+      document.body.className = "uploading"
+      var fd = new FormData()
+      fd.append("image", file)
+      var xhr = new XMLHttpRequest() // imgur allows cross domain xmlhttprequest
+      xhr.open("POST", "https://api.imgur.com/3/image.json")
+      xhr.onload = function(){
+        document.querySelector("#link").href = JSON.parse(xhr.responseText).data.link
+        document.body.className = "uploaded"
+      }
+      xhr.setRequestHeader('Authorization', 'Client-ID 5555555xxxxxxxx') // Get your own key http://api.imgur.com/
+      xhr.send(fd)
+    }
+  </script>
+  <style type="text/css">
+    body{text-align:center;padding-top:100px;font-family:monospace;background:#111;color:#ddd;}
+    div{border:4px solid #aaa;text-align:center;line-height:100px;width:200px;margin:auto;font-size:40px;display:inline-block;}
+    #link,p,div{display:none;}
+    a{color:#eee;}
+    a:visited{color:#bbb;}
+    a:hover{color:#ccc;}
+    div{display:inline-block;}
+    .uploading div{display:none;}
+    .uploaded div{display:none;}
+    .uploading p{display:inline;}
+    button{font-family:monospace;}
+    .uploaded #link{display:inline;}
+  </style>
+</head>
+<body>
+  <div>
+    drop
+    <button onclick="document.querySelector('input').click()">or click</button>
+  </div>
+  <input style="visibility: collapse; width: 0px;" type="file" onchange="upload(this.files[0])">
+  <p>uploading</p>
+  <a id="link">here it is</a>
+</body>
+</html>
+
